@@ -4,6 +4,17 @@ import { useState, useEffect } from "react";
 import { usePostStore } from "@/lib/store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Comment } from "@/lib/db-comments";
+import { 
+  Heart, 
+  MessageCircle, 
+  Send, 
+  X, 
+  Trash2, 
+  Edit2, 
+  CornerDownRight,
+  Play,
+  Check
+} from "lucide-react";
 
 function timeAgo(dateStr: string): string {
   const seconds = Math.floor(
@@ -18,78 +29,195 @@ function timeAgo(dateStr: string): string {
   return `${days}d ago`;
 }
 
-// Comment Component (simplified - flat structure)
+// Comment Component with edit, delete, like, and reply
 function CommentItem({
   comment,
   postId,
+  depth = 0,
 }: {
   comment: Comment;
   postId: string;
+  depth?: number;
 }) {
   const [replyText, setReplyText] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(comment.body);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  
   const addComment = usePostStore((s) => s.addComment);
+  const updateComment = usePostStore((s) => s.updateComment);
+  const deleteComment = usePostStore((s) => s.deleteComment);
   const currentUser = useAuthStore((s) => s.user);
+  const { posts } = usePostStore();
+  
+  // Find child comments (replies to this comment)
+  const childComments = posts.find(p => p.id === postId)?.comments.filter(
+    c => c.parent_id === comment.id
+  ) || [];
 
-  function handleReply(e: React.FormEvent) {
+  async function handleReply(e: React.FormEvent) {
     e.preventDefault();
     if (!replyText.trim()) return;
-    addComment(postId, replyText.trim(), comment.id);
+    await addComment(postId, replyText.trim(), comment.id);
     setReplyText("");
     setShowReplyInput(false);
   }
 
-  const isAuthor = currentUser?.username === comment.author_name;
+  async function handleEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editText.trim() || editText === comment.body) {
+      setIsEditing(false);
+      return;
+    }
+    await updateComment(postId, comment.id, editText.trim());
+    setIsEditing(false);
+  }
+
+  async function handleDelete() {
+    if (!confirm("Delete this comment?")) return;
+    await deleteComment(postId, comment.id);
+  }
+
+  function handleLike() {
+    setLiked(!liked);
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+    // TODO: implement comment likes in backend
+  }
+
+  const isAuthor = currentUser?.id === comment.author_id;
+  const isReply = comment.parent_id !== null;
 
   return (
-    <div className="flex gap-3">
-      <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center text-zinc-400 text-sm font-bold flex-shrink-0">
-        {comment.author_name?.[0] || "?"}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-semibold text-sm text-zinc-300">
-            {comment.author_name}
-          </span>
-          <span className="text-xs text-zinc-500">
-            {timeAgo(comment.created_at)}
-          </span>
-          {isAuthor && (
-            <span className="text-xs text-emerald-500">(You)</span>
+    <div className={`${depth > 0 ? "ml-8 mt-3" : ""}`}>
+      <div className="flex gap-3">
+        <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-zinc-400 text-xs font-bold flex-shrink-0">
+          {comment.author_name?.[0] || "?"}
+        </div>
+        <div className="flex-1 min-w-0">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-semibold text-sm text-zinc-300">
+              {comment.author_name}
+            </span>
+            <span className="text-xs text-zinc-500">
+              {timeAgo(comment.created_at)}
+            </span>
+            {isAuthor && (
+              <span className="text-xs text-emerald-500">(You)</span>
+            )}
+          </div>
+          
+          {/* Body - editable or display */}
+          {isEditing ? (
+            <form onSubmit={handleEdit} className="flex gap-2 mt-1">
+              <input
+                type="text"
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm focus:outline-none focus:border-zinc-500"
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="p-1 text-emerald-400 hover:text-emerald-300"
+              >
+                <Check size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditText(comment.body);
+                }}
+                className="p-1 text-zinc-400 hover:text-zinc-300"
+              >
+                <X size={16} />
+              </button>
+            </form>
+          ) : (
+            <p className="text-sm text-zinc-300 whitespace-pre-wrap">{comment.body}</p>
+          )}
+          
+          {/* Actions */}
+          {!isEditing && (
+            <div className="flex items-center gap-4 mt-2">
+              {/* Like */}
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-1 text-xs transition-colors ${
+                  liked ? "text-red-400" : "text-zinc-500 hover:text-red-400"
+                }`}
+              >
+                <Heart size={14} fill={liked ? "currentColor" : "none"} />
+                <span>{likeCount > 0 ? likeCount : ""}</span>
+              </button>
+              
+              {/* Reply */}
+              <button
+                onClick={() => setShowReplyInput(!showReplyInput)}
+                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                <CornerDownRight size={14} />
+                <span>Reply</span>
+              </button>
+              
+              {/* Edit/Delete - author only */}
+              {isAuthor && (
+                <>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    <Edit2 size={14} />
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="flex items-center gap-1 text-xs text-zinc-500 hover:text-red-400 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Reply input */}
+          {showReplyInput && (
+            <form onSubmit={handleReply} className="mt-3 flex gap-2">
+              <input
+                type="text"
+                placeholder="Reply..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
+              />
+              <button
+                type="submit"
+                disabled={!replyText.trim()}
+                className="px-3 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded transition-colors disabled:opacity-50"
+              >
+                <Send size={14} />
+              </button>
+            </form>
           )}
         </div>
-        <p className="text-sm text-zinc-300 whitespace-pre-wrap">{comment.body}</p>
-        
-        {/* Reply button */}
-        <div className="flex items-center gap-3 mt-2">
-          <button
-            onClick={() => setShowReplyInput(!showReplyInput)}
-            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
-          >
-            Reply
-          </button>
-        </div>
-
-        {/* Reply input */}
-        {showReplyInput && (
-          <form onSubmit={handleReply} className="mt-3 flex gap-2">
-            <input
-              type="text"
-              placeholder="Reply to comment..."
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
-            />
-            <button
-              type="submit"
-              disabled={!replyText.trim()}
-              className="px-3 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded transition-colors disabled:opacity-50"
-            >
-              Reply
-            </button>
-          </form>
-        )}
       </div>
+      
+      {/* Nested replies */}
+      {childComments.length > 0 && (
+        <div className="mt-3">
+          {childComments.map((child) => (
+            <CommentItem 
+              key={child.id} 
+              comment={child} 
+              postId={postId} 
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -258,7 +386,8 @@ export default function PostCard({ post }: PostCardProps) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
                 >
-                  ▶ Play on Roblox
+                  <Play size={14} fill="currentColor" />
+                  Play on Roblox
                 </a>
               </div>
             </div>
@@ -272,7 +401,8 @@ export default function PostCard({ post }: PostCardProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
             >
-              ▶ Play on Roblox
+              <Play size={14} fill="currentColor" />
+              Play on Roblox
             </a>
           </div>
         )}
@@ -285,14 +415,14 @@ export default function PostCard({ post }: PostCardProps) {
               post.userLiked ? "text-red-400" : "text-zinc-400 hover:text-red-400"
             }`}
           >
-            <span>{post.userLiked ? "♥" : "♡"}</span>
+            <Heart size={16} fill={post.userLiked ? "currentColor" : "none"} />
             <span>{post.likes}</span>
           </button>
           <button
             onClick={() => setShowComments(!showComments)}
             className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-400 transition-colors"
           >
-            <span>💬</span>
+            <MessageCircle size={16} />
             <span>{post.comments.length}</span>
           </button>
         </div>
@@ -346,9 +476,9 @@ export default function PostCard({ post }: PostCardProps) {
             </div>
           )}
 
-          {/* Comments list */}
+          {/* Comments list - only parent comments at top level */}
           <div className="space-y-5">
-            {post.comments.map((c) => (
+            {post.comments.filter(c => !c.parent_id).map((c) => (
               <CommentItem key={c.id} comment={c} postId={post.id} />
             ))}
           </div>

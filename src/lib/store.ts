@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, Post } from "./db-posts";
-import { getCommentsByPostId, createComment, subscribeToComments, Comment } from "./db-comments";
+import { getCommentsByPostId, createComment, updateComment, deleteComment, subscribeToComments, Comment } from "./db-comments";
 import { toggleLike, hasLiked, getLikeCount, subscribeToLikes } from "./db-likes";
 import { useAuthStore } from "./auth-store";
 
@@ -36,6 +36,8 @@ interface PostStore {
   deletePost: (id: string) => Promise<void>;
   likePost: (id: string) => Promise<void>;
   addComment: (postId: string, body: string, parentId?: string) => Promise<void>;
+  updateComment: (postId: string, commentId: string, body: string) => Promise<void>;
+  deleteComment: (postId: string, commentId: string) => Promise<void>;
   
   // Subscriptions
   subscribeToRealtime: () => (() => void);
@@ -243,6 +245,54 @@ export const usePostStore = create<PostStore>((set, get) => ({
           posts: state.posts.map((p) =>
             p.id === postId
               ? { ...p, comments: [...p.comments, comment] }
+              : p
+          ),
+        }));
+      }
+    } catch (error: any) {
+      set({ error: error.message });
+    }
+  },
+
+  updateComment: async (postId: string, commentId: string, body: string) => {
+    const user = useAuthStore.getState().user;
+    if (!user) return;
+
+    try {
+      const updated = await updateComment(commentId, body, user.id);
+      if (updated) {
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId
+              ? {
+                  ...p,
+                  comments: p.comments.map((c) =>
+                    c.id === commentId ? { ...c, body: updated.body } : c
+                  ),
+                }
+              : p
+          ),
+        }));
+      }
+    } catch (error: any) {
+      set({ error: error.message });
+    }
+  },
+
+  deleteComment: async (postId: string, commentId: string) => {
+    const user = useAuthStore.getState().user;
+    if (!user) return;
+
+    try {
+      const success = await deleteComment(commentId, user.id);
+      if (success) {
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId
+              ? {
+                  ...p,
+                  comments: p.comments.filter((c) => c.id !== commentId),
+                }
               : p
           ),
         }));
