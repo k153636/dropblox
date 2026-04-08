@@ -112,7 +112,7 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
   // Loading skeleton
   if (loading && posts.length === 0) {
     return (
-      <div className="grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-[21px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[21px]">
         {Array.from({ length: 6 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
@@ -140,7 +140,7 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
     return (
       <div className="relative">
         {/* Empty grid skeleton */}
-        <div className="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-[21px] opacity-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[21px] opacity-20">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
@@ -159,8 +159,8 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
 
   return (
     <div className="space-y-[21px]">
-      {/* Grid */}
-      <div className="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-[21px]">
+      {/* Grid - Responsive: mobile 1col, tablet 2col, desktop 3col */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[21px]">
         {posts.map((post) => (
           <LikedPostCard key={post.id} post={post} />
         ))}
