@@ -114,10 +114,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         onTouchEnd={handleTouchEnd}
       />
 
-      {/* Sidebar */}
+      {/* Sidebar - Golden Ratio: Closed 89px, Open 144px (144/89 ≈ 1.618) */}
       <aside
         className={`fixed left-0 top-0 h-full bg-zinc-900 border-r border-zinc-800 z-[40] transition-all duration-300 ease-out ${
-          isOpen ? "w-[233px] translate-x-0" : "w-[55px] -translate-x-full md:translate-x-0"
+          isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}
         onTouchStart={handleTouchStart}

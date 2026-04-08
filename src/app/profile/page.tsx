@@ -41,10 +41,10 @@ export default function ProfilePage() {
       <Header onMenuClick={toggleSidebar} sidebarOpen={sidebarOpen} />
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
 
-      {/* Main content */}
+      {/* Main content - Golden Ratio */}
       <main
         className={`transition-all duration-300 ${
-          sidebarOpen ? "md:ml-[233px]" : "md:ml-[55px]"
+          sidebarOpen ? "md:ml-[144px]" : "md:ml-[89px]"
         }`}
       >
         <div className="max-w-[676px] mx-auto px-[21px] py-[34px]">
