@@ -141,7 +141,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               onClick={openPostModal}
               className={`flex flex-col items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all ${
                 isOpen && !isMobile
-                  ? "w-[89px] h-[89px] gap-[8px] mx-auto"
+                  ? "w-[89px] h-[89px] gap-[8px] mx-auto p-0"
                   : "w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] flex-row"
               }`}
             >
@@ -170,7 +170,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
                   } ${
                     isOpen && !isMobile
-                      ? "w-[89px] h-[89px] gap-[8px] mx-auto px-[13px] py-[13px]"
+                      ? "w-[89px] h-[89px] gap-[8px] mx-auto p-0"
                       : "w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] flex-row"
                   }`}
                 >
