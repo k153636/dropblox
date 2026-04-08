@@ -124,8 +124,8 @@ export default function Feed() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-20 space-y-3">
-        <p className="text-4xl">⏳</p>
+      <div className="text-center py-[55px] space-y-[13px]">
+        <p className="text-[34px]">⏳</p>
         <p className="text-zinc-400 text-lg font-medium">Loading...</p>
       </div>
     );
@@ -133,8 +133,8 @@ export default function Feed() {
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-20 space-y-3">
-        <p className="text-4xl">🎮</p>
+      <div className="text-center py-[55px] space-y-[13px]">
+        <p className="text-[34px]">🎮</p>
         <p className="text-zinc-400 text-lg font-medium">No drops yet</p>
         <p className="text-zinc-500 text-sm">
           Be the first to share a Roblox game!
@@ -148,7 +148,7 @@ export default function Feed() {
   const endIdx = Math.min(posts.length, visibleRange.end);
 
   return (
-    <div ref={containerRef} className="space-y-4">
+    <div ref={containerRef} className="space-y-[21px]">
       {/* Virtual padding top */}
       {startIdx > 0 && (
         <div style={{ height: startIdx * 200 }} className="w-full" />
@@ -172,19 +172,19 @@ export default function Feed() {
       )}
       
       {/* Stats for debugging */}
-      <div className="text-xs text-zinc-600 text-center py-2">
+      <div className="text-xs text-zinc-600 text-center py-[8px]">
         Showing {startIdx + 1}-{endIdx} of {posts.length} posts | DOM nodes: {endIdx - startIdx}
       </div>
       
       {/* Infinite scroll trigger */}
-      <div ref={loadMoreRef} className="py-4 text-center">
+      <div ref={loadMoreRef} className="py-[21px] text-center">
         {isLoadingMore ? (
-          <div className="flex items-center justify-center gap-2 text-zinc-500">
-            <div className="w-5 h-5 border-2 border-zinc-600 border-t-emerald-500 rounded-full animate-spin" />
+          <div className="flex items-center justify-center gap-[8px] text-zinc-500">
+            <div className="w-[21px] h-[21px] border-2 border-zinc-600 border-t-emerald-500 rounded-full animate-spin" />
             <span className="text-sm">Loading more...</span>
           </div>
         ) : hasMore ? (
-          <div className="h-8" /> // Spacer for observer
+          <div className="h-[21px]" /> // Spacer for observer
         ) : (
           <p className="text-sm text-zinc-500">No more posts</p>
         )}

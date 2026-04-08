@@ -305,10 +305,10 @@ export default function PostCard({ post }: PostCardProps) {
   const hasPreview = post.preview_thumbnail || post.preview_name;
 
   return (
-    <article className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-      <div className="p-5 space-y-3">
+    <article className="bg-zinc-900 border border-zinc-800 rounded-[13px] overflow-hidden">
+      <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-[13px]">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold">
               {post.author_name?.[0] || "?"}
@@ -323,16 +323,16 @@ export default function PostCard({ post }: PostCardProps) {
           
           {/* Edit/Delete buttons - author only */}
           {isAuthor && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-[8px]">
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="text-xs text-zinc-400 hover:text-zinc-200 px-2 py-1"
+                className="text-xs text-zinc-400 hover:text-zinc-200 px-[8px] py-[5px]"
               >
                 Edit
               </button>
               <button
                 onClick={handleDelete}
-                className="text-xs text-red-400 hover:text-red-300 px-2 py-1"
+                className="text-xs text-red-400 hover:text-red-300 px-[8px] py-[5px]"
               >
                 Delete
               </button>
@@ -342,27 +342,27 @@ export default function PostCard({ post }: PostCardProps) {
 
         {/* Body - editable if editing */}
         {isEditing ? (
-          <form onSubmit={handleEdit} className="space-y-2">
+          <form onSubmit={handleEdit} className="space-y-[8px]">
             <textarea
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-[8px] px-[13px] py-[8px] text-sm focus:outline-none focus:border-zinc-500"
               rows={3}
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-[8px]">
               <button
                 type="button"
                 onClick={() => {
                   setIsEditing(false);
                   setEditBody(post.body);
                 }}
-                className="px-3 py-1.5 text-xs text-zinc-400 hover:text-zinc-200"
+                className="px-[13px] py-[8px] text-xs text-zinc-400 hover:text-zinc-200"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-3 py-1.5 text-xs bg-emerald-500 hover:bg-emerald-600 text-white rounded"
+                className="px-[13px] py-[8px] text-xs bg-emerald-500 hover:bg-emerald-600 text-white rounded-[5px]"
               >
                 Save
               </button>
@@ -386,7 +386,7 @@ export default function PostCard({ post }: PostCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
               </div>
             )}
-            <div className="bg-zinc-900 px-4 pb-4 pt-2 -mt-1 space-y-2">
+            <div className="bg-zinc-900 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[8px]">
               <p className="font-semibold text-sm">{post.preview_name}</p>
               <p className="text-xs text-zinc-400 line-clamp-2">
                 {post.preview_description}
@@ -404,7 +404,7 @@ export default function PostCard({ post }: PostCardProps) {
                   href={post.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+                  className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-colors"
                 >
                   <Play size={14} fill="currentColor" />
                   Play on Roblox
@@ -413,13 +413,13 @@ export default function PostCard({ post }: PostCardProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-zinc-800/50 rounded-lg p-3 flex items-center justify-between">
+          <div className="bg-zinc-800/50 rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
             <span className="text-sm text-zinc-400">Roblox Game</span>
             <a
               href={post.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+              className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-colors"
             >
               <Play size={14} fill="currentColor" />
               Play on Roblox
@@ -450,16 +450,16 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* Comments section */}
       {showComments && (
-        <div className="border-t border-zinc-800 p-5">
+        <div className="border-t border-zinc-800 p-[21px]">
           {/* Comment count header */}
-          <h3 className="text-lg font-bold text-zinc-200 mb-4">
+          <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
             {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}
           </h3>
 
           {/* Add comment */}
           {currentUser ? (
-            <form onSubmit={handleComment} className="flex gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold flex-shrink-0">
+            <form onSubmit={handleComment} className="flex gap-[13px] mb-[21px]">
+              <div className="w-[34px] h-[34px] rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold flex-shrink-0">
                 {currentUser.username?.[0] || "Y"}
               </div>
               <div className="flex-1">
@@ -468,21 +468,21 @@ export default function PostCard({ post }: PostCardProps) {
                   placeholder="Add a comment..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="w-full bg-zinc-800 border-b border-zinc-700 px-1 py-2 text-sm placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
+                  className="w-full bg-zinc-800 border-b border-zinc-700 px-[8px] py-[8px] text-sm placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
                 />
                 {commentText.trim() && (
-                  <div className="flex justify-end gap-2 mt-2">
+                  <div className="flex justify-end gap-[8px] mt-[8px]">
                     <button
                       type="button"
                       onClick={() => setCommentText("")}
-                      className="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-zinc-200 rounded-full transition-colors"
+                      className="px-[13px] py-[8px] text-xs font-semibold text-zinc-400 hover:text-zinc-200 rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={!commentText.trim()}
-                      className="px-4 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-full transition-colors disabled:opacity-50"
+                      className="px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-full transition-colors disabled:opacity-50"
                     >
                       Comment
                     </button>
@@ -491,21 +491,21 @@ export default function PostCard({ post }: PostCardProps) {
               </div>
             </form>
           ) : (
-            <div className="mb-6 p-3 bg-zinc-800/50 rounded-lg text-center text-sm text-zinc-400">
+            <div className="mb-[21px] p-[13px] bg-zinc-800/50 rounded-[8px] text-center text-sm text-zinc-400">
               Sign in to comment
             </div>
           )}
 
           {/* Loading state */}
           {commentsLoading && (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-[34px]">
               <div className="w-6 h-6 border-2 border-zinc-600 border-t-emerald-500 rounded-full animate-spin" />
             </div>
           )}
           
           {/* Error state */}
           {commentsError && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-center text-sm text-red-400">
+            <div className="mb-[13px] p-[13px] bg-red-500/10 border border-red-500/20 rounded-[8px] text-center text-sm text-red-400">
               {commentsError}
               <button 
                 onClick={() => {
@@ -522,9 +522,9 @@ export default function PostCard({ post }: PostCardProps) {
           
           {/* Comments list - only parent comments at top level */}
           {!commentsLoading && !commentsError && (
-            <div className="space-y-5">
+            <div className="space-y-[21px]">
               {post.comments.filter(c => !c.parent_id).length === 0 ? (
-                <div className="text-center text-sm text-zinc-500 py-4">
+                <div className="text-center text-sm text-zinc-500 py-[21px]">
                   No comments yet. Be the first to comment!
                 </div>
               ) : (

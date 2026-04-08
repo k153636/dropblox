@@ -17,7 +17,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
-      <div className="max-w-[610px] mx-auto px-4 h-14 flex items-center justify-between">
+      <div className="max-w-[676px] mx-auto px-[21px] h-[55px] flex items-center justify-between">
         <h1 className="text-xl font-bold tracking-tight">
           <span className="text-emerald-400">drop</span>lox
         </h1>
