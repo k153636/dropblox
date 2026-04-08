@@ -57,15 +57,9 @@ function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
       </div>
       
       {/* Game name */}
-      <h3 className="text-sm font-medium text-zinc-200 truncate mb-[8px] group-hover:text-emerald-400 transition-colors">
+      <h3 className="text-sm font-medium text-zinc-200 truncate group-hover:text-emerald-400 transition-colors">
         {post.preview_name || "Untitled Game"}
       </h3>
-      
-      {/* Like count */}
-      <div className="flex items-center gap-[5px] text-zinc-500 text-xs">
-        <HeartIcon className="w-[13px] h-[13px] text-emerald-500" />
-        <span>{post.likes || 0}</span>
-      </div>
     </div>
   );
 }
