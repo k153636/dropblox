@@ -4,10 +4,17 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Profiles table (synced with Supabase Auth)
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  github_id TEXT UNIQUE NOT NULL,
+  github_id TEXT UNIQUE,
+  roblox_id TEXT UNIQUE,
+  provider TEXT NOT NULL DEFAULT 'github',
   username TEXT NOT NULL,
   avatar_url TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT check_one_provider CHECK (
+    (github_id IS NOT NULL AND roblox_id IS NULL) OR
+    (github_id IS NULL AND roblox_id IS NOT NULL) OR
+    (github_id IS NULL AND roblox_id IS NULL)
+  )
 );
 
 -- Posts table

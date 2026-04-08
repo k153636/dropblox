@@ -4,7 +4,9 @@ import { supabase } from "./supabase";
 
 export interface User {
   id: string;
-  github_id: string;
+  github_id: string | null;
+  roblox_id: string | null;
+  provider: "github" | "roblox";
   username: string;
   avatarUrl: string | null;
 }
@@ -13,17 +15,18 @@ interface AuthStore {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setUser: (user: User | null) => void;
   signInWithGithub: () => Promise<void>;
+  signInWithRoblox: () => Promise<void>;
   signOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set, get) => ({
+    (set, get): AuthStore => ({
       user: null,
       isLoading: false,
       error: null,
@@ -37,6 +40,23 @@ export const useAuthStore = create<AuthStore>()(
             provider: "github",
             options: {
               redirectTo: `${window.location.origin}/auth/callback`,
+            },
+          });
+
+          if (error) throw error;
+        } catch (error: any) {
+          set({ error: error.message, isLoading: false });
+        }
+      },
+
+      signInWithRoblox: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: "roblox" as any, // Supabase Dashboardでカスタムプロバイダーとして設定
+            options: {
+              redirectTo: `${window.location.origin}/auth/callback`,
+              scopes: "openid profile",
             },
           });
 
@@ -74,11 +94,16 @@ export const useAuthStore = create<AuthStore>()(
 
           if (error && error.code === "PGRST116") {
             // Profile doesn't exist, create it
+            const provider = session.user.app_metadata.provider || "github";
+            const isRoblox = provider === "roblox";
+            
             const { data: newProfile, error: createError } = await supabase
               .from("profiles")
               .insert({
                 id: session.user.id,
-                github_id: session.user.user_metadata.provider_id || session.user.user_metadata.sub,
+                github_id: isRoblox ? null : (session.user.user_metadata.provider_id || session.user.user_metadata.sub),
+                roblox_id: isRoblox ? (session.user.user_metadata.provider_id || session.user.user_metadata.sub) : null,
+                provider: provider,
                 username: session.user.user_metadata.full_name || session.user.user_metadata.name || session.user.user_metadata.user_name || session.user.email?.split('@')[0] || 'User',
                 avatar_url: session.user.user_metadata.avatar_url,
               })
@@ -91,6 +116,8 @@ export const useAuthStore = create<AuthStore>()(
               user: {
                 id: newProfile.id,
                 github_id: newProfile.github_id,
+                roblox_id: newProfile.roblox_id,
+                provider: newProfile.provider,
                 username: newProfile.username,
                 avatarUrl: newProfile.avatar_url,
               },
@@ -102,6 +129,8 @@ export const useAuthStore = create<AuthStore>()(
               user: {
                 id: profile.id,
                 github_id: profile.github_id,
+                roblox_id: profile.roblox_id,
+                provider: profile.provider,
                 username: profile.username,
                 avatarUrl: profile.avatar_url,
               },
