@@ -21,11 +21,11 @@ export type Tables = {
     id: string;
     url: string;
     body: string;
-    preview_name: string;
-    preview_description: string;
-    preview_thumbnail: string;
-    preview_playing: number;
-    preview_visits: number;
+    preview_name: string | null;
+    preview_description: string | null;
+    preview_thumbnail: string | null;
+    preview_playing: number | string | null;
+    preview_visits: number | string | null;
     author_id: string;
     author_name: string;
     likes: number;

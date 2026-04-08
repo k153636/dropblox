@@ -7,8 +7,8 @@ export interface Post {
   preview_name?: string;
   preview_description?: string;
   preview_thumbnail?: string;
-  preview_playing?: number;
-  preview_visits?: number;
+  preview_playing?: number | string; // BIGINT can be returned as string
+  preview_visits?: number | string; // BIGINT can be returned as string
   author_id: string;
   author_name: string;
   likes: number;
