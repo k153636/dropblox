@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { usePostStore } from "@/lib/store";
+import { useAuthStore } from "@/lib/auth-store";
+import { createPost } from "@/lib/db-posts";
 
 export default function PostForm() {
   const [url, setUrl] = useState("");
@@ -15,7 +16,9 @@ export default function PostForm() {
     visits: number;
   } | null>(null);
 
-  const addPost = usePostStore((s) => s.addPost);
+  const { user } = useAuthStore();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   async function handleUrlBlur() {
     if (!url.includes("roblox.com") || !url.includes("games/")) return;
@@ -36,7 +39,11 @@ export default function PostForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isValidRobloxUrl) return;
+    if (!isValidRobloxUrl || !user) return;
+
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     let finalPreview = preview;
     if (!finalPreview) {
@@ -50,11 +57,41 @@ export default function PostForm() {
       }
     }
 
-    addPost(url.trim(), body.trim(), finalPreview || undefined);
+    const post = await createPost(
+      {
+        url: url.trim(),
+        body: body.trim(),
+        preview: finalPreview || undefined,
+      },
+      user.id,
+      user.username
+    );
 
-    setUrl("");
-    setBody("");
-    setPreview(null);
+    setLoading(false);
+
+    if (post) {
+      setSuccess(true);
+      setUrl("");
+      setBody("");
+      setPreview(null);
+      setTimeout(() => setSuccess(false), 3000);
+    } else {
+      setError("Failed to create post. Please try again.");
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
+        <p className="text-zinc-400 text-sm">
+          Please{" "}
+          <a href="/auth" className="text-emerald-400 hover:underline">
+            sign in
+          </a>{" "}
+          to post a game
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -62,6 +99,16 @@ export default function PostForm() {
       onSubmit={handleSubmit}
       className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3"
     >
+      {error && (
+        <p className="text-red-400 text-sm bg-red-950/30 px-3 py-2 rounded-lg">
+          {error}
+        </p>
+      )}
+      {success && (
+        <p className="text-emerald-400 text-sm bg-emerald-950/30 px-3 py-2 rounded-lg">
+          Posted successfully!
+        </p>
+      )}
       <input
         type="text"
         placeholder="Paste your Roblox game URL..."
@@ -108,10 +155,10 @@ export default function PostForm() {
       <div className="flex justify-end">
         <button
           type="submit"
-          disabled={!isValidRobloxUrl}
+          disabled={!isValidRobloxUrl || loading}
           className="px-5 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
         >
-          Drop it
+          {loading ? "Posting..." : "Drop it"}
         </button>
       </div>
     </form>
