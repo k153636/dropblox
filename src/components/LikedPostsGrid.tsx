@@ -135,15 +135,24 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
     );
   }
 
-  // Empty state
+  // Empty state - show grid with message overlay
   if (posts.length === 0) {
     return (
-      <div className="text-center py-[55px] text-zinc-500">
-        <HeartOutlineIcon className="w-[55px] h-[55px] mx-auto mb-[13px] opacity-30" />
-        <p>No liked posts yet</p>
-        <p className="text-sm mt-[8px] opacity-60">
-          Posts you like will appear here
-        </p>
+      <div className="relative">
+        {/* Empty grid skeleton */}
+        <div className="grid grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 gap-[21px] opacity-20">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+        {/* Message overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400">
+          <HeartOutlineIcon className="w-[55px] h-[55px] mb-[13px] opacity-60" />
+          <p className="font-medium">No liked posts yet</p>
+          <p className="text-sm mt-[8px] opacity-60">
+            Posts you like will appear here
+          </p>
+        </div>
       </div>
     );
   }
