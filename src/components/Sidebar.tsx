@@ -3,21 +3,49 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import {
-  Home,
-  PlusSquare,
-  User,
-  Flame,
-  Bell,
-  Settings,
-  Menu,
-  X,
-} from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
 }
+
+// SVG Icons
+const HomeIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+);
+
+const PlusSquareIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="18" x="3" y="3" rx="2" />
+    <path d="M8 12h8" />
+    <path d="M12 8v8" />
+  </svg>
+);
+
+const UserIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const MenuIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="4" x2="20" y1="12" y2="12" />
+    <line x1="4" x2="20" y1="6" y2="6" />
+    <line x1="4" x2="20" y1="18" y2="18" />
+  </svg>
+);
+
+const XIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
+  </svg>
+);
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname();
@@ -60,8 +88,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   );
 
   const navItems = [
-    { icon: Home, label: "Home", href: "/", active: pathname === "/" },
-    { icon: User, label: "Profile", href: "/profile", active: pathname === "/profile" },
+    { icon: HomeIcon, label: "Home", href: "/", active: pathname === "/" },
+    { icon: UserIcon, label: "Profile", href: "/profile", active: pathname === "/profile" },
   ];
 
   return (
@@ -83,13 +111,22 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-zinc-900 border-r border-zinc-800 z-40 transition-all duration-300 ease-out ${
+        className={`fixed left-0 top-0 h-full bg-zinc-900 border-r border-zinc-800 z-[40] transition-all duration-300 ease-out ${
           isOpen ? "w-[233px] translate-x-0" : "w-[55px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
+        {/* Toggle button - always visible when closed on desktop */}
+        <button
+          onClick={onToggle}
+          className="absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors z-[41]"
+          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+        >
+          {isOpen ? <XIcon className="w-[21px] h-[21px]" /> : <MenuIcon className="w-[21px] h-[21px]" />}
+        </button>
+
         <div className="flex flex-col h-full py-[13px]">
           {/* New Post Button */}
           <div className="px-[13px] mb-[13px]">
@@ -102,7 +139,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 isOpen ? "px-[13px] py-[13px]" : "justify-center p-[13px]"
               }`}
             >
-              <PlusSquare size={21} />
+              <PlusSquareIcon className="w-[21px] h-[21px]" />
               {isOpen && <span className="font-medium text-sm">New Post</span>}
             </button>
           </div>
@@ -121,32 +158,23 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
                   } ${isOpen ? "px-[13px] py-[13px]" : "justify-center p-[13px]"}`}
                 >
-                  <Icon size={21} />
+                  <Icon className="w-[21px] h-[21px]" />
                   {isOpen && <span className="font-medium text-sm">{item.label}</span>}
                 </Link>
               );
             })}
           </nav>
         </div>
-
-        {/* Toggle button (visible when open) */}
-        <button
-          onClick={onToggle}
-          className={`absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors ${
-            isOpen ? "block" : "hidden md:block"
-          }`}
-        >
-          {isOpen ? <X size={21} /> : <Menu size={21} />}
-        </button>
       </aside>
 
-      {/* Hamburger button in top-left (visible when closed on mobile) */}
+      {/* Mobile toggle button - visible when sidebar closed */}
       {!isOpen && isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-50 p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200"
+          className="fixed top-[13px] left-[13px] z-[51] p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200"
+          aria-label="Open sidebar"
         >
-          <Menu size={21} />
+          <MenuIcon className="w-[21px] h-[21px]" />
         </button>
       )}
     </>
