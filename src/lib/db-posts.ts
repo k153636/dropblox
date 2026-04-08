@@ -90,6 +90,27 @@ export async function getPostById(id: string): Promise<Post | null> {
   return data as Post;
 }
 
+// Get posts by a specific user (for profile page)
+export async function getPostsByUserId(
+  userId: string,
+  limit: number = 20,
+  offset: number = 0
+): Promise<Post[] | null> {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("author_id", userId)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error("Error fetching user posts:", error);
+    return null;
+  }
+
+  return data as Post[];
+}
+
 // Update a post (author only)
 export async function updatePost(
   id: string,

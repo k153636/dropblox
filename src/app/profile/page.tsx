@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import UserPostsGrid from "@/components/UserPostsGrid";
 import LikedPostsGrid from "@/components/LikedPostsGrid";
 import { useAuthStore } from "@/lib/auth-store";
 
@@ -123,13 +124,7 @@ export default function ProfilePage() {
           {/* Tab Content */}
           <div className="min-h-[200px]">
             {activeTab === "posts" ? (
-              <div className="text-center py-[55px] text-zinc-500">
-                <GridIcon className="w-[55px] h-[55px] mx-auto mb-[13px] opacity-30" />
-                <p>No posts yet</p>
-                <p className="text-sm mt-[8px] opacity-60">
-                  Your posts will appear here
-                </p>
-              </div>
+              <UserPostsGrid userId={user.id} />
             ) : (
               <LikedPostsGrid userId={user.id} />
             )}
