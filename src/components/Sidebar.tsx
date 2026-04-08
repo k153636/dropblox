@@ -139,8 +139,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           <div className="px-[13px] mb-[13px]">
             <button
               onClick={openPostModal}
-              className={`flex items-center gap-[13px] w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all min-h-[47px] ${
-                isOpen ? "px-[13px] py-[13px]" : "justify-center px-[13px] py-[13px]"
+              className={`flex items-center justify-center w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all min-h-[47px] px-[13px] py-[13px] ${
+                isOpen ? "gap-[13px]" : ""
               }`}
             >
               <PlusSquareIcon className="w-[21px] h-[21px] flex-shrink-0" />
@@ -162,11 +162,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       onToggle();
                     }
                   }}
-                  className={`flex items-center rounded-[8px] transition-colors min-h-[47px] ${
+                  className={`flex items-center justify-center rounded-[8px] transition-colors min-h-[47px] px-[13px] py-[13px] ${
                     item.active
                       ? "bg-zinc-800 text-emerald-400"
                       : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-                  } ${isOpen ? "gap-[13px] px-[13px] py-[13px]" : "justify-center px-[13px] py-[13px]"}`}
+                  } ${isOpen ? "gap-[13px]" : ""}`}
                 >
                   <Icon className="w-[21px] h-[21px] flex-shrink-0" />
                   {isOpen && <span className="font-medium text-sm whitespace-nowrap">{item.label}</span>}
