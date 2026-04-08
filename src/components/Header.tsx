@@ -2,11 +2,11 @@
 
 import { useAuthStore } from "@/lib/auth-store";
 
-// Roblox icon component
+// Roblox icon component - tilted square with hole
 function RobloxIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M5.333 0v17.066h6.933V24l6.4-6.933h3.2V0H5.333zm6.4 12.8h-3.2V3.2h3.2v9.6zm6.4 0h-3.2V3.2h3.2v9.6z"/>
+      <path d="M12.103 0L0 16.803V24h11.784l12.097-16.803V0H12.103zM9.735 15.066l-2.237-2.728 7.309-8.935 2.237 2.728-7.309 8.935z"/>
     </svg>
   );
 }
