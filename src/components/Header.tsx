@@ -37,7 +37,12 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
-      <div className="max-w-[676px] mx-auto px-[21px] h-[55px] flex items-center justify-between">
+      <div 
+        className={`h-[55px] flex items-center justify-between transition-all duration-300 ${
+          sidebarOpen ? "md:ml-[144px] px-[21px]" : "md:ml-[89px] px-[21px]"
+        }`}
+      >
+        {/* Left side - Title */}
         <div className="flex items-center gap-[13px]">
           {/* Hamburger menu button */}
           <button
@@ -51,48 +56,52 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
             <span className="text-emerald-400">drop</span>blox
           </h1>
         </div>
-        {user ? (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              {user.avatarUrl ? (
-                <img
-                  src={user.avatarUrl}
-                  alt={user.username}
-                  className="w-8 h-8 rounded-full"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm">
-                  {user.username[0]?.toUpperCase()}
-                </div>
-              )}
-              <span className="text-sm text-zinc-300">{user.username}</span>
+
+        {/* Right side - User auth */}
+        <div className="flex-shrink-0">
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.username}
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm">
+                    {user.username[0]?.toUpperCase()}
+                  </div>
+                )}
+                <span className="text-sm text-zinc-300">{user.username}</span>
+              </div>
+              <button
+                onClick={signOut}
+                className="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+              >
+                Sign out
+              </button>
             </div>
-            <button
-              onClick={signOut}
-              className="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-            >
-              Sign out
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={signInWithGithub}
-              className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
-            >
-              <GitHubIcon className="w-4 h-4" />
-              GitHub
-            </button>
-            <button
-              onClick={signInWithRoblox}
-              className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
-              title="Requires Roblox OAuth setup"
-            >
-              <RobloxIcon className="w-4 h-4" />
-              Roblox
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={signInWithGithub}
+                className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
+              >
+                <GitHubIcon className="w-4 h-4" />
+                GitHub
+              </button>
+              <button
+                onClick={signInWithRoblox}
+                className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
+                title="Requires Roblox OAuth setup"
+              >
+                <RobloxIcon className="w-4 h-4" />
+                Roblox
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
