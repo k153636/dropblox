@@ -88,6 +88,11 @@ function CommentItem({
 
   const isAuthor = currentUser?.id === comment.author_id;
   const isReply = comment.parent_id !== null;
+  
+  // Limit nesting depth to 5
+  if (depth >= 5) {
+    return null;
+  }
 
   return (
     <div className={`${depth > 0 ? "ml-8 mt-3" : ""}`}>
@@ -143,15 +148,15 @@ function CommentItem({
           {/* Actions */}
           {!isEditing && (
             <div className="flex items-center gap-4 mt-2">
-              {/* Like */}
+              {/* Like - fixed width container to prevent layout shift */}
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-1 text-xs transition-colors ${
+                className={`flex items-center justify-center gap-1 text-xs transition-colors min-w-[40px] ${
                   liked ? "text-red-400" : "text-zinc-500 hover:text-red-400"
                 }`}
               >
                 <Heart size={14} fill={liked ? "currentColor" : "none"} />
-                <span>{likeCount > 0 ? likeCount : ""}</span>
+                <span className="w-4 text-center">{likeCount > 0 ? likeCount : " "}</span>
               </button>
               
               {/* Reply */}
@@ -246,6 +251,9 @@ export default function PostCard({ post }: PostCardProps) {
   const [showComments, setShowComments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentsError, setCommentsError] = useState<string | null>(null);
+  const [hasLoadedComments, setHasLoadedComments] = useState(false);
   
   const likePost = usePostStore((s) => s.likePost);
   const addComment = usePostStore((s) => s.addComment);
@@ -254,12 +262,24 @@ export default function PostCard({ post }: PostCardProps) {
   const loadComments = usePostStore((s) => s.loadComments);
   const currentUser = useAuthStore((s) => s.user);
 
-  // Load comments when expanding
+  // Load comments when expanding - always reload when opened
   useEffect(() => {
-    if (showComments && post.comments.length === 0) {
-      loadComments(post.id);
+    if (showComments) {
+      setCommentsLoading(true);
+      setCommentsError(null);
+      loadComments(post.id)
+        .then(() => {
+          setHasLoadedComments(true);
+        })
+        .catch((err) => {
+          setCommentsError("Failed to load comments");
+          console.error("Error loading comments:", err);
+        })
+        .finally(() => {
+          setCommentsLoading(false);
+        });
     }
-  }, [showComments, post.id, post.comments.length, loadComments]);
+  }, [showComments, post.id, loadComments]);
 
   function handleComment(e: React.FormEvent) {
     e.preventDefault();
@@ -407,23 +427,23 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         )}
 
-        {/* Actions */}
+        {/* Actions - fixed width buttons to prevent layout shift */}
         <div className="flex items-center gap-4 pt-1">
           <button
             onClick={() => likePost(post.id)}
-            className={`flex items-center gap-1.5 text-xs transition-colors ${
+            className={`flex items-center justify-center gap-1.5 text-xs transition-colors min-w-[50px] ${
               post.userLiked ? "text-red-400" : "text-zinc-400 hover:text-red-400"
             }`}
           >
             <Heart size={16} fill={post.userLiked ? "currentColor" : "none"} />
-            <span>{post.likes}</span>
+            <span className="w-5 text-center tabular-nums">{post.likes}</span>
           </button>
           <button
             onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-400 transition-colors"
+            className="flex items-center justify-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-400 transition-colors min-w-[50px]"
           >
             <MessageCircle size={16} />
-            <span>{post.comments.length}</span>
+            <span className="w-5 text-center tabular-nums">{post.comments.length}</span>
           </button>
         </div>
       </div>
@@ -476,12 +496,44 @@ export default function PostCard({ post }: PostCardProps) {
             </div>
           )}
 
+          {/* Loading state */}
+          {commentsLoading && (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-6 h-6 border-2 border-zinc-600 border-t-emerald-500 rounded-full animate-spin" />
+            </div>
+          )}
+          
+          {/* Error state */}
+          {commentsError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-center text-sm text-red-400">
+              {commentsError}
+              <button 
+                onClick={() => {
+                  setCommentsLoading(true);
+                  setCommentsError(null);
+                  loadComments(post.id).finally(() => setCommentsLoading(false));
+                }}
+                className="ml-2 underline hover:text-red-300"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+          
           {/* Comments list - only parent comments at top level */}
-          <div className="space-y-5">
-            {post.comments.filter(c => !c.parent_id).map((c) => (
-              <CommentItem key={c.id} comment={c} postId={post.id} />
-            ))}
-          </div>
+          {!commentsLoading && !commentsError && (
+            <div className="space-y-5">
+              {post.comments.filter(c => !c.parent_id).length === 0 ? (
+                <div className="text-center text-sm text-zinc-500 py-4">
+                  No comments yet. Be the first to comment!
+                </div>
+              ) : (
+                post.comments.filter(c => !c.parent_id).map((c) => (
+                  <CommentItem key={c.id} comment={c} postId={post.id} />
+                ))
+              )}
+            </div>
+          )}
         </div>
       )}
     </article>
