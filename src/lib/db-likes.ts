@@ -119,3 +119,32 @@ export async function getLikesByPostId(postId: string): Promise<Like[]> {
 
   return (data as Like[]) || [];
 }
+
+// Import Post type
+import type { Post } from "./db-posts";
+
+// Get posts liked by a user (TikTok-style grid)
+export async function getLikedPostsByUserId(
+  userId: string,
+  limit: number = 20,
+  offset: number = 0
+): Promise<Post[] | null> {
+  const { data, error } = await supabase
+    .from("likes")
+    .select(`
+      post_id,
+      posts:post_id (*)
+    `)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error("Error fetching liked posts:", error);
+    return null;
+  }
+
+  // Extract posts from the nested structure
+  const posts = data?.map((item: any) => item.posts as Post) || [];
+  return posts;
+}

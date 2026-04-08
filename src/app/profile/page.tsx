@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import LikedPostsGrid from "@/components/LikedPostsGrid";
 import { useAuthStore } from "@/lib/auth-store";
 
 // SVG Icons
@@ -130,13 +131,7 @@ export default function ProfilePage() {
                 </p>
               </div>
             ) : (
-              <div className="text-center py-[55px] text-zinc-500">
-                <HeartIcon className="w-[55px] h-[55px] mx-auto mb-[13px] opacity-30" />
-                <p>No liked posts yet</p>
-                <p className="text-sm mt-[8px] opacity-60">
-                  Posts you like will appear here
-                </p>
-              </div>
+              <LikedPostsGrid userId={user.id} />
             )}
           </div>
         </div>
