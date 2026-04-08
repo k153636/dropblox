@@ -241,8 +241,8 @@ interface PostCardProps {
     preview_name?: string;
     preview_description?: string;
     preview_thumbnail?: string;
-    preview_playing?: number;
-    preview_visits?: number;
+    preview_playing?: number | string;
+    preview_visits?: number | string;
   };
 }
 
@@ -394,10 +394,10 @@ export default function PostCard({ post }: PostCardProps) {
               <div className="flex items-center justify-between">
                 <div className="flex gap-3 text-xs text-zinc-500">
                   {post.preview_playing !== undefined && (
-                    <span>{post.preview_playing.toLocaleString()} playing</span>
+                    <span>{Number(post.preview_playing).toLocaleString()} playing</span>
                   )}
                   {post.preview_visits !== undefined && (
-                    <span>{post.preview_visits.toLocaleString()} visits</span>
+                    <span>{Number(post.preview_visits).toLocaleString()} visits</span>
                   )}
                 </div>
                 <a
