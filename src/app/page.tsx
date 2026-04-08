@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import PostForm from "@/components/PostForm";
 import Feed from "@/components/Feed";
 
 export default function Home() {
@@ -22,8 +21,7 @@ export default function Home() {
           sidebarOpen ? "md:ml-[233px]" : "md:ml-[55px]"
         }`}
       >
-        <div className="max-w-[676px] mx-auto px-[21px] py-[34px] space-y-[21px]">
-          <PostForm />
+        <div className="max-w-[676px] mx-auto px-[21px] py-[34px]">
           <Feed />
         </div>
       </main>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import PostModal from "./PostModal";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -51,6 +52,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+
+  const openPostModal = () => setIsPostModalOpen(true);
+  const closePostModal = () => setIsPostModalOpen(false);
 
   // Detect mobile
   useEffect(() => {
@@ -133,10 +138,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {/* New Post Button */}
           <div className="px-[13px] mb-[13px]">
             <button
-              onClick={() => {
-                // TODO: Open post modal
-                console.log("New post clicked");
-              }}
+              onClick={openPostModal}
               className={`flex items-center gap-[13px] w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all ${
                 isOpen ? "px-[13px] py-[13px]" : "justify-center p-[13px]"
               }`}
@@ -179,6 +181,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           <MenuIcon className="w-[21px] h-[21px]" />
         </button>
       )}
+
+      {/* Post Modal */}
+      <PostModal isOpen={isPostModalOpen} onClose={closePostModal} />
     </>
   );
 }
