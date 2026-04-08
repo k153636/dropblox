@@ -1,15 +1,32 @@
+"use client";
+
+import { useState } from "react";
 import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
 import PostForm from "@/components/PostForm";
 import Feed from "@/components/Feed";
 
 export default function Home() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
   return (
-    <>
-      <Header />
-      <main className="max-w-[610px] mx-auto px-4 py-8 space-y-5">
-        <PostForm />
-        <Feed />
+    <div className="min-h-screen bg-zinc-950">
+      <Header onMenuClick={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+      
+      {/* Main content - shifted when sidebar open on desktop */}
+      <main 
+        className={`transition-all duration-300 ${
+          sidebarOpen ? "md:ml-[233px]" : "md:ml-[55px]"
+        }`}
+      >
+        <div className="max-w-[676px] mx-auto px-[21px] py-[34px] space-y-[21px]">
+          <PostForm />
+          <Feed />
+        </div>
       </main>
-    </>
+    </div>
   );
 }

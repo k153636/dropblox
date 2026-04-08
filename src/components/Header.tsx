@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/lib/auth-store";
+import { Menu } from "lucide-react";
 
 // Roblox icon component - official Simple Icons version
 function RobloxIcon({ className }: { className?: string }) {
@@ -12,15 +13,30 @@ function RobloxIcon({ className }: { className?: string }) {
   );
 }
 
-export default function Header() {
+interface HeaderProps {
+  onMenuClick?: () => void;
+  sidebarOpen?: boolean;
+}
+
+export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps) {
   const { user, signInWithGithub, signInWithRoblox, signOut } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
       <div className="max-w-[676px] mx-auto px-[21px] h-[55px] flex items-center justify-between">
-        <h1 className="text-xl font-bold tracking-tight">
-          <span className="text-emerald-400">drop</span>blox
-        </h1>
+        <div className="flex items-center gap-[13px]">
+          {/* Hamburger menu button */}
+          <button
+            onClick={onMenuClick}
+            className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors md:hidden"
+            aria-label="Toggle menu"
+          >
+            <Menu size={21} />
+          </button>
+          <h1 className="text-xl font-bold tracking-tight">
+            <span className="text-emerald-400">drop</span>blox
+          </h1>
+        </div>
         {user ? (
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
