@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import type { Post } from "@/lib/db-posts";
-import { updatePost } from "@/lib/db-posts";
+import { updatePost, deletePost } from "@/lib/db-posts";
 
 interface EditPostModalProps {
   post: Post | null;
   isOpen: boolean;
   onClose: () => void;
   onUpdate: (updatedPost: Post) => void;
+  onDelete?: (postId: string) => void;
 }
 
 // SVG Icons
@@ -19,11 +20,13 @@ const XIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export default function EditPostModal({ post, isOpen, onClose, onUpdate }: EditPostModalProps) {
+export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelete }: EditPostModalProps) {
   const [body, setBody] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -65,6 +68,25 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate }: EditP
       }, 1000);
     } else {
       setError("Failed to update post");
+    }
+  }
+
+  async function handleDelete() {
+    if (!post) return;
+
+    setDeleting(true);
+    setError(null);
+
+    const success = await deletePost(post.id, post.author_id);
+
+    setDeleting(false);
+
+    if (success) {
+      onDelete?.(post.id);
+      onClose();
+    } else {
+      setError("Failed to delete post");
+      setShowDeleteConfirm(false);
     }
   }
 
@@ -127,6 +149,33 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate }: EditP
               />
             </div>
 
+            {/* Delete Confirmation */}
+            {showDeleteConfirm && (
+              <div className="p-[13px] bg-red-500/10 border border-red-500/20 rounded-[8px] space-y-[13px]">
+                <p className="text-sm text-red-400">
+                  Are you sure you want to delete this post? This action cannot be undone.
+                </p>
+                <div className="flex gap-[8px] justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={deleting}
+                    className="px-[13px] py-[8px] text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="px-[13px] py-[8px] text-sm font-medium bg-red-500 hover:bg-red-600 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-[6px] transition-colors"
+                  >
+                    {deleting ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Error & Success */}
             {error && (
               <div className="p-[13px] bg-red-500/10 border border-red-500/20 rounded-[8px] text-sm text-red-400">
@@ -140,21 +189,36 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate }: EditP
             )}
 
             {/* Buttons */}
-            <div className="flex justify-end gap-[13px]">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-[21px] py-[13px] text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-[21px] py-[13px] text-sm font-medium bg-emerald-500 hover:bg-emerald-600 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-[8px] transition-colors"
-              >
-                {loading ? "Saving..." : "Save Changes"}
-              </button>
+            <div className="flex justify-between items-center">
+              {/* Delete button */}
+              {!showDeleteConfirm && (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-[21px] py-[13px] text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-[8px] transition-colors"
+                >
+                  Delete
+                </button>
+              )}
+              {showDeleteConfirm && <div />}
+
+              {/* Save/Cancel buttons */}
+              <div className="flex gap-[13px]">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-[21px] py-[13px] text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-[21px] py-[13px] text-sm font-medium bg-emerald-500 hover:bg-emerald-600 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-[8px] transition-colors"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
             </div>
           </form>
         </div>

@@ -208,6 +208,9 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
         onUpdate={(updatedPost) => {
           setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
         }}
+        onDelete={(deletedPostId) => {
+          setPosts(posts.filter(p => p.id !== deletedPostId));
+        }}
       />
 
       {/* Load more */}
