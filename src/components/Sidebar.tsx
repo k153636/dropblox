@@ -156,6 +156,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => {
+                    // Close sidebar on mobile when navigating
+                    if (isMobile && isOpen) {
+                      onToggle();
+                    }
+                  }}
                   className={`flex items-center gap-[13px] rounded-[8px] transition-colors ${
                     item.active
                       ? "bg-zinc-800 text-emerald-400"
