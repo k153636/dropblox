@@ -118,14 +118,16 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Toggle button - always visible when closed on desktop */}
-        <button
-          onClick={onToggle}
-          className="absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors z-[41]"
-          aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
-        >
-          {isOpen ? <XIcon className="w-[21px] h-[21px]" /> : <MenuIcon className="w-[21px] h-[21px]" />}
-        </button>
+        {/* Toggle button - X when open (top right) */}
+        {isOpen && (
+          <button
+            onClick={onToggle}
+            className="absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors z-[41]"
+            aria-label="Close sidebar"
+          >
+            <XIcon className="w-[21px] h-[21px]" />
+          </button>
+        )}
 
         <div className="flex flex-col h-full py-[13px]">
           {/* New Post Button */}
@@ -167,11 +169,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </div>
       </aside>
 
-      {/* Mobile toggle button - visible when sidebar closed */}
-      {!isOpen && isMobile && (
+      {/* Desktop toggle button - fixed position, always visible when closed (md and up) */}
+      {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[51] p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200"
+          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-colors hidden md:block"
           aria-label="Open sidebar"
         >
           <MenuIcon className="w-[21px] h-[21px]" />
