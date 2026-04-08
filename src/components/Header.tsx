@@ -19,7 +19,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
       <div className="max-w-[676px] mx-auto px-[21px] h-[55px] flex items-center justify-between">
         <h1 className="text-xl font-bold tracking-tight">
-          <span className="text-emerald-400">drop</span>lox
+          <span className="text-emerald-400">drop</span>blox
         </h1>
         {user ? (
           <div className="flex items-center gap-3">
