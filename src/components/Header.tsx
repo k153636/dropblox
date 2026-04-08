@@ -2,11 +2,12 @@
 
 import { useAuthStore } from "@/lib/auth-store";
 
-// Roblox icon component - tilted square with hole
+// Roblox icon component - official Simple Icons version
 function RobloxIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.103 0L0 16.803V24h11.784l12.097-16.803V0H12.103zM9.735 15.066l-2.237-2.728 7.309-8.935 2.237 2.728-7.309 8.935z"/>
+    <svg className={className} role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <title>Roblox</title>
+      <path d="M18.926 23.998 0 18.892 5.075.002 24 5.108ZM15.348 10.09l-5.282-1.453-1.414 5.273 5.282 1.453z"/>
     </svg>
   );
 }
@@ -56,7 +57,7 @@ export default function Header() {
             </button>
             <button
               onClick={signInWithRoblox}
-              className="px-3 py-2 text-xs font-medium bg-red-600/80 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center gap-1.5"
+              className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
               title="Requires Roblox OAuth setup"
             >
               <RobloxIcon className="w-4 h-4" />
