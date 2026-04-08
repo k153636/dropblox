@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getLikedPostsByUserId } from "@/lib/db-likes";
 import type { Post } from "@/lib/db-posts";
+import PostDetailModal from "./PostDetailModal";
 
 interface LikedPostsGridProps {
   userId: string;
@@ -33,9 +34,9 @@ function SkeletonCard() {
 }
 
 // Individual Liked Post Card
-function LikedPostCard({ post }: { post: Post }) {
+function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
   return (
-    <div className="group cursor-pointer">
+    <div className="group cursor-pointer" onClick={onClick}>
       {/* Thumbnail */}
       <div className="relative aspect-video rounded-[8px] overflow-hidden mb-[13px] bg-zinc-800">
         {post.preview_thumbnail ? (
@@ -75,8 +76,20 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const LIMIT = 20;
+
+  const openPostDetail = (post: Post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const closePostDetail = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
 
   async function loadLikedPosts(reset = false) {
     const currentOffset = reset ? 0 : offset;
@@ -112,8 +125,11 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
   // Loading skeleton
   if (loading && posts.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[21px]">
-        {Array.from({ length: 6 }).map((_, i) => (
+      <div 
+        className="grid gap-[21px]"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
+      >
+        {Array.from({ length: 12 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
       </div>
@@ -140,8 +156,11 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
     return (
       <div className="relative">
         {/* Empty grid skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[21px] opacity-20">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div 
+          className="grid gap-[21px] opacity-20"
+          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
+        >
+          {Array.from({ length: 12 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </div>
@@ -159,12 +178,18 @@ export default function LikedPostsGrid({ userId }: LikedPostsGridProps) {
 
   return (
     <div className="space-y-[21px]">
-      {/* Grid - Responsive: mobile 1col, tablet 2col, desktop 3col */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[21px]">
+      {/* Grid - Auto responsive: fills columns based on screen width */}
+      <div 
+        className="grid gap-[21px]"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
+      >
         {posts.map((post) => (
-          <LikedPostCard key={post.id} post={post} />
+          <LikedPostCard key={post.id} post={post} onClick={() => openPostDetail(post)} />
         ))}
       </div>
+
+      {/* Post Detail Modal */}
+      <PostDetailModal post={selectedPost} isOpen={isModalOpen} onClose={closePostDetail} />
 
       {/* Load more */}
       {hasMore && (
