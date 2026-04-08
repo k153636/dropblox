@@ -139,12 +139,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           <div className="px-[13px] mb-[13px]">
             <button
               onClick={openPostModal}
-              className={`flex items-center gap-[13px] w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all ${
-                isOpen ? "px-[13px] py-[13px]" : "justify-center p-[13px]"
+              className={`flex items-center gap-[13px] w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all min-h-[47px] ${
+                isOpen ? "px-[13px] py-[13px]" : "justify-center px-[13px] py-[13px]"
               }`}
             >
-              <PlusSquareIcon className="w-[21px] h-[21px]" />
-              {isOpen && <span className="font-medium text-sm">New Post</span>}
+              <PlusSquareIcon className="w-[21px] h-[21px] flex-shrink-0" />
+              {isOpen && <span className="font-medium text-sm whitespace-nowrap">New Post</span>}
             </button>
           </div>
 
@@ -162,14 +162,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       onToggle();
                     }
                   }}
-                  className={`flex items-center gap-[13px] rounded-[8px] transition-colors ${
+                  className={`flex items-center rounded-[8px] transition-colors min-h-[47px] ${
                     item.active
                       ? "bg-zinc-800 text-emerald-400"
                       : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
-                  } ${isOpen ? "px-[13px] py-[13px]" : "justify-center p-[13px]"}`}
+                  } ${isOpen ? "gap-[13px] px-[13px] py-[13px]" : "justify-center px-[13px] py-[13px]"}`}
                 >
-                  <Icon className="w-[21px] h-[21px]" />
-                  {isOpen && <span className="font-medium text-sm">{item.label}</span>}
+                  <Icon className="w-[21px] h-[21px] flex-shrink-0" />
+                  {isOpen && <span className="font-medium text-sm whitespace-nowrap">{item.label}</span>}
                 </Link>
               );
             })}
@@ -177,14 +177,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </div>
       </aside>
 
-      {/* Desktop toggle button - fixed position, always visible when sidebar closed */}
-      {!isOpen && (
+      {/* Desktop toggle button - visible when sidebar closed (desktop only) */}
+      {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-colors hidden md:block"
+          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-colors"
           aria-label="Open sidebar"
         >
-          <MenuIcon className="w-[21px] h-[21px]" />
+          <MenuIcon className="w-[21px] h-[21px] flex-shrink-0" />
         </button>
       )}
 
