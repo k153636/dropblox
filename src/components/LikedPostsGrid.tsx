@@ -33,12 +33,12 @@ function SkeletonCard() {
   );
 }
 
-// Individual Liked Post Card
+// Individual Liked Post Card — φ layout
 function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
   return (
     <div className="group cursor-pointer" onClick={onClick}>
       {/* Thumbnail */}
-      <div className="relative aspect-video rounded-[8px] overflow-hidden mb-[13px] bg-zinc-800">
+      <div className="relative aspect-video rounded-[8px] overflow-hidden mb-[8px] bg-zinc-800/80 ring-1 ring-zinc-800/60">
         {post.preview_thumbnail ? (
           <img
             src={post.preview_thumbnail}
@@ -47,17 +47,17 @@ function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-zinc-600">
-            <span className="text-xs">No image</span>
+          <div className="w-full h-full flex items-center justify-center text-zinc-700">
+            <span className="text-[11px] tracking-wide">No image</span>
           </div>
         )}
         
         {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300" />
       </div>
       
       {/* Game name */}
-      <h3 className="text-sm font-medium text-zinc-200 truncate group-hover:text-emerald-400 transition-colors">
+      <h3 className="text-[13px] font-medium text-zinc-300 truncate group-hover:text-emerald-400 transition-colors">
         {post.preview_name || "Untitled Game"}
       </h3>
     </div>

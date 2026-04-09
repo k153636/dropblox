@@ -40,12 +40,12 @@ const EditIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Individual User Post Card
+// Individual User Post Card — φ layout
 function UserPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
   return (
     <div className="group cursor-pointer" onClick={onClick}>
       {/* Thumbnail */}
-      <div className="relative aspect-video rounded-[8px] overflow-hidden mb-[13px] bg-zinc-800">
+      <div className="relative aspect-video rounded-[8px] overflow-hidden mb-[8px] bg-zinc-800/80 ring-1 ring-zinc-800/60">
         {post.preview_thumbnail ? (
           <img
             src={post.preview_thumbnail}
@@ -54,30 +54,30 @@ function UserPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-zinc-600">
-            <span className="text-xs">No image</span>
+          <div className="w-full h-full flex items-center justify-center text-zinc-700">
+            <span className="text-[11px] tracking-wide">No image</span>
           </div>
         )}
         
         {/* Edit indicator overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-900/80 p-[8px] rounded-full">
-            <EditIcon className="w-[21px] h-[21px] text-white" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 bg-zinc-900/80 backdrop-blur-sm p-[8px] rounded-full">
+            <EditIcon className="w-[16px] h-[16px] text-white" />
           </div>
         </div>
       </div>
       
       {/* Game name */}
-      <h3 className="text-sm font-medium text-zinc-200 truncate mb-[8px] group-hover:text-emerald-400 transition-colors">
+      <h3 className="text-[13px] font-medium text-zinc-300 truncate mb-[5px] group-hover:text-emerald-400 transition-colors">
         {post.preview_name || "Untitled Game"}
       </h3>
 
       {/* Like count */}
-      <div className="flex items-center gap-[5px] text-zinc-500 text-xs">
-        <svg className="w-[13px] h-[13px] text-emerald-500" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <div className="flex items-center gap-[5px] text-zinc-600 text-[11px]">
+        <svg className="w-[11px] h-[11px] text-emerald-500/70" viewBox="0 0 24 24" fill="currentColor" stroke="none">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
-        <span>{post.likes || 0}</span>
+        <span className="tabular-nums">{post.likes || 0}</span>
       </div>
     </div>
   );
