@@ -343,6 +343,16 @@ export const usePostStore = create<PostStore>((set, get) => ({
             ],
           };
         });
+      } else if (payload.eventType === "UPDATE") {
+        // Post updated
+        const updatedPost = payload.new as Post;
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === updatedPost.id
+              ? { ...p, body: updatedPost.body, preview_name: updatedPost.preview_name, preview_description: updatedPost.preview_description }
+              : p
+          ),
+        }));
       } else if (payload.eventType === "DELETE") {
         // Post deleted
         const deletedId = payload.old.id;
