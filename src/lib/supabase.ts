@@ -57,21 +57,3 @@ export type Tables = {
   };
 };
 
-// Realtime subscriptions helper
-export function subscribeToPosts(callback: (payload: any) => void) {
-  return supabase
-    .channel("posts")
-    .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, callback)
-    .subscribe();
-}
-
-export function subscribeToComments(postId: string, callback: (payload: any) => void) {
-  return supabase
-    .channel(`comments:${postId}`)
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "comments", filter: `post_id=eq.${postId}` },
-      callback
-    )
-    .subscribe();
-}
