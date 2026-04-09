@@ -160,16 +160,19 @@ export const usePostStore = create<PostStore>((set, get) => ({
         user.username
       );
       
-      if (post) {
-        set((state) => ({
-          posts: [
-            { ...post, likes: 0, userLiked: false, comments: [] },
-            ...state.posts,
-          ],
-        }));
+      if (!post) {
+        throw new Error("Failed to create post");
       }
+
+      set((state) => ({
+        posts: [
+          { ...post, likes: 0, userLiked: false, comments: [] },
+          ...state.posts,
+        ],
+      }));
     } catch (error: any) {
       set({ error: error.message });
+      throw error;
     }
   },
 
@@ -179,15 +182,18 @@ export const usePostStore = create<PostStore>((set, get) => ({
 
     try {
       const updated = await updatePost(id, { body }, user.id);
-      if (updated) {
-        set((state) => ({
-          posts: state.posts.map((p) =>
-            p.id === id ? { ...p, body: updated.body } : p
-          ),
-        }));
+      if (!updated) {
+        throw new Error("Failed to update post");
       }
+
+      set((state) => ({
+        posts: state.posts.map((p) =>
+          p.id === id ? { ...p, body: updated.body } : p
+        ),
+      }));
     } catch (error: any) {
       set({ error: error.message });
+      throw error;
     }
   },
 
@@ -197,13 +203,16 @@ export const usePostStore = create<PostStore>((set, get) => ({
 
     try {
       const success = await deletePost(id, user.id);
-      if (success) {
-        set((state) => ({
-          posts: state.posts.filter((p) => p.id !== id),
-        }));
+      if (!success) {
+        throw new Error("Failed to delete post");
       }
+
+      set((state) => ({
+        posts: state.posts.filter((p) => p.id !== id),
+      }));
     } catch (error: any) {
       set({ error: error.message });
+      throw error;
     }
   },
 
