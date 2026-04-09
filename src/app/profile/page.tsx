@@ -98,11 +98,11 @@ export default function ProfilePage() {
 
                 {/* Stats — φ pill badges */}
                 <div className="flex gap-[13px] mt-[13px]">
-                  <div className="flex items-center gap-[8px] bg-zinc-800/60 border border-zinc-700/50 rounded-[8px] px-[13px] py-[8px]">
+                  <div className="flex items-center gap-[8px]">
                     <span className="text-[13px] font-semibold text-zinc-100 tabular-nums">{postCount}</span>
                     <span className="text-[11px] text-zinc-500 uppercase tracking-wider">posts</span>
                   </div>
-                  <div className="flex items-center gap-[8px] bg-zinc-800/60 border border-zinc-700/50 rounded-[8px] px-[13px] py-[8px]">
+                  <div className="flex items-center gap-[8px]">
                     <span className="text-[13px] font-semibold text-zinc-100 tabular-nums">{likesCount}</span>
                     <span className="text-[11px] text-zinc-500 uppercase tracking-wider">likes</span>
                   </div>
