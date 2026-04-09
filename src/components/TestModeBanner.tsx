@@ -1,6 +1,8 @@
 "use client";
 
 export default function TestModeBanner() {
+  if (!process.env.NEXT_PUBLIC_TEST_MODE) return null;
+
   return (
     <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4 mb-6">
       <div className="flex items-center gap-3">
