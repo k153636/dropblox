@@ -10,6 +10,7 @@ export interface Post {
   preview_playing?: number | string; // BIGINT can be returned as string
   preview_visits?: number | string; // BIGINT can be returned as string
   preview_genre?: string;
+  last_fetched_at?: string;
   author_id: string;
   author_name: string;
   likes: number;
@@ -46,6 +47,7 @@ export async function createPost(
       preview_playing: input.preview?.playing,
       preview_visits: input.preview?.visits,
       preview_genre: input.preview?.genre || '',
+      last_fetched_at: new Date().toISOString(),
       author_id: userId,
       author_name: userName,
       likes: 0,
