@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePostStore } from "@/lib/store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Comment } from "@/lib/db-comments";
+import CopyLinkButton from "./CopyLinkButton";
 import { 
   Heart, 
   MessageCircle, 
@@ -445,6 +446,8 @@ export default function PostCard({ post }: PostCardProps) {
             <MessageCircle size={16} />
             <span className="w-5 text-center tabular-nums">{post.comments.length}</span>
           </button>
+          {/* Copy Link Button */}
+          <CopyLinkButton postId={post.id} gameUrl={post.url} />
         </div>
       </div>
 
