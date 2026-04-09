@@ -325,14 +325,17 @@ export const usePostStore = create<PostStore>((set, get) => ({
     // Subscribe to posts
     const postsSubscription = subscribeToPosts((payload) => {
       if (payload.eventType === "INSERT") {
-        // New post added by another user - auto add to feed
+        // New post added - skip if already exists (e.g. added by addPost optimistically)
         const newPost = payload.new as Post;
-        set((state) => ({
-          posts: [
-            { ...newPost, likes: 0, userLiked: false, comments: [] },
-            ...state.posts,
-          ],
-        }));
+        set((state) => {
+          if (state.posts.some((p) => p.id === newPost.id)) return state;
+          return {
+            posts: [
+              { ...newPost, likes: 0, userLiked: false, comments: [] },
+              ...state.posts,
+            ],
+          };
+        });
       } else if (payload.eventType === "DELETE") {
         // Post deleted
         const deletedId = payload.old.id;
