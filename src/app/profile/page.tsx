@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import UserPostsGrid from "@/components/UserPostsGrid";
+import LikedPostsGrid from "@/components/LikedPostsGrid";
 import { useAuthStore } from "@/lib/auth-store";
 import { getPostCountByUserId } from "@/lib/db-posts";
 import { getTotalLikesReceivedByUserId } from "@/lib/db-likes";
-import { LayoutGrid, Pencil, Check, X } from "lucide-react";
+import { LayoutGrid, Heart, Pencil, Check, X } from "lucide-react";
 
 export default function ProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"posts" | "likes">("posts");
   const { user } = useAuthStore();
   const [postCount, setPostCount] = useState(0);
   const [likesCount, setLikesCount] = useState(0);
@@ -156,17 +158,37 @@ export default function ProfilePage() {
           <div className="border-b border-zinc-800 mb-[21px]">
             <div className="flex gap-[34px]">
               <button
-                className="flex items-center gap-[8px] pb-[13px] text-sm font-medium text-emerald-400 border-b-2 border-emerald-400"
+                onClick={() => setActiveTab("posts")}
+                className={`flex items-center gap-[8px] pb-[13px] text-sm font-medium transition-colors ${
+                  activeTab === "posts"
+                    ? "text-emerald-400 border-b-2 border-emerald-400"
+                    : "text-zinc-500 hover:text-zinc-300"
+                }`}
               >
                 <LayoutGrid size={21} />
                 Posts
               </button>
+              <button
+                onClick={() => setActiveTab("likes")}
+                className={`flex items-center gap-[8px] pb-[13px] text-sm font-medium transition-colors ${
+                  activeTab === "likes"
+                    ? "text-emerald-400 border-b-2 border-emerald-400"
+                    : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                <Heart size={21} />
+                Liked
+              </button>
             </div>
           </div>
 
-          {/* Posts Content */}
+          {/* Tab Content */}
           <div className="min-h-[200px]">
-            <UserPostsGrid userId={user.id} />
+            {activeTab === "posts" ? (
+              <UserPostsGrid userId={user.id} />
+            ) : (
+              <LikedPostsGrid userId={user.id} />
+            )}
           </div>
         </div>
       </main>

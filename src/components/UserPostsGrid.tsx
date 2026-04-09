@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { getPostsByUserId } from "@/lib/db-posts";
 import type { Post } from "@/lib/db-posts";
-import { getLikeCount } from "@/lib/db-likes";
 import EditPostModal from "./EditPostModal";
 import { useAuthStore } from "@/lib/auth-store";
 
@@ -68,17 +67,9 @@ function UserPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
       </div>
       
       {/* Game name */}
-      <h3 className="text-sm font-medium text-zinc-200 truncate mb-[8px] group-hover:text-emerald-400 transition-colors">
+      <h3 className="text-sm font-medium text-zinc-200 truncate group-hover:text-emerald-400 transition-colors">
         {post.preview_name || "Untitled Game"}
       </h3>
-      
-      {/* Like count */}
-      <div className="flex items-center gap-[5px] text-zinc-500 text-xs">
-        <svg className="w-[13px] h-[13px] text-emerald-500" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-        </svg>
-        <span>{post.likes || 0}</span>
-      </div>
     </div>
   );
 }
@@ -120,18 +111,10 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
       return;
     }
 
-    // Fetch actual like counts from likes table
-    const postsWithLikes = await Promise.all(
-      data.map(async (post) => {
-        const likeCount = await getLikeCount(post.id);
-        return { ...post, likes: likeCount };
-      })
-    );
-
     if (reset) {
-      setPosts(postsWithLikes);
+      setPosts(data);
     } else {
-      setPosts((prev) => [...prev, ...postsWithLikes]);
+      setPosts((prev) => [...prev, ...data]);
     }
 
     setHasMore(data.length === LIMIT);
