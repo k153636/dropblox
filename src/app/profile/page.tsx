@@ -145,7 +145,7 @@ export default function ProfilePage() {
                 </p>
                 <button
                   onClick={() => setIsEditingBio(true)}
-                  className="p-[5px] text-zinc-500 hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-all"
+                  className="p-[5px] text-zinc-500 hover:text-emerald-400 transition-colors"
                   title="自己紹介を編集"
                 >
                   <Pencil size={14} />
