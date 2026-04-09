@@ -45,7 +45,17 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">5. 禁止事項</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">5. 免責事項（Robloxとの関係性）</h2>
+            <p><strong>Dropbloxは、Roblox Corporationと提携、関連、認可、承認、または何らかの形で公式に接続されているものではありません。</strong></p>
+            <ul className="list-disc ml-6 mt-2 space-y-1">
+              <li>Robloxの名称、マーク、エンブレム、およびロゴは、それぞれの所有者の登録商標です</li>
+              <li>本サービスはRobloxコミュニティによるファンメイドのプロジェクトです</li>
+              <li>Roblox Corporationは本サービスの運営、内容、またはプライバシー慣行について責任を負いません</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">6. 禁止事項</h2>
             <ul className="list-disc ml-6 space-y-1">
               <li>本サービスの不正アクセス・改ざん</li>
               <li>スパム行為・嫌がらせ</li>
@@ -56,7 +66,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">6. 免責事項</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">7. 免責事項</h2>
             <ul className="list-disc ml-6 space-y-1">
               <li>本サービスは「現状有姿」で提供されます</li>
               <li>運営はサービスの中断・停止による損害を責任を負いません</li>
@@ -65,25 +75,26 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">7. サービスの変更・終了</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">8. サービスの変更・終了</h2>
             <p>運営は、予告なく本サービスの内容を変更し、または提供を終了する権利を有します。</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">8. 準拠法・管轄</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">9. 準拠法・管轄</h2>
             <p>本規約は日本法に準拠し、紛争が生じた場合は日本の裁判所を管轄裁判所とします。</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">9. お問い合わせ</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">10. お問い合わせ</h2>
             <p>本規約に関するご質問は、以下までご連絡ください：</p>
-            <p className="mt-2">GitHub: <a href="https://github.com/k153636" className="text-emerald-400 hover:underline">@k153636</a></p>
+            <p className="mt-2">Email: <a href="mailto:dropblox.info@proton.me" className="text-emerald-400 hover:underline">dropblox.info@proton.me</a></p>
+            <p className="mt-1">GitHub: <a href="https://github.com/k153636" className="text-emerald-400 hover:underline">@k153636</a></p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">10. 改定</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">11. 改定</h2>
             <p>本規約は随時改定される場合があります。改定後は本ページに掲載された時点で効力を生じます。</p>
-            <p className="mt-2 text-zinc-400">最終更新日: 2025年4月9日</p>
+            <p className="mt-2 text-zinc-400">最終更新日: 2026年4月9日</p>
           </section>
         </div>
       </div>

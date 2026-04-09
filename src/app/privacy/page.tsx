@@ -96,16 +96,30 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">8. お問い合わせ</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">8. データ削除リクエスト（Data Deletion Request）</h2>
+            <p>ユーザーは、いつでも以下の方法で収集されたデータの削除を要求できます：</p>
+            <ul className="list-disc ml-6 mt-2 space-y-1">
+              <li><strong>Email</strong>: <a href="mailto:dropblox.info@proton.me" className="text-emerald-400 hover:underline">dropblox.info@proton.me</a></li>
+              <li><strong>GitHub</strong>: <a href="https://github.com/k153636" className="text-emerald-400 hover:underline">@k153636</a> へのDMまたはIssue作成</li>
+              <li><strong>削除対象データ</strong>: 個人情報、Roblox認証データ、投稿履歴、いいね履歴など全ての関連データ</li>
+              <li><strong>処理期間</strong>: リクエスト受領後、30日以内に完全削除</li>
+              <li><strong>確認</strong>: 削除完了後、GitHubで確認メッセージを送信</li>
+            </ul>
+            <p className="mt-3"><strong>Robloxデータの削除：</strong>Roblox OAuthデータを含む、ユーザーに関連するすべてのデータを削除します。アカウント削除後は復元できません。</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">9. お問い合わせ</h2>
             <p>プライバシーに関するご質問・ご要望は、以下までご連絡ください：</p>
-            <p className="mt-2">GitHub: <a href="https://github.com/k153636" className="text-emerald-400 hover:underline">@k153636</a></p>
+            <p className="mt-2">Email: <a href="mailto:dropblox.info@proton.me" className="text-emerald-400 hover:underline">dropblox.info@proton.me</a></p>
+            <p className="mt-1">GitHub: <a href="https://github.com/k153636" className="text-emerald-400 hover:underline">@k153636</a></p>
             <p className="mt-1">データ削除のリクエストも上記からお願いします。</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3 text-zinc-100">9. 改定</h2>
+            <h2 className="text-xl font-semibold mb-3 text-zinc-100">10. 改定</h2>
             <p>本ポリシーは随時改定される場合があります。改定後は本ページに掲載された時点で効力を生じます。</p>
-            <p className="mt-2 text-zinc-400">最終更新日: 2025年4月9日</p>
+            <p className="mt-2 text-zinc-400">最終更新日: 2026年4月9日</p>
           </section>
         </div>
       </div>
