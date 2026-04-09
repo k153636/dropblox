@@ -4,10 +4,14 @@ import { fetchGameData } from "@/lib/roblox";
 
 // Batch update stale posts — called by Vercel Cron
 export async function GET(req: NextRequest) {
-  // Auth: require CRON_SECRET or Vercel Cron signature
-  const authHeader = req.headers.get("authorization");
+  // Auth: always require CRON_SECRET
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    console.error("CRON_SECRET is not configured");
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

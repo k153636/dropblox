@@ -4,10 +4,13 @@ import { fetchGameData } from "@/lib/roblox";
 
 // Update a single post by ID (internal use — requires CRON_SECRET)
 export async function POST(req: NextRequest) {
-  // Auth guard
-  const authHeader = req.headers.get("authorization");
+  // Auth: always require CRON_SECRET
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
