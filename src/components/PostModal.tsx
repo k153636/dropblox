@@ -158,7 +158,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                 <img
                   src={preview.thumbnail}
                   alt={preview.name}
-                  className="w-full aspect-ratio-16/9 object-cover rounded-[8px]"
+                  className="w-full aspect-video object-cover rounded-[8px]"
                 />
                 <h3 className="font-semibold text-zinc-100">{preview.name}</h3>
                 <p className="text-sm text-zinc-400 line-clamp-2">{preview.description}</p>
