@@ -209,7 +209,7 @@ export async function searchPostsSimple(query: string, limit: number = 20) {
   const { data, error } = await supabase
     .from('posts')
     .select('*')
-    .or(`preview_name.ilike.%${query}%,description.ilike.%${query}%`)
+    .or(`preview_name.ilike.%${query}%,preview_description.ilike.%${query}%,body.ilike.%${query}%`)
     .limit(limit)
     .order('created_at', { ascending: false });
 
