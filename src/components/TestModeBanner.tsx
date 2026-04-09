@@ -1,13 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/lib/auth-store";
-
 export default function TestModeBanner() {
-  const { user } = useAuthStore();
-
-  // ログイン済みユーザーには表示しない
-  if (user) return null;
-
   return (
     <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4 mb-6">
       <div className="flex items-center gap-3">
@@ -25,10 +18,10 @@ export default function TestModeBanner() {
         </svg>
         <div>
           <h3 className="text-yellow-400 font-semibold text-sm">
-            テスト環境 - 閲覧のみ可能
+            テスト運用中
           </h3>
           <p className="text-yellow-200/80 text-xs mt-1">
-            現在テストモードです。ログインしないと投稿・編集・削除などのアクションはできません。
+            現在テスト運用中です。投稿・編集・削除などのアクションは一時的に無効化されています。閲覧のみ可能です。
           </p>
         </div>
       </div>
