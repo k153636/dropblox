@@ -464,7 +464,7 @@ export default function PostCard({ post }: PostCardProps) {
           {currentUser ? (
             <form onSubmit={handleComment} className="flex gap-[13px] mb-[21px]">
               <div className="w-[34px] h-[34px] rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold flex-shrink-0">
-                {currentUser.username?.[0] || "Y"}
+                {currentUser?.username?.[0] || "Y"}
               </div>
               <div className="flex-1">
                 <input
