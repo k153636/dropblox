@@ -89,19 +89,19 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/70 z-[60] transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div className="fixed inset-0 z-[61] flex items-center justify-center p-[21px]">
-        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-[13px] shadow-2xl">
+        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-900/70 backdrop-blur-xl border border-white/[0.08] rounded-[13px] shadow-2xl">
           {/* Header */}
-          <div className="flex items-center justify-between px-[21px] py-[13px] border-b border-zinc-800">
+          <div className="flex items-center justify-between px-[21px] py-[13px] border-b border-white/[0.06]">
             <h2 className="text-lg font-semibold text-zinc-100">Edit Post</h2>
             <button
               onClick={onClose}
-              className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-zinc-800"
+              className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-white/[0.06]"
             >
               <X size={21} />
             </button>
@@ -110,7 +110,7 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
           {/* Content */}
           <form onSubmit={handleSubmit} className="p-[21px] space-y-[21px]">
             {/* Game Info (Read-only) */}
-            <div className="p-[13px] bg-zinc-800/50 border border-zinc-700 rounded-[8px] space-y-[13px]">
+            <div className="p-[13px] bg-white/[0.04] border border-white/[0.06] rounded-[8px] space-y-[13px]">
               {post.preview_thumbnail && (
                 <img
                   src={post.preview_thumbnail}
@@ -138,7 +138,7 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
                 onChange={(e) => setBody(e.target.value)}
                 placeholder="Write something about this game..."
                 rows={4}
-                className="w-full px-[13px] py-[13px] bg-zinc-800 border border-zinc-700 rounded-[8px] text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors resize-none"
+                className="w-full px-[13px] py-[13px] bg-white/[0.04] border border-white/[0.08] rounded-[8px] text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20 transition-all resize-none"
               />
             </div>
 

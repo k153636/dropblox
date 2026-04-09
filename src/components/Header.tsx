@@ -28,7 +28,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
   const { user, signInWithGithub, signInWithRoblox, signOut } = useAuthStore();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-zinc-900/40 backdrop-blur-xl">
       <div 
         className={`h-[55px] flex items-center justify-between transition-all duration-300 ${
           sidebarOpen ? "md:ml-[144px] px-[21px]" : "md:ml-[89px] px-[21px]"
@@ -78,14 +78,14 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
             <div className="flex items-center gap-2">
               <button
                 onClick={signInWithGithub}
-                className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-white rounded-lg backdrop-blur-sm transition-all flex items-center gap-1.5"
               >
                 <GitHubIcon className="w-4 h-4" />
                 GitHub
               </button>
               <button
                 onClick={signInWithRoblox}
-                className="px-3 py-2 text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-white rounded-lg backdrop-blur-sm transition-all flex items-center gap-1.5"
                 title="Requires Roblox OAuth setup"
               >
                 <RobloxIcon className="w-4 h-4" />

@@ -49,10 +49,10 @@ export default function SearchBar({ sidebarOpen = true }: SearchBarProps) {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="ゲームを検索..."
-            className="w-full pl-9 pr-8 py-2 bg-zinc-900/80 border border-zinc-800 rounded-lg 
+            className="w-full pl-9 pr-8 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg 
                        text-sm text-zinc-200 placeholder-zinc-500
                        focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20
-                       transition-all"
+                       backdrop-blur-sm transition-all"
           />
           {inputValue ? (
             <button

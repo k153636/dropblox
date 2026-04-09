@@ -69,7 +69,7 @@ export default function ProfilePage() {
         <div className="max-w-[610px] mx-auto px-[21px] pt-[55px] pb-[89px]">
 
           {/* ── Profile Card ── */}
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-[13px] p-[34px] mb-[34px] backdrop-blur-sm">
+          <div className="bg-zinc-900/50 border border-white/[0.06] rounded-[13px] p-[34px] mb-[34px] backdrop-blur-xl">
             <div className="flex items-start gap-[21px]">
               {/* Avatar — φ ring */}
               <div className="relative shrink-0">
@@ -111,7 +111,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Bio — φ divider */}
-            <div className="mt-[21px] pt-[21px] border-t border-zinc-800/60">
+            <div className="mt-[21px] pt-[21px] border-t border-white/[0.06]">
               {isEditingBio ? (
                 <div className="space-y-[13px]">
                   <textarea
@@ -120,7 +120,7 @@ export default function ProfilePage() {
                     placeholder="自己紹介を書いてください..."
                     maxLength={200}
                     rows={3}
-                    className="w-full px-[13px] py-[13px] bg-zinc-800/80 border border-zinc-700/60 rounded-[8px] text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/30 transition-all resize-none text-sm leading-relaxed"
+                    className="w-full px-[13px] py-[13px] bg-white/[0.04] border border-white/[0.08] rounded-[8px] text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20 transition-all resize-none text-sm leading-relaxed"
                     autoFocus
                   />
                   <div className="flex items-center justify-between">
@@ -163,7 +163,7 @@ export default function ProfilePage() {
           </div>
 
           {/* ── Tabs — φ spacing ── */}
-          <div className="border-b border-zinc-800/60 mb-[34px]">
+          <div className="border-b border-white/[0.06] mb-[34px]">
             <div className="flex gap-[34px]">
               <button
                 onClick={() => setActiveTab("posts")}

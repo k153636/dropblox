@@ -80,7 +80,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Sidebar - Golden Ratio: Closed 89px, Open 144px (144/89 ≈ 1.618) */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-zinc-900 border-r border-zinc-800 z-[40] transition-all duration-300 ease-out ${
+        className={`fixed left-0 top-0 h-full bg-zinc-900/60 backdrop-blur-xl border-r border-white/[0.06] z-[40] transition-all duration-300 ease-out ${
           isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}
@@ -103,7 +103,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           <div className="px-[13px] mb-[13px]">
             <button
               onClick={openPostModal}
-              className={`flex flex-col items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-all ${
+              className={`flex flex-col items-center justify-center bg-emerald-500/80 hover:bg-emerald-500 backdrop-blur-sm text-white rounded-[8px] transition-all ${
                 isOpen && !isMobile
                   ? "w-[89px] h-[89px] gap-[8px] mx-auto p-0"
                   : "w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] flex-row"
@@ -133,8 +133,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   }}
                   className={`flex flex-col items-center justify-center rounded-[8px] transition-colors ${
                     item.active
-                      ? "bg-zinc-800 text-emerald-400"
-                      : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+                      ? "bg-white/[0.08] text-emerald-400"
+                      : "text-zinc-400 hover:bg-white/[0.06] hover:text-zinc-200"
                   } ${
                     isOpen && !isMobile
                       ? "w-[89px] h-[89px] gap-[8px] mx-auto p-0"
@@ -154,7 +154,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900 border border-zinc-800 rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900/60 backdrop-blur-xl border border-white/[0.08] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
           aria-label="Open sidebar"
         >
           <Menu size={21} className="flex-shrink-0" />

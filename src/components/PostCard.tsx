@@ -305,7 +305,7 @@ export default function PostCard({ post }: PostCardProps) {
   const hasPreview = post.preview_thumbnail || post.preview_name;
 
   return (
-    <article className="bg-zinc-900 border border-zinc-800 rounded-[13px] overflow-hidden">
+    <article className="bg-zinc-900/50 backdrop-blur-md border border-white/[0.06] rounded-[13px] overflow-hidden">
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -346,7 +346,7 @@ export default function PostCard({ post }: PostCardProps) {
             <textarea
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-[8px] px-[13px] py-[8px] text-sm focus:outline-none focus:border-zinc-500"
+              className="w-full bg-white/[0.04] border border-white/[0.08] rounded-[8px] px-[13px] py-[8px] text-sm focus:outline-none focus:border-emerald-500/40"
               rows={3}
             />
             <div className="flex justify-end gap-[8px]">
@@ -374,7 +374,7 @@ export default function PostCard({ post }: PostCardProps) {
 
         {/* Game preview card */}
         {hasPreview ? (
-          <div className="rounded-lg overflow-hidden border border-zinc-800">
+          <div className="rounded-[8px] overflow-hidden border border-white/[0.06]">
             {post.preview_thumbnail && (
               <div className="relative">
                 <img
@@ -386,7 +386,7 @@ export default function PostCard({ post }: PostCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
               </div>
             )}
-            <div className="bg-zinc-900 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[8px]">
+            <div className="bg-zinc-900/80 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[8px]">
               <p className="font-semibold text-sm">{post.preview_name}</p>
               <p className="text-xs text-zinc-400 line-clamp-2">
                 {post.preview_description}
@@ -413,7 +413,7 @@ export default function PostCard({ post }: PostCardProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-zinc-800/50 rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
+          <div className="bg-white/[0.04] border border-white/[0.06] rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
             <span className="text-sm text-zinc-400">Roblox Game</span>
             <a
               href={post.url}
@@ -458,7 +458,7 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* Comments section */}
       {!!process.env.NEXT_PUBLIC_ENABLE_COMMENTS && (
-        <div className="border-t border-zinc-800 p-[21px]">
+        <div className="border-t border-white/[0.06] p-[21px]">
           {/* Comment count header */}
           <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
             {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}
@@ -476,7 +476,7 @@ export default function PostCard({ post }: PostCardProps) {
                   placeholder="Add a comment..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="w-full bg-zinc-800 border-b border-zinc-700 px-[8px] py-[8px] text-sm placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
+                  className="w-full bg-white/[0.04] border-b border-white/[0.08] px-[8px] py-[8px] text-sm placeholder-zinc-500 focus:outline-none focus:border-emerald-500/40"
                 />
                 {commentText.trim() && (
                   <div className="flex justify-end gap-[8px] mt-[8px]">

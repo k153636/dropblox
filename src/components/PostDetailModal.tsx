@@ -42,21 +42,21 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/70 z-[60] transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal */}
       <div className="fixed inset-0 z-[61] flex items-center justify-center p-[21px]">
-        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-900 border border-zinc-800 rounded-[13px] shadow-2xl">
+        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-900/70 backdrop-blur-xl border border-white/[0.08] rounded-[13px] shadow-2xl">
           {/* Header */}
-          <div className="flex items-center justify-between px-[21px] py-[13px] border-b border-zinc-800">
+          <div className="flex items-center justify-between px-[21px] py-[13px] border-b border-white/[0.06]">
             <h2 className="text-lg font-semibold text-zinc-100 truncate pr-[13px]">
               {post.preview_name || "Game Details"}
             </h2>
             <button
               onClick={onClose}
-              className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-zinc-800 flex-shrink-0"
+              className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-white/[0.06] flex-shrink-0"
             >
               <X size={21} />
             </button>
