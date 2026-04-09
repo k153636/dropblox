@@ -26,7 +26,6 @@ interface PostStore {
   error: string | null;
   hasMore: boolean;
   offset: number;
-  user: { id: string; username: string; avatar: string } | null;
   
   // Search
   searchQuery: string;
@@ -62,7 +61,6 @@ export const usePostStore = create<PostStore>((set, get) => ({
   error: null,
   hasMore: true,
   offset: 0,
-  user: null,
   
   // Search state
   searchQuery: "",
