@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import type { Post } from "./db-posts";
 
 export interface Like {
   id: string;
@@ -135,9 +136,6 @@ export async function getLikesByPostId(postId: string): Promise<Like[]> {
 
   return (data as Like[]) || [];
 }
-
-// Import Post type
-import type { Post } from "./db-posts";
 
 // Get posts liked by a user (TikTok-style grid)
 export async function getLikedPostsByUserId(
