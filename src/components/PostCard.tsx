@@ -51,12 +51,11 @@ function CommentItem({
   const updateComment = usePostStore((s) => s.updateComment);
   const deleteComment = usePostStore((s) => s.deleteComment);
   const currentUser = useAuthStore((s) => s.user);
-  const { posts } = usePostStore();
-  
-  // Find child comments (replies to this comment)
-  const childComments = posts.find(p => p.id === postId)?.comments.filter(
-    c => c.parent_id === comment.id
-  ) || [];
+  const childComments = usePostStore((s) =>
+    s.posts.find(p => p.id === postId)?.comments.filter(
+      c => c.parent_id === comment.id
+    ) || []
+  );
 
   async function handleReply(e: React.FormEvent) {
     e.preventDefault();
