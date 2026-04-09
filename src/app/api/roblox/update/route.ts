@@ -1,20 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { fetchGameData } from "@/lib/roblox";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-// Update a single post by ID
+// Update a single post by ID (internal use — requires CRON_SECRET)
 export async function POST(req: NextRequest) {
+  // Auth guard
+  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { postId } = await req.json();
   if (!postId) {
     return NextResponse.json({ error: "Missing postId" }, { status: 400 });
   }
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
+
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    // Fetch post
     const { data: post, error: fetchError } = await supabase
       .from("posts")
       .select("id, url")
@@ -25,13 +35,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    // Fetch fresh data from Roblox
     const gameData = await fetchGameData(post.url);
     if (!gameData) {
+      // Bump timestamp even on failure to avoid infinite retry
+      await supabase
+        .from("posts")
+        .update({ last_fetched_at: new Date().toISOString() })
+        .eq("id", post.id);
       return NextResponse.json({ error: "Failed to fetch game data" }, { status: 502 });
     }
 
-    // Update post
     const { error: updateError } = await supabase
       .from("posts")
       .update({
@@ -50,56 +63,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
     }
 
-    return NextResponse.json({
-      success: true,
-      postId,
-      data: gameData,
-    });
+    return NextResponse.json({ success: true, postId, data: gameData });
   } catch (err) {
     console.error("Update error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
-
-async function fetchGameData(url: string) {
-  const match = url.match(/games\/(\d+)/);
-  if (!match) return null;
-
-  const placeId = match[1];
-
-  try {
-    // Get universe ID
-    const universeRes = await fetch(
-      `https://apis.roblox.com/universes/v1/places/${placeId}/universe`
-    );
-    if (!universeRes.ok) return null;
-    const { universeId } = await universeRes.json();
-
-    // Get game details + thumbnail in parallel
-    const [detailRes, thumbRes] = await Promise.all([
-      fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`),
-      fetch(
-        `https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false`
-      ),
-    ]);
-
-    const detailData = await detailRes.json();
-    const thumbData = await thumbRes.json();
-
-    const game = detailData.data?.[0];
-    const thumb = thumbData.data?.[0];
-
-    if (!game) return null;
-
-    return {
-      name: game.name,
-      description: (game.description || "").slice(0, 200),
-      thumbnail: thumb?.imageUrl || "",
-      playing: game.playing || 0,
-      visits: game.visits || 0,
-      genre: game.genre || "",
-    };
-  } catch {
-    return null;
   }
 }

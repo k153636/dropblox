@@ -26,6 +26,8 @@ export type Tables = {
     preview_thumbnail: string | null;
     preview_playing: number | string | null;
     preview_visits: number | string | null;
+    preview_genre: string | null;
+    last_fetched_at: string | null;
     author_id: string;
     author_name: string;
     likes: number;

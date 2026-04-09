@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/roblox/batch-update",
-      "schedule": "* * * * *"
+      "schedule": "0 * * * *"
     }
   ]
 }
