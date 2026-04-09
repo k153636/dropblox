@@ -10,6 +10,7 @@ export interface User {
   username: string;
   avatarUrl: string | null;
   bio: string;
+  createdAt: string | null;
 }
 
 interface AuthStore {
@@ -123,6 +124,7 @@ export const useAuthStore = create<AuthStore>()(
                 username: newProfile.username,
                 avatarUrl: newProfile.avatar_url,
                 bio: newProfile.bio || "",
+                createdAt: newProfile.created_at || null,
               },
             });
           } else if (error) {
@@ -137,6 +139,7 @@ export const useAuthStore = create<AuthStore>()(
                 username: profile.username,
                 avatarUrl: profile.avatar_url,
                 bio: profile.bio || "",
+                createdAt: profile.created_at || null,
               },
             });
           }

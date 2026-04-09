@@ -86,7 +86,7 @@ export default function ProfilePage() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-zinc-100">{user.username}</h1>
               <p className="text-zinc-500 text-sm mt-[8px]">
-                Joined {new Date().toLocaleDateString()}
+                Joined {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
               </p>
 
               {/* Stats */}
