@@ -160,28 +160,45 @@ export async function getTotalLikesReceivedByUserId(userId: string): Promise<num
   return count || 0;
 }
 
-// Get posts liked by a user (TikTok-style grid)
+// Get posts liked by a user (TikTok-style grid), sorted by most recently liked
 export async function getLikedPostsByUserId(
   userId: string,
   limit: number = 20,
   offset: number = 0
 ): Promise<Post[] | null> {
-  const { data, error } = await supabase
+  // Step 1: Get liked post IDs in newest-liked-first order
+  const { data: likes, error: likesError } = await supabase
     .from("likes")
-    .select(`
-      post_id,
-      posts:post_id (*)
-    `)
+    .select("post_id")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
-  if (error) {
-    console.error("Error fetching liked posts:", error);
+  if (likesError) {
+    console.error("Error fetching liked post IDs:", likesError);
     return null;
   }
 
-  // Extract posts from the nested structure
-  const posts = data?.map((item: any) => item.posts as Post) || [];
-  return posts;
+  if (!likes || likes.length === 0) return [];
+
+  const postIds = likes.map((l) => l.post_id);
+
+  // Step 2: Fetch posts by IDs
+  const { data: posts, error: postsError } = await supabase
+    .from("posts")
+    .select("*")
+    .in("id", postIds);
+
+  if (postsError) {
+    console.error("Error fetching liked posts:", postsError);
+    return null;
+  }
+
+  // Step 3: Maintain the liked order (newest liked first)
+  const postMap = new Map((posts || []).map((p) => [p.id, p]));
+  const ordered = postIds
+    .map((id) => postMap.get(id))
+    .filter(Boolean) as Post[];
+
+  return ordered;
 }
