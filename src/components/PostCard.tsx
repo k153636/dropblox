@@ -439,9 +439,13 @@ export default function PostCard({ post }: PostCardProps) {
             <span className="w-5 text-center tabular-nums">{post.likes}</span>
           </button>
           <button
-            disabled
-            className="flex items-center justify-center gap-1.5 text-xs text-zinc-600 cursor-not-allowed min-w-[50px]"
-            title="テスト環境ではコメント機能は無効化されています"
+            disabled={!process.env.NEXT_PUBLIC_ENABLE_COMMENTS}
+            className={`flex items-center justify-center gap-1.5 text-xs min-w-[50px] ${
+              process.env.NEXT_PUBLIC_ENABLE_COMMENTS
+                ? "text-zinc-400 hover:text-blue-400 transition-colors"
+                : "text-zinc-600 cursor-not-allowed"
+            }`}
+            title={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? undefined : "コメント機能は現在無効化されています"}
           >
             <MessageCircle size={16} />
             <span className="w-5 text-center tabular-nums">{post.comments.length}</span>
@@ -451,8 +455,8 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
       </div>
 
-      {/* Comments section - disabled in test environment */}
-      {false && (
+      {/* Comments section */}
+      {!!process.env.NEXT_PUBLIC_ENABLE_COMMENTS && (
         <div className="border-t border-zinc-800 p-[21px]">
           {/* Comment count header */}
           <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
