@@ -344,25 +344,26 @@ export const usePostStore = create<PostStore>((set, get) => ({
 
     // Subscribe to likes - Realtime like updates
     const likesSubscription = subscribeToAllLikes((payload: any) => {
-      const { post_id: postId, user_id: userId } = payload.new as { post_id: string; user_id: string };
-      const currentUserId = get().user?.id;
+      const likeData = payload.eventType === "DELETE" ? payload.old : payload.new;
+      if (!likeData) return;
+      const { post_id: postId, user_id: userId } = likeData as { post_id: string; user_id: string };
+      const currentUserId = useAuthStore.getState().user?.id;
+
+      // Skip events from the current user — already handled by optimistic update in likePost
+      if (userId === currentUserId) return;
 
       set((state) => ({
         posts: state.posts.map((post) => {
           if (post.id === postId) {
             if (payload.eventType === "INSERT") {
-              // Like added
               return {
                 ...post,
                 likes: post.likes + 1,
-                userLiked: post.userLiked || userId === currentUserId,
               };
             } else if (payload.eventType === "DELETE") {
-              // Like removed
               return {
                 ...post,
                 likes: Math.max(0, post.likes - 1),
-                userLiked: post.userLiked && userId !== currentUserId,
               };
             }
           }
