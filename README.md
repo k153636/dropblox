@@ -136,7 +136,7 @@ create table likes (
 
 ## ライセンス・著作権
 
-© 2025 Dropblox. All Rights Reserved.
+© 2026 Dropblox. All Rights Reserved.
 
 ### Dropblox Custom License
 
