@@ -439,6 +439,7 @@ export default function PostCard({ post }: PostCardProps) {
             <span className="w-5 text-center tabular-nums">{post.likes}</span>
           </button>
           <button
+            onClick={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? () => setShowComments(!showComments) : undefined}
             disabled={!process.env.NEXT_PUBLIC_ENABLE_COMMENTS}
             className={`flex items-center justify-center gap-1.5 text-xs min-w-[50px] ${
               process.env.NEXT_PUBLIC_ENABLE_COMMENTS
