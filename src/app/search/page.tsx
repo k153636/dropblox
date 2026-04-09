@@ -119,7 +119,14 @@ export default function SearchPage() {
           ) : hasSearched && searchResults.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {searchResults.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCard 
+                  key={post.id} 
+                  post={{
+                    ...post,
+                    userLiked: false,
+                    comments: [],
+                  }} 
+                />
               ))}
             </div>
           ) : hasSearched ? (

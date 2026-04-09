@@ -8,8 +8,8 @@ ALTER TABLE posts ADD COLUMN IF NOT EXISTS search_vector tsvector;
 UPDATE posts 
 SET search_vector = 
   setweight(to_tsvector('simple', COALESCE(preview_name, '')), 'A') ||
-  setweight(to_tsvector('simple', COALESCE(description, '')), 'B') ||
-  setweight(to_tsvector('simple', COALESCE(array_to_string(tags, ' '), '')), 'C')
+  setweight(to_tsvector('simple', COALESCE(body, '')), 'B') ||
+  setweight(to_tsvector('simple', COALESCE(preview_description, '')), 'C')
 WHERE search_vector IS NULL;
 
 -- 3. GINインデックス作成（高速検索用）
@@ -21,8 +21,8 @@ RETURNS TRIGGER AS $$
 BEGIN
   NEW.search_vector := 
     setweight(to_tsvector('simple', COALESCE(NEW.preview_name, '')), 'A') ||
-    setweight(to_tsvector('simple', COALESCE(NEW.description, '')), 'B') ||
-    setweight(to_tsvector('simple', COALESCE(array_to_string(NEW.tags, ' '), '')), 'C');
+    setweight(to_tsvector('simple', COALESCE(NEW.body, '')), 'B') ||
+    setweight(to_tsvector('simple', COALESCE(NEW.preview_description, '')), 'C');
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
