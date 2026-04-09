@@ -206,10 +206,12 @@ export async function searchPosts(query: string, limit: number = 20) {
 
 // Alternative: Client-side simple search (fallback)
 export async function searchPostsSimple(query: string, limit: number = 20) {
+  // Escape ILIKE special characters to prevent unintended pattern matching
+  const sanitized = query.replace(/[\\%_]/g, (ch) => `\\${ch}`);
   const { data, error } = await supabase
     .from('posts')
     .select('*')
-    .or(`preview_name.ilike.%${query}%,preview_description.ilike.%${query}%,body.ilike.%${query}%`)
+    .or(`preview_name.ilike.%${sanitized}%,preview_description.ilike.%${sanitized}%,body.ilike.%${sanitized}%`)
     .limit(limit)
     .order('created_at', { ascending: false });
 
