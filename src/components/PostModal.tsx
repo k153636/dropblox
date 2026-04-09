@@ -3,19 +3,12 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/auth-store";
 import { usePostStore } from "@/lib/store";
+import { X } from "lucide-react";
 
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-// SVG Icons
-const XIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-);
 
 export default function PostModal({ isOpen, onClose }: PostModalProps) {
   const [url, setUrl] = useState("");
@@ -126,7 +119,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
               onClick={onClose}
               className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-zinc-800"
             >
-              <XIcon className="w-[21px] h-[21px]" />
+              <X size={21} />
             </button>
           </div>
 

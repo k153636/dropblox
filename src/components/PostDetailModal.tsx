@@ -2,20 +2,13 @@
 
 import { useEffect } from "react";
 import type { Post } from "@/lib/db-posts";
+import { X } from "lucide-react";
 
 interface PostDetailModalProps {
   post: Post | null;
   isOpen: boolean;
   onClose: () => void;
 }
-
-// SVG Icons
-const XIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-);
 
 const HeartIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
@@ -65,7 +58,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
               onClick={onClose}
               className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-zinc-800 flex-shrink-0"
             >
-              <XIcon className="w-[21px] h-[21px]" />
+              <X size={21} />
             </button>
           </div>
 

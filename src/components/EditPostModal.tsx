@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Post } from "@/lib/db-posts";
 import { usePostStore } from "@/lib/store";
+import { X } from "lucide-react";
 
 interface EditPostModalProps {
   post: Post | null;
@@ -11,14 +12,6 @@ interface EditPostModalProps {
   onUpdate: (updatedPost: Post) => void;
   onDelete?: (postId: string) => void;
 }
-
-// SVG Icons
-const XIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-);
 
 export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelete }: EditPostModalProps) {
   const [body, setBody] = useState("");
@@ -110,7 +103,7 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
               onClick={onClose}
               className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-zinc-800"
             >
-              <XIcon className="w-[21px] h-[21px]" />
+              <X size={21} />
             </button>
           </div>
 
