@@ -7,19 +7,41 @@ import UserPostsGrid from "@/components/UserPostsGrid";
 import { useAuthStore } from "@/lib/auth-store";
 import { getPostCountByUserId } from "@/lib/db-posts";
 import { getTotalLikesReceivedByUserId } from "@/lib/db-likes";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, Pencil, Check, X } from "lucide-react";
 
 export default function ProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAuthStore();
   const [postCount, setPostCount] = useState(0);
   const [likesCount, setLikesCount] = useState(0);
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [bioText, setBioText] = useState("");
+  const [bioSaving, setBioSaving] = useState(false);
+  const updateProfile = useAuthStore((s) => s.updateProfile);
 
   useEffect(() => {
     if (!user) return;
     getPostCountByUserId(user.id).then(setPostCount);
     getTotalLikesReceivedByUserId(user.id).then(setLikesCount);
+    setBioText(user.bio || "");
   }, [user]);
+
+  async function handleSaveBio() {
+    setBioSaving(true);
+    try {
+      await updateProfile({ bio: bioText });
+      setIsEditingBio(false);
+    } catch {
+      // error handled in store
+    } finally {
+      setBioSaving(false);
+    }
+  }
+
+  function handleCancelBio() {
+    setBioText(user?.bio || "");
+    setIsEditingBio(false);
+  }
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -81,9 +103,53 @@ export default function ProfilePage() {
 
           {/* Bio */}
           <div className="mb-[34px]">
-            <p className="text-zinc-300">
-              Roblox developer and game enthusiast
-            </p>
+            {isEditingBio ? (
+              <div className="space-y-[8px]">
+                <textarea
+                  value={bioText}
+                  onChange={(e) => setBioText(e.target.value)}
+                  placeholder="自己紹介を書いてください..."
+                  maxLength={200}
+                  rows={3}
+                  className="w-full px-[13px] py-[13px] bg-zinc-800 border border-zinc-700 rounded-[8px] text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors resize-none text-sm"
+                  autoFocus
+                />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-zinc-500">{bioText.length}/200</span>
+                  <div className="flex gap-[8px]">
+                    <button
+                      onClick={handleCancelBio}
+                      disabled={bioSaving}
+                      className="flex items-center gap-[5px] px-[13px] py-[8px] text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+                    >
+                      <X size={14} />
+                      キャンセル
+                    </button>
+                    <button
+                      onClick={handleSaveBio}
+                      disabled={bioSaving}
+                      className="flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-[6px] transition-colors"
+                    >
+                      <Check size={14} />
+                      {bioSaving ? "保存中..." : "保存"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="group flex items-start gap-[8px]">
+                <p className="text-zinc-300 text-sm flex-1">
+                  {user.bio || <span className="text-zinc-500 italic">自己紹介はまだありません</span>}
+                </p>
+                <button
+                  onClick={() => setIsEditingBio(true)}
+                  className="p-[5px] text-zinc-500 hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-all"
+                  title="自己紹介を編集"
+                >
+                  <Pencil size={14} />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Tabs */}

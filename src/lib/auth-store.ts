@@ -9,6 +9,7 @@ export interface User {
   provider: "github" | "roblox";
   username: string;
   avatarUrl: string | null;
+  bio: string;
 }
 
 interface AuthStore {
@@ -22,6 +23,7 @@ interface AuthStore {
   signInWithRoblox: () => Promise<void>;
   signOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
+  updateProfile: (updates: { bio?: string; username?: string }) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -120,6 +122,7 @@ export const useAuthStore = create<AuthStore>()(
                 provider: newProfile.provider,
                 username: newProfile.username,
                 avatarUrl: newProfile.avatar_url,
+                bio: newProfile.bio || "",
               },
             });
           } else if (error) {
@@ -133,11 +136,41 @@ export const useAuthStore = create<AuthStore>()(
                 provider: profile.provider,
                 username: profile.username,
                 avatarUrl: profile.avatar_url,
+                bio: profile.bio || "",
               },
             });
           }
         } catch (error: any) {
           set({ error: error.message });
+        }
+      },
+
+      updateProfile: async (updates) => {
+        const user = get().user;
+        if (!user) return;
+
+        try {
+          const updateData: Record<string, string> = {};
+          if (updates.bio !== undefined) updateData.bio = updates.bio;
+          if (updates.username !== undefined) updateData.username = updates.username;
+
+          const { error } = await supabase
+            .from("profiles")
+            .update(updateData)
+            .eq("id", user.id);
+
+          if (error) throw error;
+
+          set({
+            user: {
+              ...user,
+              ...(updates.bio !== undefined && { bio: updates.bio }),
+              ...(updates.username !== undefined && { username: updates.username }),
+            },
+          });
+        } catch (error: any) {
+          set({ error: error.message });
+          throw error;
         }
       },
     }),
