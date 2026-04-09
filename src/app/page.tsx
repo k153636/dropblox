@@ -4,6 +4,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Feed from "@/components/Feed";
+import TestModeBanner from "@/components/TestModeBanner";
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,6 +23,7 @@ export default function Home() {
         }`}
       >
         <div className="max-w-[676px] mx-auto px-[21px] py-[34px]">
+          <TestModeBanner />
           <Feed />
         </div>
       </main>
