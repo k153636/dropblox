@@ -171,10 +171,12 @@ export default function Feed() {
         <div style={{ height: (posts.length - endIdx) * 200 }} className="w-full" />
       )}
       
-      {/* Stats for debugging */}
-      <div className="text-xs text-zinc-600 text-center py-[8px]">
-        Showing {startIdx + 1}-{endIdx} of {posts.length} posts | DOM nodes: {endIdx - startIdx}
-      </div>
+      {/* Stats for debugging - development only */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="text-xs text-zinc-600 text-center py-[8px]">
+          Showing {startIdx + 1}-{endIdx} of {posts.length} posts | DOM nodes: {endIdx - startIdx}
+        </div>
+      )}
       
       {/* Infinite scroll trigger */}
       <div ref={loadMoreRef} className="py-[21px] text-center">
