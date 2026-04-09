@@ -189,3 +189,34 @@ export function subscribeToPosts(callback: (payload: any) => void) {
     )
     .subscribe();
 }
+
+// Search posts by keyword (full-text search)
+export async function searchPosts(query: string, limit: number = 20) {
+  const { data, error } = await supabase
+    .rpc('search_posts', { query_text: query })
+    .limit(limit);
+
+  if (error) {
+    console.error('Search error:', error);
+    throw error;
+  }
+
+  return data || [];
+}
+
+// Alternative: Client-side simple search (fallback)
+export async function searchPostsSimple(query: string, limit: number = 20) {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .or(`preview_name.ilike.%${query}%,description.ilike.%${query}%`)
+    .limit(limit)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Simple search error:', error);
+    throw error;
+  }
+
+  return data || [];
+}

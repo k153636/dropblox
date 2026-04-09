@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, Post } from "./db-posts";
+import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, Post } from "./db-posts";
 import { getCommentsByPostId, createComment, updateComment, deleteComment, subscribeToComments, Comment } from "./db-comments";
 import { toggleLike, hasLiked, getLikeCount, subscribeToLikes } from "./db-likes";
 import { useAuthStore } from "./auth-store";
@@ -27,6 +27,12 @@ interface PostStore {
   hasMore: boolean;
   offset: number;
   
+  // Search
+  searchQuery: string;
+  searchResults: Post[];
+  isSearching: boolean;
+  hasSearched: boolean;
+  
   // Actions
   loadPosts: () => Promise<void>;
   loadMorePosts: () => Promise<void>;
@@ -41,6 +47,11 @@ interface PostStore {
   
   // Subscriptions
   subscribeToRealtime: () => (() => void);
+  
+  // Search Actions
+  searchPosts: (query: string) => Promise<void>;
+  clearSearch: () => void;
+  setSearchQuery: (query: string) => void;
 }
 
 export const usePostStore = create<PostStore>((set, get) => ({
@@ -50,6 +61,12 @@ export const usePostStore = create<PostStore>((set, get) => ({
   error: null,
   hasMore: true,
   offset: 0,
+  
+  // Search state
+  searchQuery: "",
+  searchResults: [],
+  isSearching: false,
+  hasSearched: false,
 
   loadPosts: async () => {
     set({ isLoading: true, error: null, offset: 0 });
@@ -326,5 +343,29 @@ export const usePostStore = create<PostStore>((set, get) => ({
     return () => {
       postsSubscription.unsubscribe();
     };
+  },
+
+  // Search Actions
+  searchPosts: async (query: string) => {
+    if (!query.trim()) {
+      get().clearSearch();
+      return;
+    }
+    
+    set({ isSearching: true, error: null });
+    try {
+      const results = await searchPosts(query, 20);
+      set({ searchResults: results, isSearching: false, hasSearched: true });
+    } catch (error: any) {
+      set({ error: error.message, isSearching: false });
+    }
+  },
+
+  clearSearch: () => {
+    set({ searchQuery: "", searchResults: [], isSearching: false, hasSearched: false });
+  },
+
+  setSearchQuery: (query: string) => {
+    set({ searchQuery: query });
   },
 }));

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import PostModal from "./PostModal";
+import SearchBar from "./SearchBar";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -149,6 +150,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               {isOpen && <span className="font-medium text-xs whitespace-nowrap">New Post</span>}
             </button>
           </div>
+
+          {/* Search Bar */}
+          <SearchBar sidebarOpen={isOpen} />
 
           {/* Navigation Items */}
           <nav className="flex-1 space-y-[8px] px-[13px]">
