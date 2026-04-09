@@ -325,7 +325,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
     // Subscribe to posts
     const postsSubscription = subscribeToPosts((payload) => {
       if (payload.eventType === "INSERT") {
-        // New post added by another user
+        // New post added by another user - auto add to feed
         const newPost = payload.new as Post;
         set((state) => ({
           posts: [
