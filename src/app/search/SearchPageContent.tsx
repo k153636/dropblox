@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePostStore } from "@/lib/store";
 import PostCard from "@/components/PostCard";
+import { getDistinctGenres } from "@/lib/db-posts";
 import { Search, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -21,6 +22,14 @@ export default function SearchPageContent() {
   } = usePostStore();
 
   const [inputValue, setInputValue] = useState(query);
+  const [genres, setGenres] = useState<string[]>([]);
+
+  // Fetch popular genres
+  useEffect(() => {
+    getDistinctGenres(8).then((g) => {
+      setGenres(g.length > 0 ? g : ["Adventure", "Horror", "RPG", "Simulation", "Action"]);
+    });
+  }, []);
 
   // 初期検索（URLパラメータから）
   useEffect(() => {
@@ -162,7 +171,7 @@ export default function SearchPageContent() {
               <div className="mt-[34px]">
                 <p className="text-zinc-600 text-[11px] uppercase tracking-wider mb-[13px]">人気の検索</p>
                 <div className="flex flex-wrap justify-center gap-[8px]">
-                  {["アドベンチャー", "ホラー", "RPG", "シミュレーション", "アクション"].map((tag) => (
+                  {genres.map((tag) => (
                     <button
                       key={tag}
                       onClick={() => {

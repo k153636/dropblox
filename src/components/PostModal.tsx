@@ -20,6 +20,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
     thumbnail: string;
     playing: number;
     visits: number;
+    genre?: string;
   } | null>(null);
 
   const { user } = useAuthStore();
@@ -152,6 +153,11 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                 <h3 className="font-semibold text-zinc-100">{preview.name}</h3>
                 <p className="text-sm text-zinc-400 line-clamp-2">{preview.description}</p>
                 <div className="flex items-center gap-[13px] text-xs text-zinc-500">
+                  {preview.genre && (
+                    <span className="px-[8px] py-[3px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
+                      {preview.genre}
+                    </span>
+                  )}
                   <span>{preview.playing.toLocaleString()} playing</span>
                   <span>{preview.visits.toLocaleString()} visits</span>
                 </div>

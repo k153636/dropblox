@@ -243,6 +243,7 @@ interface PostCardProps {
     preview_thumbnail?: string;
     preview_playing?: number | string;
     preview_visits?: number | string;
+    preview_genre?: string;
   };
 }
 
@@ -387,7 +388,14 @@ export default function PostCard({ post }: PostCardProps) {
               </div>
             )}
             <div className="bg-zinc-900/80 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[8px]">
-              <p className="font-semibold text-sm">{post.preview_name}</p>
+              <div className="flex items-center gap-[8px]">
+                <p className="font-semibold text-sm">{post.preview_name}</p>
+                {post.preview_genre && (
+                  <span className="px-[8px] py-[2px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
+                    {post.preview_genre}
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-zinc-400 line-clamp-2">
                 {post.preview_description}
               </p>

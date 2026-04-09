@@ -10,6 +10,7 @@ export interface GamePreview {
   thumbnail: string;
   playing: number;
   visits: number;
+  genre?: string;
 }
 
 export { type Post, type Comment };

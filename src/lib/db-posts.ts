@@ -9,6 +9,7 @@ export interface Post {
   preview_thumbnail?: string;
   preview_playing?: number | string; // BIGINT can be returned as string
   preview_visits?: number | string; // BIGINT can be returned as string
+  preview_genre?: string;
   author_id: string;
   author_name: string;
   likes: number;
@@ -24,6 +25,7 @@ export interface CreatePostInput {
     thumbnail: string;
     playing: number;
     visits: number;
+    genre?: string;
   };
 }
 
@@ -43,6 +45,7 @@ export async function createPost(
       preview_thumbnail: input.preview?.thumbnail,
       preview_playing: input.preview?.playing,
       preview_visits: input.preview?.visits,
+      preview_genre: input.preview?.genre || '',
       author_id: userId,
       author_name: userName,
       likes: 0,
@@ -217,6 +220,32 @@ export async function searchPosts(query: string, limit: number = 20) {
   }
 
   return data || [];
+}
+
+// Get distinct genres from posts
+export async function getDistinctGenres(limit: number = 10): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("preview_genre")
+    .not("preview_genre", "eq", "")
+    .not("preview_genre", "is", null);
+
+  if (error) {
+    console.error("Error fetching genres:", error);
+    return [];
+  }
+
+  // Count occurrences and sort by frequency
+  const counts = new Map<string, number>();
+  for (const row of data || []) {
+    const g = row.preview_genre as string;
+    if (g) counts.set(g, (counts.get(g) || 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([genre]) => genre);
 }
 
 // Alternative: Client-side simple search (fallback)

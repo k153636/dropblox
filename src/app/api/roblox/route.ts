@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
       thumbnail: thumb?.imageUrl || "",
       playing: game.playing || 0,
       visits: game.visits || 0,
+      genre: game.genre || "",
     });
   } catch {
     return NextResponse.json({ error: "API request failed" }, { status: 502 });
