@@ -137,6 +137,29 @@ export async function getLikesByPostId(postId: string): Promise<Like[]> {
   return (data as Like[]) || [];
 }
 
+// Get total likes received on all posts by a user
+export async function getTotalLikesReceivedByUserId(userId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("id")
+    .eq("author_id", userId);
+
+  if (error || !data || data.length === 0) return 0;
+
+  const postIds = data.map((p) => p.id);
+  const { count, error: countError } = await supabase
+    .from("likes")
+    .select("*", { count: "exact", head: true })
+    .in("post_id", postIds);
+
+  if (countError) {
+    console.error("Error counting received likes:", countError);
+    return 0;
+  }
+
+  return count || 0;
+}
+
 // Get posts liked by a user (TikTok-style grid)
 export async function getLikedPostsByUserId(
   userId: string,

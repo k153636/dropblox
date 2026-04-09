@@ -1,32 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import UserPostsGrid from "@/components/UserPostsGrid";
-import LikedPostsGrid from "@/components/LikedPostsGrid";
 import { useAuthStore } from "@/lib/auth-store";
-
-// SVG Icons
-const GridIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7" />
-    <rect x="14" y="3" width="7" height="7" />
-    <rect x="14" y="14" width="7" height="7" />
-    <rect x="3" y="14" width="7" height="7" />
-  </svg>
-);
-
-const HeartIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5 4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-  </svg>
-);
+import { getPostCountByUserId } from "@/lib/db-posts";
+import { getTotalLikesReceivedByUserId } from "@/lib/db-likes";
+import { LayoutGrid } from "lucide-react";
 
 export default function ProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"posts" | "likes">("posts");
   const { user } = useAuthStore();
+  const [postCount, setPostCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    getPostCountByUserId(user.id).then(setPostCount);
+    getTotalLikesReceivedByUserId(user.id).then(setLikesCount);
+  }, [user]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -75,11 +68,11 @@ export default function ProfilePage() {
               {/* Stats */}
               <div className="flex gap-[21px] mt-[13px]">
                 <div className="text-center">
-                  <div className="font-bold text-zinc-100">0</div>
+                  <div className="font-bold text-zinc-100">{postCount}</div>
                   <div className="text-xs text-zinc-500">posts</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-bold text-zinc-100">0</div>
+                  <div className="font-bold text-zinc-100">{likesCount}</div>
                   <div className="text-xs text-zinc-500">likes</div>
                 </div>
               </div>
@@ -97,37 +90,17 @@ export default function ProfilePage() {
           <div className="border-b border-zinc-800 mb-[21px]">
             <div className="flex gap-[34px]">
               <button
-                onClick={() => setActiveTab("posts")}
-                className={`flex items-center gap-[8px] pb-[13px] text-sm font-medium transition-colors ${
-                  activeTab === "posts"
-                    ? "text-emerald-400 border-b-2 border-emerald-400"
-                    : "text-zinc-500 hover:text-zinc-300"
-                }`}
+                className="flex items-center gap-[8px] pb-[13px] text-sm font-medium text-emerald-400 border-b-2 border-emerald-400"
               >
-                <GridIcon className="w-[21px] h-[21px]" />
+                <LayoutGrid size={21} />
                 Posts
-              </button>
-              <button
-                onClick={() => setActiveTab("likes")}
-                className={`flex items-center gap-[8px] pb-[13px] text-sm font-medium transition-colors ${
-                  activeTab === "likes"
-                    ? "text-emerald-400 border-b-2 border-emerald-400"
-                    : "text-zinc-500 hover:text-zinc-300"
-                }`}
-              >
-                <HeartIcon className="w-[21px] h-[21px]" />
-                Liked
               </button>
             </div>
           </div>
 
-          {/* Tab Content */}
+          {/* Posts Content */}
           <div className="min-h-[200px]">
-            {activeTab === "posts" ? (
-              <UserPostsGrid userId={user.id} />
-            ) : (
-              <LikedPostsGrid userId={user.id} />
-            )}
+            <UserPostsGrid userId={user.id} />
           </div>
         </div>
       </main>

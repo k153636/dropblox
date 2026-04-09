@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getPostsByUserId } from "@/lib/db-posts";
 import type { Post } from "@/lib/db-posts";
+import { getLikeCount } from "@/lib/db-likes";
 import EditPostModal from "./EditPostModal";
 import { useAuthStore } from "@/lib/auth-store";
 
@@ -119,10 +120,18 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
       return;
     }
 
+    // Fetch actual like counts from likes table
+    const postsWithLikes = await Promise.all(
+      data.map(async (post) => {
+        const likeCount = await getLikeCount(post.id);
+        return { ...post, likes: likeCount };
+      })
+    );
+
     if (reset) {
-      setPosts(data);
+      setPosts(postsWithLikes);
     } else {
-      setPosts((prev) => [...prev, ...data]);
+      setPosts((prev) => [...prev, ...postsWithLikes]);
     }
 
     setHasMore(data.length === LIMIT);

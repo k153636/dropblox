@@ -178,6 +178,21 @@ export async function deletePost(id: string, userId: string): Promise<boolean> {
   return true;
 }
 
+// Get post count for a user
+export async function getPostCountByUserId(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("posts")
+    .select("*", { count: "exact", head: true })
+    .eq("author_id", userId);
+
+  if (error) {
+    console.error("Error counting user posts:", error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
 // Subscribe to post changes
 export function subscribeToPosts(callback: (payload: any) => void) {
   return supabase
