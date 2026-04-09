@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/auth-store";
-import { createPost } from "@/lib/db-posts";
+import { usePostStore } from "@/lib/store";
 
 interface PostModalProps {
   isOpen: boolean;
@@ -30,6 +30,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
   } | null>(null);
 
   const { user } = useAuthStore();
+  const addPost = usePostStore((s) => s.addPost);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -81,20 +82,15 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
       }
     }
 
-    const post = await createPost(
-      { url, body, preview: finalPreview || undefined },
-      user.id,
-      user.username
-    );
-
-    setLoading(false);
-
-    if (post) {
+    try {
+      await addPost(url, body, finalPreview || undefined);
+      setLoading(false);
       setSuccess(true);
       setTimeout(() => {
         onClose();
       }, 1000);
-    } else {
+    } catch {
+      setLoading(false);
       setError("Failed to create post.");
     }
   }

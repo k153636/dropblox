@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuthStore } from "@/lib/auth-store";
-import { createPost } from "@/lib/db-posts";
+import { usePostStore } from "@/lib/store";
 
 export default function PostForm() {
   const [url, setUrl] = useState("");
@@ -17,6 +17,7 @@ export default function PostForm() {
   } | null>(null);
 
   const { user } = useAuthStore();
+  const addPost = usePostStore((s) => s.addPost);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -57,25 +58,16 @@ export default function PostForm() {
       }
     }
 
-    const post = await createPost(
-      {
-        url: url.trim(),
-        body: body.trim(),
-        preview: finalPreview || undefined,
-      },
-      user.id,
-      user.username
-    );
-
-    setLoading(false);
-
-    if (post) {
+    try {
+      await addPost(url.trim(), body.trim(), finalPreview || undefined);
+      setLoading(false);
       setSuccess(true);
       setUrl("");
       setBody("");
       setPreview(null);
       setTimeout(() => setSuccess(false), 3000);
-    } else {
+    } catch {
+      setLoading(false);
       setError("Failed to create post. Please try again.");
     }
   }

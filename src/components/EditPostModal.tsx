@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Post } from "@/lib/db-posts";
-import { updatePost, deletePost } from "@/lib/db-posts";
+import { usePostStore } from "@/lib/store";
 
 interface EditPostModalProps {
   post: Post | null;
@@ -27,6 +27,8 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
   const [success, setSuccess] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const storeUpdatePost = usePostStore((s) => s.updatePost);
+  const storeDeletePost = usePostStore((s) => s.deletePost);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -56,17 +58,16 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
     setError(null);
     setSuccess(false);
 
-    const updated = await updatePost(post.id, { body }, post.author_id);
-
-    setLoading(false);
-
-    if (updated) {
+    try {
+      await storeUpdatePost(post.id, body);
+      setLoading(false);
       setSuccess(true);
-      onUpdate(updated);
+      onUpdate({ ...post, body });
       setTimeout(() => {
         onClose();
       }, 1000);
-    } else {
+    } catch {
+      setLoading(false);
       setError("Failed to update post");
     }
   }
@@ -77,14 +78,13 @@ export default function EditPostModal({ post, isOpen, onClose, onUpdate, onDelet
     setDeleting(true);
     setError(null);
 
-    const success = await deletePost(post.id, post.author_id);
-
-    setDeleting(false);
-
-    if (success) {
+    try {
+      await storeDeletePost(post.id);
+      setDeleting(false);
       onDelete?.(post.id);
       onClose();
-    } else {
+    } catch {
+      setDeleting(false);
       setError("Failed to delete post");
       setShowDeleteConfirm(false);
     }
