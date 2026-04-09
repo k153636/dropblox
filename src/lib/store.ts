@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, Post } from "./db-posts";
 import { getCommentsByPostId, createComment, updateComment, deleteComment, subscribeToComments, Comment } from "./db-comments";
-import { toggleLike, hasLiked, getLikeCount, subscribeToLikes } from "./db-likes";
+import { toggleLike, hasLiked, getLikeCount, subscribeToLikes, subscribeToAllLikes } from "./db-likes";
 import { useAuthStore } from "./auth-store";
 
 export interface GamePreview {
@@ -26,6 +26,7 @@ interface PostStore {
   error: string | null;
   hasMore: boolean;
   offset: number;
+  user: { id: string; username: string; avatar: string } | null;
   
   // Search
   searchQuery: string;
@@ -61,6 +62,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
   error: null,
   hasMore: true,
   offset: 0,
+  user: null,
   
   // Search state
   searchQuery: "",
@@ -340,8 +342,38 @@ export const usePostStore = create<PostStore>((set, get) => ({
       }
     });
 
+    // Subscribe to likes - Realtime like updates
+    const likesSubscription = subscribeToAllLikes((payload: any) => {
+      const { post_id: postId, user_id: userId } = payload.new as { post_id: string; user_id: string };
+      const currentUserId = get().user?.id;
+
+      set((state) => ({
+        posts: state.posts.map((post) => {
+          if (post.id === postId) {
+            if (payload.eventType === "INSERT") {
+              // Like added
+              return {
+                ...post,
+                likes: post.likes + 1,
+                userLiked: post.userLiked || userId === currentUserId,
+              };
+            } else if (payload.eventType === "DELETE") {
+              // Like removed
+              return {
+                ...post,
+                likes: Math.max(0, post.likes - 1),
+                userLiked: post.userLiked && userId !== currentUserId,
+              };
+            }
+          }
+          return post;
+        }),
+      }));
+    });
+
     return () => {
       postsSubscription.unsubscribe();
+      likesSubscription.unsubscribe();
     };
   },
 

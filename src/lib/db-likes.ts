@@ -104,6 +104,22 @@ export function subscribeToLikes(postId: string, callback: (payload: any) => voi
     .subscribe();
 }
 
+// Subscribe to all likes (for realtime like count updates)
+export function subscribeToAllLikes(callback: (payload: any) => void) {
+  return supabase
+    .channel("likes:all")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "likes",
+      },
+      callback
+    )
+    .subscribe();
+}
+
 // Get all likes for a post (with user info)
 export async function getLikesByPostId(postId: string): Promise<Like[]> {
   const { data, error } = await supabase
