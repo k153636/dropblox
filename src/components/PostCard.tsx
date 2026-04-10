@@ -306,7 +306,7 @@ export default function PostCard({ post }: PostCardProps) {
   const hasPreview = post.preview_thumbnail || post.preview_name;
 
   return (
-    <article className="bg-zinc-900/50 backdrop-blur-md border border-white/[0.06] rounded-[13px] overflow-hidden">
+    <article className="rounded-[13px] overflow-hidden">
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">

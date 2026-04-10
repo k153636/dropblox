@@ -43,5 +43,5 @@ next-env.d.ts
 # company secrets
 .company/
 
-.vscode/nul
+.vscode/
 .windsurf/
