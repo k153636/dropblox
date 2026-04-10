@@ -69,7 +69,7 @@ export default function ProfilePage() {
         <div className="max-w-[610px] mx-auto px-[21px] pt-[55px] pb-[89px]">
 
           {/* ── Profile Card ── */}
-          <div className="bg-zinc-900/50 border border-white/[0.06] rounded-[13px] p-[34px] mb-[34px] backdrop-blur-xl">
+          <div className="rounded-[13px] p-[34px] mb-[34px]">
             <div className="flex items-start gap-[21px]">
               {/* Avatar — φ ring */}
               <div className="relative shrink-0">

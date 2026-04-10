@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { Post } from "@/lib/db-posts";
-import { X } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Heart, ExternalLink } from "lucide-react";
+import { fetchGameScreenshots } from "@/lib/roblox";
 
 interface PostDetailModalProps {
   post: Post | null;
@@ -10,31 +11,41 @@ interface PostDetailModalProps {
   onClose: () => void;
 }
 
-const HeartIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="none">
-    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-  </svg>
-);
-
-const ExternalLinkIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-    <polyline points="15 3 21 3 21 9" />
-    <line x1="10" x2="21" y1="14" y2="3" />
-  </svg>
-);
-
 export default function PostDetailModal({ post, isOpen, onClose }: PostDetailModalProps) {
-  // Close on escape key
+  const [screenshots, setScreenshots] = useState<string[]>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch screenshots when modal opens
   useEffect(() => {
-    function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
+    if (!isOpen || !post?.url) return;
+    setLoading(true);
+    setCurrentSlide(0);
+    fetchGameScreenshots(post.url)
+      .then((imgs) => setScreenshots(imgs.length > 0 ? imgs : post.preview_thumbnail ? [post.preview_thumbnail] : []))
+      .catch(() => setScreenshots(post.preview_thumbnail ? [post.preview_thumbnail] : []))
+      .finally(() => setLoading(false));
+  }, [isOpen, post?.url, post?.preview_thumbnail]);
+
+  const goNext = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % screenshots.length);
+  }, [screenshots.length]);
+
+  const goPrev = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + screenshots.length) % screenshots.length);
+  }, [screenshots.length]);
+
+  // Keyboard nav
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && screenshots.length > 1) goNext();
+      if (e.key === "ArrowLeft" && screenshots.length > 1) goPrev();
     }
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [isOpen, onClose, screenshots.length, goNext, goPrev]);
 
   if (!isOpen || !post) return null;
 
@@ -42,7 +53,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
         onClick={onClose}
       />
 
@@ -64,16 +75,70 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
 
           {/* Content */}
           <div className="p-[21px] space-y-[21px]">
-            {/* Thumbnail */}
-            {post.preview_thumbnail && (
-              <div className="aspect-video rounded-[8px] overflow-hidden bg-zinc-800">
-                <img
-                  src={post.preview_thumbnail}
-                  alt={post.preview_name || "Game thumbnail"}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+            {/* Screenshot Slider */}
+            <div className="relative aspect-video rounded-[8px] overflow-hidden bg-zinc-800">
+              {loading ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-[34px] h-[34px] border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+                </div>
+              ) : screenshots.length > 0 ? (
+                <>
+                  {/* Slides */}
+                  <div
+                    className="flex h-full transition-transform duration-300 ease-out"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                  >
+                    {screenshots.map((url, i) => (
+                      <img
+                        key={i}
+                        src={url}
+                        alt={`${post.preview_name || "Game"} screenshot ${i + 1}`}
+                        className="w-full h-full object-cover flex-shrink-0"
+                      />
+                    ))}
+                  </div>
+
+                  {/* Navigation arrows */}
+                  {screenshots.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                        className="absolute left-[8px] top-1/2 -translate-y-1/2 w-[34px] h-[34px] bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-all"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); goNext(); }}
+                        className="absolute right-[8px] top-1/2 -translate-y-1/2 w-[34px] h-[34px] bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-all"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Dots indicator */}
+                  {screenshots.length > 1 && (
+                    <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 flex gap-[5px]">
+                      {screenshots.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => { e.stopPropagation(); setCurrentSlide(i); }}
+                          className={`w-[6px] h-[6px] rounded-full transition-all ${
+                            i === currentSlide
+                              ? "bg-white w-[18px]"
+                              : "bg-white/40 hover:bg-white/60"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-zinc-600 text-sm">
+                  No screenshots available
+                </div>
+              )}
+            </div>
 
             {/* Game Info */}
             <div className="space-y-[13px]">
@@ -91,7 +156,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
             {/* Stats */}
             <div className="flex items-center gap-[21px] py-[13px] border-y border-zinc-800">
               <div className="flex items-center gap-[8px] text-zinc-400">
-                <HeartIcon className="w-[21px] h-[21px] text-emerald-500" />
+                <Heart size={21} className="text-emerald-500" fill="currentColor" />
                 <span className="font-medium">{post.likes || 0} likes</span>
               </div>
               
@@ -120,7 +185,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
                 rel="noopener noreferrer"
                 className="flex items-center gap-[8px] px-[21px] py-[13px] bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] font-medium text-sm transition-colors"
               >
-                <ExternalLinkIcon className="w-[16px] h-[16px]" />
+                <ExternalLink size={16} />
                 Visit Game
               </a>
             </div>

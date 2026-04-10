@@ -26,7 +26,7 @@ const HeartOutlineIcon = ({ className }: { className?: string }) => (
 function SkeletonCard() {
   return (
     <div className="animate-pulse">
-      <div className="aspect-video bg-zinc-800 rounded-[8px] mb-[13px]" />
+      <div className="aspect-square bg-zinc-800 rounded-[8px] mb-[13px]" />
       <div className="h-[16px] bg-zinc-800 rounded w-3/4 mb-[8px]" />
       <div className="h-[14px] bg-zinc-800 rounded w-1/2" />
     </div>
@@ -38,7 +38,7 @@ function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
   return (
     <div className="group cursor-pointer" onClick={onClick}>
       {/* Thumbnail */}
-      <div className="relative aspect-video rounded-[8px] overflow-hidden mb-[8px] bg-zinc-800/80 ring-1 ring-zinc-800/60">
+      <div className="relative aspect-square rounded-[8px] overflow-hidden mb-[8px] bg-zinc-800/80 ring-1 ring-zinc-800/60">
         {post.preview_thumbnail ? (
           <img
             src={post.preview_thumbnail}

@@ -5,6 +5,7 @@ import { usePostStore } from "@/lib/store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Comment } from "@/lib/db-comments";
 import CopyLinkButton from "./CopyLinkButton";
+import PostDetailModal from "./PostDetailModal";
 import { 
   Heart, 
   MessageCircle, 
@@ -245,9 +246,10 @@ interface PostCardProps {
     preview_visits?: number | string;
     preview_genre?: string;
   };
+  showActions?: boolean;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, showActions = false }: PostCardProps) {
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -255,6 +257,7 @@ export default function PostCard({ post }: PostCardProps) {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [hasLoadedComments, setHasLoadedComments] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   
   const likePost = usePostStore((s) => s.likePost);
   const addComment = usePostStore((s) => s.addComment);
@@ -306,7 +309,8 @@ export default function PostCard({ post }: PostCardProps) {
   const hasPreview = post.preview_thumbnail || post.preview_name;
 
   return (
-    <article className="rounded-[13px] overflow-hidden">
+    <>
+    <article className="rounded-[13px] overflow-hidden cursor-pointer" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -322,9 +326,9 @@ export default function PostCard({ post }: PostCardProps) {
             </div>
           </div>
           
-          {/* Edit/Delete buttons - author only */}
-          {isAuthor && (
-            <div className="flex items-center gap-[8px]">
+          {/* Edit/Delete buttons - author only, profile page only */}
+          {showActions && isAuthor && (
+            <div className="flex items-center gap-[8px]" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="text-xs text-zinc-400 hover:text-zinc-200 px-[8px] py-[5px]"
@@ -381,26 +385,26 @@ export default function PostCard({ post }: PostCardProps) {
                 <img
                   src={post.preview_thumbnail}
                   alt={post.preview_name || "Game"}
-                  className="w-full aspect-[1.618/1] object-cover"
+                  className="w-full aspect-square object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/60 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-[34px] backdrop-blur-[2px] bg-zinc-900/40" style={{ maskImage: 'linear-gradient(to bottom, transparent, black)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black)' }} />
               </div>
             )}
-            <div className="bg-zinc-900/80 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[8px]">
-              <div className="flex items-center gap-[8px]">
-                <p className="font-semibold text-sm">{post.preview_name}</p>
+            <div className="bg-zinc-900/80 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
+              <div className="flex items-start justify-between gap-[8px]">
+                <p className="font-semibold text-[15px] leading-tight">{post.preview_name}</p>
                 {post.preview_genre && (
-                  <span className="px-[8px] py-[2px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
+                  <span className="flex-shrink-0 px-[8px] py-[2px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
                     {post.preview_genre}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-zinc-400 line-clamp-2">
+              <p className="text-[13px] text-zinc-400 leading-relaxed line-clamp-2">
                 {post.preview_description}
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex gap-3 text-xs text-zinc-500">
+              <div className="flex items-center justify-between pt-[4px]">
+                <div className="flex gap-[13px] text-[12px] text-zinc-500">
                   {post.preview_playing !== undefined && (
                     <span>{Number(post.preview_playing).toLocaleString()} playing</span>
                   )}
@@ -413,6 +417,7 @@ export default function PostCard({ post }: PostCardProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-colors"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <Play size={14} fill="currentColor" />
                   Play on Roblox
@@ -428,6 +433,7 @@ export default function PostCard({ post }: PostCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-colors"
+              onClick={(e) => e.stopPropagation()}
             >
               <Play size={14} fill="currentColor" />
               Play on Roblox
@@ -436,7 +442,7 @@ export default function PostCard({ post }: PostCardProps) {
         )}
 
         {/* Actions - fixed width buttons to prevent layout shift */}
-        <div className="flex items-center gap-4 pt-1">
+        <div className="flex items-center gap-4 pt-1" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => likePost(post.id)}
             className={`flex items-center justify-center gap-1.5 text-xs transition-colors min-w-[50px] ${
@@ -553,5 +559,11 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
       )}
     </article>
+    <PostDetailModal
+      post={post}
+      isOpen={showDetail}
+      onClose={() => setShowDetail(false)}
+    />
+    </>
   );
 }

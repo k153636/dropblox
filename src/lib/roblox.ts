@@ -9,6 +9,44 @@ export interface RobloxGameData {
   genre: string;
 }
 
+export async function fetchGameScreenshots(robloxUrl: string): Promise<string[]> {
+  const match = robloxUrl.match(/games\/(\d+)/);
+  if (!match) return [];
+
+  const placeId = match[1];
+
+  try {
+    const universeRes = await fetch(
+      `https://apis.roblox.com/universes/v1/places/${placeId}/universe`
+    );
+    if (!universeRes.ok) return [];
+    const { universeId } = await universeRes.json();
+
+    // Get game media (screenshots/videos uploaded by developer)
+    const mediaRes = await fetch(
+      `https://games.roblox.com/v1/games/${universeId}/media`
+    );
+    const mediaData = await mediaRes.json();
+    const imageAssets = (mediaData.data || [])
+      .filter((m: { assetTypeId: number }) => m.assetTypeId === 1)
+      .map((m: { imageId: number }) => m.imageId);
+
+    if (imageAssets.length === 0) return [];
+
+    // Get thumbnail URLs for the media assets
+    const assetIds = imageAssets.join(",");
+    const thumbRes = await fetch(
+      `https://thumbnails.roblox.com/v1/assets?assetIds=${assetIds}&returnPolicy=PlaceHolder&size=768x432&format=Png&isCircular=false`
+    );
+    const thumbData = await thumbRes.json();
+    return (thumbData.data || [])
+      .map((t: { imageUrl?: string }) => t.imageUrl)
+      .filter((url: string | undefined): url is string => !!url);
+  } catch {
+    return [];
+  }
+}
+
 export async function fetchGameData(robloxUrl: string): Promise<RobloxGameData | null> {
   const match = robloxUrl.match(/games\/(\d+)/);
   if (!match) return null;
