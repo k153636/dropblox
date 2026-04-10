@@ -79,7 +79,7 @@ export async function fetchGameData(robloxUrl: string): Promise<RobloxGameData |
 
     return {
       name: game.name,
-      description: (game.description || "").slice(0, 200),
+      description: (game.description || "").slice(0, 1000),
       thumbnail: thumb?.imageUrl || "",
       playing: game.playing || 0,
       visits: game.visits || 0,

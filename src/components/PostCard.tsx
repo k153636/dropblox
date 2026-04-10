@@ -15,7 +15,9 @@ import {
   Edit2, 
   CornerDownRight,
   Play,
-  Check
+  Check,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 function timeAgo(dateStr: string): string {
@@ -258,6 +260,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [hasLoadedComments, setHasLoadedComments] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   
   const likePost = usePostStore((s) => s.likePost);
   const addComment = usePostStore((s) => s.addComment);
@@ -400,10 +403,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                   </span>
                 )}
               </div>
-              <p className="text-[13px] text-zinc-400 leading-relaxed line-clamp-2">
-                {post.preview_description}
-              </p>
-              <div className="flex items-center justify-between pt-[4px]">
+              <div className="flex items-center justify-between">
                 <div className="flex gap-[13px] text-[12px] text-zinc-500">
                   {post.preview_playing !== undefined && (
                     <span>{Number(post.preview_playing).toLocaleString()} playing</span>
