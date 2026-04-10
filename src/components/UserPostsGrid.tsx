@@ -5,6 +5,7 @@ import { getPostsByUserId } from "@/lib/db-posts";
 import type { Post } from "@/lib/db-posts";
 import { getLikeCount } from "@/lib/db-likes";
 import EditPostModal from "./EditPostModal";
+import PostDetailModal from "./PostDetailModal";
 import { useAuthStore } from "@/lib/auth-store";
 
 interface UserPostsGridProps {
@@ -90,17 +91,23 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const LIMIT = 20;
 
   const openPostDetail = (post: Post) => {
     setSelectedPost(post);
-    setIsModalOpen(true);
+    setIsDetailOpen(true);
   };
 
-  const closePostDetail = () => {
-    setIsModalOpen(false);
+  const closeDetail = () => {
+    setIsDetailOpen(false);
+    setSelectedPost(null);
+  };
+
+  const closeEdit = () => {
+    setIsEditOpen(false);
     setSelectedPost(null);
   };
 
@@ -209,11 +216,18 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
         ))}
       </div>
 
+      {/* Post Detail Modal (screenshots slider) */}
+      <PostDetailModal
+        post={selectedPost}
+        isOpen={isDetailOpen}
+        onClose={closeDetail}
+      />
+
       {/* Edit Post Modal */}
       <EditPostModal 
         post={selectedPost} 
-        isOpen={isModalOpen} 
-        onClose={closePostDetail}
+        isOpen={isEditOpen} 
+        onClose={closeEdit}
         onUpdate={(updatedPost) => {
           setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
         }}

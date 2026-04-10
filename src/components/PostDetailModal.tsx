@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import type { Post } from "@/lib/db-posts";
 import { X, ChevronLeft, ChevronRight, Heart, ExternalLink } from "lucide-react";
-import { fetchGameScreenshots } from "@/lib/roblox";
 
 interface PostDetailModalProps {
   post: Post | null;
@@ -21,8 +20,12 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
     if (!isOpen || !post?.url) return;
     setLoading(true);
     setCurrentSlide(0);
-    fetchGameScreenshots(post.url)
-      .then((imgs) => setScreenshots(imgs.length > 0 ? imgs : post.preview_thumbnail ? [post.preview_thumbnail] : []))
+    fetch(`/api/roblox/screenshots?url=${encodeURIComponent(post.url)}`)
+      .then((res) => res.json())
+      .then((data: { screenshots: string[] }) => {
+        const imgs = data.screenshots || [];
+        setScreenshots(imgs.length > 0 ? imgs : post.preview_thumbnail ? [post.preview_thumbnail] : []);
+      })
       .catch(() => setScreenshots(post.preview_thumbnail ? [post.preview_thumbnail] : []))
       .finally(() => setLoading(false));
   }, [isOpen, post?.url, post?.preview_thumbnail]);
