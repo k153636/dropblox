@@ -42,7 +42,7 @@ const EditIcon = ({ className }: { className?: string }) => (
 );
 
 // Individual User Post Card — φ layout
-function UserPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
+function UserPostCard({ post, onClick, onEdit }: { post: Post; onClick: () => void; onEdit: () => void }) {
   return (
     <div className="group cursor-pointer" onClick={onClick}>
       {/* Thumbnail */}
@@ -59,10 +59,13 @@ function UserPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
             <span className="text-[11px] tracking-wide">No image</span>
           </div>
         )}
-        
-        {/* Edit indicator overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
-          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 bg-zinc-900/80 backdrop-blur-sm p-[8px] rounded-full">
+
+        {/* Edit indicator overlay - clickable */}
+        <div
+          className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center z-10"
+          onClick={(e) => { e.stopPropagation(); onEdit(); }}
+        >
+          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 bg-zinc-900/80 backdrop-blur-sm p-[8px] rounded-full cursor-pointer hover:bg-zinc-800/90">
             <EditIcon className="w-[16px] h-[16px] text-white" />
           </div>
         </div>
@@ -99,6 +102,11 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
   const openPostDetail = (post: Post) => {
     setSelectedPost(post);
     setIsDetailOpen(true);
+  };
+
+  const openEdit = (post: Post) => {
+    setSelectedPost(post);
+    setIsEditOpen(true);
   };
 
   const closeDetail = () => {
@@ -212,7 +220,7 @@ export default function UserPostsGrid({ userId }: UserPostsGridProps) {
         style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
       >
         {posts.map((post) => (
-          <UserPostCard key={post.id} post={post} onClick={() => openPostDetail(post)} />
+          <UserPostCard key={post.id} post={post} onClick={() => openPostDetail(post)} onEdit={() => openEdit(post)} />
         ))}
       </div>
 

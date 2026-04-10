@@ -160,71 +160,6 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
               )}
             </div>
 
-            {/* Fullscreen overlay */}
-            {fullscreen && screenshots.length > 0 && (
-              <div className="fixed inset-0 z-[70] bg-black/95 flex flex-col items-center justify-center" onClick={() => setFullscreen(false)}>
-                {/* Close / minimize */}
-                <button
-                  onClick={() => setFullscreen(false)}
-                  className="absolute top-[21px] right-[21px] w-[34px] h-[34px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all z-10"
-                >
-                  <Minimize2 size={18} />
-                </button>
-
-                {/* Fullscreen slides */}
-                <div className="relative w-full max-w-[90vw] max-h-[80vh] aspect-video overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                  <div
-                    className="flex h-full transition-transform duration-300 ease-out"
-                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                  >
-                    {screenshots.map((url, i) => (
-                      <img
-                        key={i}
-                        src={url}
-                        alt={`${post.preview_name || "Game"} screenshot ${i + 1}`}
-                        className="w-full h-full object-contain flex-shrink-0"
-                      />
-                    ))}
-                  </div>
-
-                  {/* Fullscreen nav arrows */}
-                  {screenshots.length > 1 && (
-                    <>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                        className="absolute left-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all"
-                      >
-                        <ChevronLeft size={24} />
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); goNext(); }}
-                        className="absolute right-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all"
-                      >
-                        <ChevronRight size={24} />
-                      </button>
-                    </>
-                  )}
-                </div>
-
-                {/* Fullscreen dots */}
-                {screenshots.length > 1 && (
-                  <div className="flex gap-[8px] mt-[21px]" onClick={(e) => e.stopPropagation()}>
-                    {screenshots.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentSlide(i)}
-                        className={`w-[8px] h-[8px] rounded-full transition-all ${
-                          i === currentSlide
-                            ? "bg-white w-[24px]"
-                            : "bg-white/30 hover:bg-white/50"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Game Info */}
             <div className="space-y-[13px]">
               <h1 className="text-2xl font-bold text-zinc-100">
@@ -280,6 +215,71 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
           </div>
         </div>
       </div>
+
+      {/* Fullscreen overlay - outside modal so it's not affected by invisible class */}
+      {fullscreen && screenshots.length > 0 && (
+        <div className="fixed inset-0 z-[70] bg-black/95 flex flex-col items-center justify-center" onClick={() => setFullscreen(false)}>
+          {/* Close / minimize */}
+          <button
+            onClick={() => setFullscreen(false)}
+            className="absolute top-[21px] right-[21px] w-[34px] h-[34px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all z-10"
+          >
+            <Minimize2 size={18} />
+          </button>
+
+          {/* Fullscreen slides */}
+          <div className="relative w-full max-w-[90vw] max-h-[80vh] aspect-video overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="flex h-full transition-transform duration-300 ease-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {screenshots.map((url, i) => (
+                <img
+                  key={i}
+                  src={url}
+                  alt={`${post.preview_name || "Game"} screenshot ${i + 1}`}
+                  className="w-full h-full object-contain flex-shrink-0"
+                />
+              ))}
+            </div>
+
+            {/* Fullscreen nav arrows */}
+            {screenshots.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                  className="absolute left-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); goNext(); }}
+                  className="absolute right-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Fullscreen dots */}
+          {screenshots.length > 1 && (
+            <div className="flex gap-[8px] mt-[21px]" onClick={(e) => e.stopPropagation()}>
+              {screenshots.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`w-[8px] h-[8px] rounded-full transition-all ${
+                    i === currentSlide
+                      ? "bg-white w-[24px]"
+                      : "bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 }
