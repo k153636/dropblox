@@ -3,7 +3,31 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/auth-store";
 import { usePostStore } from "@/lib/store";
-import { X } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
+
+// Common Roblox game genres
+const ROBLOX_GENRES = [
+  "Adventure",
+  "Horror",
+  "RPG",
+  "Simulation",
+  "Action",
+  "Puzzle",
+  "Strategy",
+  "Sports",
+  "Fighting",
+  "Tycoon",
+  "Obby",
+  "Social",
+  "Survival",
+  "FPS",
+  "Anime",
+  "Roleplay",
+  "Minigames",
+  "Shooter",
+  "Exploration",
+  "Creative",
+];
 
 interface PostModalProps {
   isOpen: boolean;
@@ -27,6 +51,8 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
   const addPost = usePostStore((s) => s.addPost);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [manualGenre, setManualGenre] = useState("");
+  const [showGenreDropdown, setShowGenreDropdown] = useState(false);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -36,6 +62,8 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
       setPreview(null);
       setError(null);
       setSuccess(false);
+      setManualGenre("");
+      setShowGenreDropdown(false);
     }
   }, [isOpen]);
 
@@ -77,7 +105,13 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
     }
 
     try {
-      await addPost(url, body, finalPreview || undefined);
+      // Use manual genre if selected, otherwise use API genre
+      const effectivePreview = finalPreview ? {
+        ...finalPreview,
+        genre: (finalPreview.genre && finalPreview.genre !== "All") ? finalPreview.genre : manualGenre,
+      } : undefined;
+
+      await addPost(url, body, effectivePreview);
       setLoading(false);
       setSuccess(true);
       setTimeout(() => {
@@ -153,10 +187,40 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                 <h3 className="font-semibold text-zinc-100">{preview.name}</h3>
                 <p className="text-sm text-zinc-400 line-clamp-2">{preview.description}</p>
                 <div className="flex items-center gap-[13px] text-xs text-zinc-500">
-                  {preview.genre && (
+                  {preview.genre && preview.genre !== "All" ? (
                     <span className="px-[8px] py-[3px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
                       {preview.genre}
                     </span>
+                  ) : (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowGenreDropdown(!showGenreDropdown)}
+                        className="flex items-center gap-[4px] px-[8px] py-[3px] bg-zinc-800 hover:bg-zinc-700 border border-white/[0.1] text-zinc-300 rounded-[5px] text-[11px] font-medium transition-colors"
+                      >
+                        {manualGenre || "ジャンルを選択"}
+                        <ChevronDown size={12} />
+                      </button>
+                      {showGenreDropdown && (
+                        <div className="absolute top-full left-0 mt-[4px] w-[160px] max-h-[200px] overflow-y-auto bg-zinc-900 border border-white/[0.1] rounded-[8px] shadow-xl z-10 py-[4px]">
+                          {ROBLOX_GENRES.map((g) => (
+                            <button
+                              key={g}
+                              type="button"
+                              onClick={() => {
+                                setManualGenre(g);
+                                setShowGenreDropdown(false);
+                              }}
+                              className={`w-full px-[12px] py-[6px] text-left text-[12px] hover:bg-white/[0.06] transition-colors ${
+                                manualGenre === g ? "text-emerald-400" : "text-zinc-300"
+                              }`}
+                            >
+                              {g}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
                   <span>{preview.playing.toLocaleString()} playing</span>
                   <span>{preview.visits.toLocaleString()} visits</span>

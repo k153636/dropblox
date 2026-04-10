@@ -397,7 +397,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
             <div className="bg-zinc-900/80 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
               <div className="flex items-start justify-between gap-[8px]">
                 <p className="font-semibold text-[15px] leading-tight">{post.preview_name}</p>
-                {post.preview_genre && (
+                {post.preview_genre && post.preview_genre !== "All" && (
                   <span className="flex-shrink-0 px-[8px] py-[2px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
                     {post.preview_genre}
                   </span>

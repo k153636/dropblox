@@ -77,13 +77,15 @@ export async function fetchGameData(robloxUrl: string): Promise<RobloxGameData |
 
     if (!game) return null;
 
+    const genre = game.genre || "";
+
     return {
       name: game.name,
       description: (game.description || "").slice(0, 1000),
       thumbnail: thumb?.imageUrl || "",
       playing: game.playing || 0,
       visits: game.visits || 0,
-      genre: game.genre || "",
+      genre: genre,
     };
   } catch {
     return null;

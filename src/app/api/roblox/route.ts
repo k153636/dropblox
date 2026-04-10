@@ -41,8 +41,10 @@ export async function GET(req: NextRequest) {
     if (!gameData) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
+
     return NextResponse.json(gameData);
-  } catch {
+  } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "API request failed" }, { status: 502 });
   }
 }
