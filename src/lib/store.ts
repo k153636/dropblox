@@ -3,6 +3,7 @@ import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, searchP
 import { getCommentsByPostId, createComment, updateComment, deleteComment, subscribeToComments, Comment } from "./db-comments";
 import { toggleLike, hasLiked, getLikeCount, subscribeToLikes, subscribeToAllLikes } from "./db-likes";
 import { useAuthStore } from "./auth-store";
+import toast from "react-hot-toast";
 
 export interface GamePreview {
   name: string;
@@ -150,7 +151,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
   addPost: async (url: string, body: string, preview?: GamePreview) => {
     const user = useAuthStore.getState().user;
     if (!user) {
-      set({ error: "Must be signed in to create posts" });
+      useAuthStore.getState().openAuthModal();
       return;
     }
 
@@ -220,7 +221,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
   likePost: async (id: string) => {
     const user = useAuthStore.getState().user;
     if (!user) {
-      set({ error: "Must be signed in to like posts" });
+      useAuthStore.getState().openAuthModal();
       return;
     }
 
@@ -261,7 +262,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
   addComment: async (postId: string, body: string, parentId?: string) => {
     const user = useAuthStore.getState().user;
     if (!user) {
-      set({ error: "Must be signed in to comment" });
+      useAuthStore.getState().openAuthModal();
       return;
     }
 

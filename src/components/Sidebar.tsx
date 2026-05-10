@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Home, SquarePlus, User, Menu, X } from "lucide-react";
+import { useAuthStore } from "@/lib/auth-store";
 import PostModal from "./PostModal";
 import SearchBar from "./SearchBar";
 
@@ -17,8 +18,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
-
-  const openPostModal = () => setIsPostModalOpen(true);
+  const { user, openAuthModal } = useAuthStore();
+  const openPostModal = () => {
+    if (!user) {
+      openAuthModal();
+    } else {
+      setIsPostModalOpen(true);
+    }
+  };
   const closePostModal = () => setIsPostModalOpen(false);
 
   // Detect mobile

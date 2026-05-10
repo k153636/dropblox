@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { supabase } from "./supabase";
+import toast from "react-hot-toast";
 
 export interface User {
   id: string;
@@ -17,6 +18,7 @@ interface AuthStore {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+  isAuthModalOpen: boolean;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -25,6 +27,8 @@ interface AuthStore {
   signOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
   updateProfile: (updates: { bio?: string; username?: string }) => Promise<void>;
+  openAuthModal: () => void;
+  closeAuthModal: () => void;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -33,9 +37,10 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
       isLoading: false,
       error: null,
-
+      isAuthModalOpen: false,
+ 
       setUser: (user) => set({ user }),
-
+ 
       signInWithGithub: async () => {
         set({ isLoading: true, error: null });
         try {
@@ -45,10 +50,12 @@ export const useAuthStore = create<AuthStore>()(
               redirectTo: `${window.location.origin}/auth/callback`,
             },
           });
-
+ 
           if (error) throw error;
+          set({ isAuthModalOpen: false }); // Close modal on start of OAuth flow
         } catch (error: any) {
           set({ error: error.message, isLoading: false });
+          toast.error(`Login failed: ${error.message}`);
         }
       },
 
@@ -64,11 +71,13 @@ export const useAuthStore = create<AuthStore>()(
           });
 
           if (error) throw error;
+          set({ isAuthModalOpen: false });
         } catch (error: any) {
           set({ error: error.message, isLoading: false });
+          toast.error(`Login failed: ${error.message}`);
         }
       },
-
+ 
       signOut: async () => {
         set({ isLoading: true });
         try {
@@ -78,7 +87,10 @@ export const useAuthStore = create<AuthStore>()(
           set({ error: error.message, isLoading: false });
         }
       },
-
+ 
+      openAuthModal: () => set({ isAuthModalOpen: true }),
+      closeAuthModal: () => set({ isAuthModalOpen: false }),
+ 
       fetchUser: async () => {
         try {
           const { data: { session } } = await supabase.auth.getSession();
@@ -173,6 +185,7 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch (error: any) {
           set({ error: error.message });
+          toast.error(`Failed to update profile: ${error.message}`);
           throw error;
         }
       },

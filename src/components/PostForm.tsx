@@ -77,9 +77,12 @@ export default function PostForm() {
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
         <p className="text-zinc-400 text-sm">
           Please{" "}
-          <a href="/auth" className="text-emerald-400 hover:underline">
+          <button 
+            onClick={() => useAuthStore.getState().openAuthModal()} 
+            className="text-emerald-400 hover:underline font-medium"
+          >
             sign in
-          </a>{" "}
+          </button>{" "}
           to post a game
         </p>
       </div>

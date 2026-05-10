@@ -313,12 +313,12 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="rounded-[13px] overflow-hidden cursor-pointer" onClick={() => setShowDetail(true)}>
+    <article className="bg-zinc-900/60 border border-white/[0.06] rounded-[13px] overflow-hidden cursor-pointer hover:border-white/[0.1] transition-colors group" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500/30 to-emerald-700/20 ring-1 ring-white/[0.08] flex items-center justify-center text-emerald-400 text-sm font-bold">
               {post.author_name?.[0] || "?"}
             </div>
             <div className="flex flex-col">
@@ -390,20 +390,19 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                   alt={post.preview_name || "Game"}
                   className="w-full aspect-square object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 h-[34px] backdrop-blur-[2px] bg-zinc-900/40" style={{ maskImage: 'linear-gradient(to bottom, transparent, black)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black)' }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
               </div>
             )}
-            <div className="bg-zinc-900/80 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
+            <div className="bg-zinc-950/60 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
               <div className="flex items-start justify-between gap-[8px]">
-                <p className="font-semibold text-[15px] leading-tight">{post.preview_name}</p>
+                <p className="font-semibold text-[15px] leading-tight text-zinc-100">{post.preview_name}</p>
                 {post.preview_genre && post.preview_genre !== "All" && (
-                  <span className="flex-shrink-0 px-[8px] py-[2px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
+                  <span className="flex-shrink-0 px-[8px] py-[3px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-[5px] text-[11px] font-medium">
                     {post.preview_genre}
                   </span>
                 )}
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-[8px]">
                 <div className="flex gap-[13px] text-[12px] text-zinc-500">
                   {post.preview_playing !== undefined && (
                     <span>{Number(post.preview_playing).toLocaleString()} playing</span>
@@ -416,54 +415,56 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                   href={post.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-colors"
+                  className="flex-shrink-0 inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[7px] transition-colors shadow-lg shadow-emerald-900/30"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <Play size={14} fill="currentColor" />
-                  Play on Roblox
+                  <Play size={13} fill="currentColor" />
+                  Play
                 </a>
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-white/[0.04] border border-white/[0.06] rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
-            <span className="text-sm text-zinc-400">Roblox Game</span>
+          <div className="bg-white/[0.03] border border-white/[0.06] rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
+            <span className="text-sm text-zinc-500">Roblox Game</span>
             <a
               href={post.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] transition-colors"
+              className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[7px] transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
-              <Play size={14} fill="currentColor" />
-              Play on Roblox
+              <Play size={13} fill="currentColor" />
+              Play
             </a>
           </div>
         )}
 
-        {/* Actions - fixed width buttons to prevent layout shift */}
-        <div className="flex items-center gap-4 pt-1" onClick={(e) => e.stopPropagation()}>
+        {/* Actions */}
+        <div className="flex items-center gap-[5px] pt-1" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => likePost(post.id)}
-            className={`flex items-center justify-center gap-1.5 text-xs transition-colors min-w-[50px] ${
-              post.userLiked ? "text-red-400" : "text-zinc-400 hover:text-red-400"
+            className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
+              post.userLiked
+                ? "text-red-400 bg-red-500/10"
+                : "text-zinc-400 hover:text-red-400 hover:bg-red-500/10"
             }`}
           >
-            <Heart size={16} fill={post.userLiked ? "currentColor" : "none"} />
-            <span className="w-5 text-center tabular-nums">{post.likes}</span>
+            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} />
+            <span className="tabular-nums">{post.likes}</span>
           </button>
           <button
             onClick={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? () => setShowComments(!showComments) : undefined}
             disabled={!process.env.NEXT_PUBLIC_ENABLE_COMMENTS}
-            className={`flex items-center justify-center gap-1.5 text-xs min-w-[50px] ${
+            className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
               process.env.NEXT_PUBLIC_ENABLE_COMMENTS
-                ? "text-zinc-400 hover:text-blue-400 transition-colors"
+                ? "text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10"
                 : "text-zinc-600 cursor-not-allowed"
             }`}
             title={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? undefined : "コメント機能は現在無効化されています"}
           >
-            <MessageCircle size={16} />
-            <span className="w-5 text-center tabular-nums">{post.comments.length}</span>
+            <MessageCircle size={14} />
+            <span className="tabular-nums">{post.comments.length}</span>
           </button>
           {/* Copy Link Button */}
           <CopyLinkButton postId={post.id} gameUrl={post.url} />

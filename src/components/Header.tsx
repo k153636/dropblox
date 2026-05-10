@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useAuthStore } from "@/lib/auth-store";
 import { Menu } from "lucide-react";
 
@@ -52,44 +53,47 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
         {/* Right side - User auth */}
         <div className="flex-shrink-0">
           {user ? (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-[8px]">
+              <Link
+                href="/profile"
+                className="flex items-center gap-[8px] px-[10px] py-[6px] rounded-[8px] hover:bg-white/[0.06] transition-colors"
+              >
                 {user.avatarUrl ? (
                   <img
                     src={user.avatarUrl}
                     alt={user.username}
-                    className="w-8 h-8 rounded-full"
+                    className="w-7 h-7 rounded-full ring-1 ring-white/[0.1]"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-sm">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500/30 to-emerald-700/20 ring-1 ring-white/[0.1] flex items-center justify-center text-emerald-400 font-bold text-xs">
                     {user.username[0]?.toUpperCase()}
                   </div>
                 )}
-                <span className="text-sm text-zinc-300">{user.username}</span>
-              </div>
+                <span className="text-sm text-zinc-300 font-medium hidden sm:block">{user.username}</span>
+              </Link>
               <button
                 onClick={signOut}
-                className="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+                className="px-[10px] py-[6px] text-xs font-medium text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06] rounded-[8px] transition-all"
               >
                 Sign out
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-[8px]">
               <button
                 onClick={signInWithGithub}
-                className="px-3 py-2 text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-white rounded-lg backdrop-blur-sm transition-all flex items-center gap-1.5"
+                className="px-[10px] py-[6px] text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-200 rounded-[8px] transition-all flex items-center gap-[6px]"
               >
-                <GitHubIcon className="w-4 h-4" />
-                GitHub
+                <GitHubIcon className="w-[14px] h-[14px]" />
+                <span className="hidden sm:inline">GitHub</span>
               </button>
               <button
                 onClick={signInWithRoblox}
-                className="px-3 py-2 text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-white rounded-lg backdrop-blur-sm transition-all flex items-center gap-1.5"
+                className="px-[10px] py-[6px] text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-200 rounded-[8px] transition-all flex items-center gap-[6px]"
                 title="Requires Roblox OAuth setup"
               >
-                <RobloxIcon className="w-4 h-4" />
-                Roblox
+                <RobloxIcon className="w-[14px] h-[14px]" />
+                <span className="hidden sm:inline">Roblox</span>
               </button>
             </div>
           )}

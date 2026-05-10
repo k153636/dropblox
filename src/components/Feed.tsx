@@ -124,9 +124,25 @@ export default function Feed() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-[55px] space-y-[13px]">
-        <p className="text-[34px]">⏳</p>
-        <p className="text-zinc-400 text-lg font-medium">Loading...</p>
+      <div className="space-y-[21px]">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-zinc-900/60 border border-white/[0.06] rounded-[13px] overflow-hidden animate-pulse">
+            <div className="p-[21px] space-y-[13px]">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-white/[0.06]" />
+                <div className="space-y-[6px]">
+                  <div className="h-[12px] w-[89px] bg-white/[0.06] rounded-[4px]" />
+                  <div className="h-[10px] w-[55px] bg-white/[0.04] rounded-[4px]" />
+                </div>
+              </div>
+              <div className="bg-white/[0.04] rounded-[8px] aspect-square" />
+              <div className="flex gap-[5px]">
+                <div className="h-[28px] w-[54px] bg-white/[0.04] rounded-[6px]" />
+                <div className="h-[28px] w-[54px] bg-white/[0.04] rounded-[6px]" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -134,8 +150,10 @@ export default function Feed() {
   if (posts.length === 0) {
     return (
       <div className="text-center py-[55px] space-y-[13px]">
-        <p className="text-[34px]">🎮</p>
-        <p className="text-zinc-400 text-lg font-medium">No drops yet</p>
+        <div className="w-[55px] h-[55px] mx-auto bg-zinc-900/60 border border-white/[0.06] rounded-[13px] flex items-center justify-center text-[24px]">
+          🎮
+        </div>
+        <p className="text-zinc-200 text-lg font-semibold">No drops yet</p>
         <p className="text-zinc-500 text-sm">
           Be the first to share a Roblox game!
         </p>

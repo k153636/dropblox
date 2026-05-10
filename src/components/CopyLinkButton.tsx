@@ -29,21 +29,14 @@ export default function CopyLinkButton({ postId, gameUrl }: CopyLinkButtonProps)
   return (
     <button
       onClick={handleCopy}
-      className={`flex items-center justify-center gap-1.5 text-xs transition-colors min-w-[50px] ${
-        copied 
-          ? "text-emerald-400" 
-          : "text-zinc-400 hover:text-zinc-200"
+      className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all ${
+        copied
+          ? "text-emerald-400 bg-emerald-500/10"
+          : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]"
       }`}
       title={copied ? "コピーしました！" : "ゲームURLをコピー"}
     >
-      {copied ? (
-        <Check size={16} />
-      ) : (
-        <Link2 size={16} />
-      )}
-      <span className="w-5 text-center">
-        {copied ? "済" : ""}
-      </span>
+      {copied ? <Check size={14} /> : <Link2 size={14} />}
     </button>
   );
 }

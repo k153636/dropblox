@@ -187,41 +187,35 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                 <h3 className="font-semibold text-zinc-100">{preview.name}</h3>
                 <p className="text-sm text-zinc-400 line-clamp-2">{preview.description}</p>
                 <div className="flex items-center gap-[13px] text-xs text-zinc-500">
-                  {preview.genre && preview.genre !== "All" ? (
-                    <span className="px-[8px] py-[3px] bg-emerald-500/10 text-emerald-400 rounded-[5px] text-[11px] font-medium">
-                      {preview.genre}
-                    </span>
-                  ) : (
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setShowGenreDropdown(!showGenreDropdown)}
-                        className="flex items-center gap-[4px] px-[8px] py-[3px] bg-zinc-800 hover:bg-zinc-700 border border-white/[0.1] text-zinc-300 rounded-[5px] text-[11px] font-medium transition-colors"
-                      >
-                        {manualGenre || "ジャンルを選択"}
-                        <ChevronDown size={12} />
-                      </button>
-                      {showGenreDropdown && (
-                        <div className="absolute top-full left-0 mt-[4px] w-[160px] max-h-[200px] overflow-y-auto bg-zinc-900 border border-white/[0.1] rounded-[8px] shadow-xl z-10 py-[4px]">
-                          {ROBLOX_GENRES.map((g) => (
-                            <button
-                              key={g}
-                              type="button"
-                              onClick={() => {
-                                setManualGenre(g);
-                                setShowGenreDropdown(false);
-                              }}
-                              className={`w-full px-[12px] py-[6px] text-left text-[12px] hover:bg-white/[0.06] transition-colors ${
-                                manualGenre === g ? "text-emerald-400" : "text-zinc-300"
-                              }`}
-                            >
-                              {g}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowGenreDropdown(!showGenreDropdown)}
+                      className="flex items-center gap-[4px] px-[8px] py-[3px] bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 rounded-[5px] text-[11px] font-medium transition-colors"
+                    >
+                      {manualGenre || preview?.genre || "ジャンルを選択"}
+                      <ChevronDown size={12} />
+                    </button>
+                    {showGenreDropdown && (
+                      <div className="absolute top-full left-0 mt-[4px] w-[160px] max-h-[200px] overflow-y-auto bg-zinc-900 border border-white/[0.1] rounded-[8px] shadow-xl z-10 py-[4px]">
+                        {ROBLOX_GENRES.map((g) => (
+                          <button
+                            key={g}
+                            type="button"
+                            onClick={() => {
+                              setManualGenre(g);
+                              setShowGenreDropdown(false);
+                            }}
+                            className={`w-full px-[12px] py-[6px] text-left text-[12px] hover:bg-white/[0.06] transition-colors ${
+                              manualGenre === g ? "text-emerald-400" : "text-zinc-300"
+                            }`}
+                          >
+                            {g}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <span>{preview.playing.toLocaleString()} playing</span>
                   <span>{preview.visits.toLocaleString()} visits</span>
                 </div>
