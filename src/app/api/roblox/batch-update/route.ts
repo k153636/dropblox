@@ -26,15 +26,15 @@ export async function GET(req: NextRequest) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    // Find posts that haven't been updated in the last 24 hours (Hobby: daily cron)
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    // Find posts not updated in the last 1 minute, oldest first
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
 
     const { data: posts, error: fetchError } = await supabase
       .from("posts")
       .select("id, url, last_fetched_at")
-      .or(`last_fetched_at.lt.${oneDayAgo},last_fetched_at.is.null`)
+      .or(`last_fetched_at.lt.${oneMinuteAgo},last_fetched_at.is.null`)
       .order("last_fetched_at", { ascending: true, nullsFirst: true })
-      .limit(50);
+      .limit(20);
 
     if (fetchError) {
       console.error("Error fetching stale posts:", fetchError);
