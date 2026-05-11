@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Sidebar - mobile: hidden until opened, desktop: always visible */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-zinc-950/30 backdrop-blur-2xl border-r border-white/[0.05] shadow-[1px_0_40px_rgba(16,185,129,0.06),1px_0_0_rgba(255,255,255,0.03)] z-[40] transition-all duration-300 ease-out ${
+        className={`fixed left-0 top-0 h-full bg-zinc-950/65 backdrop-blur-2xl shadow-[1px_0_0_rgba(255,255,255,0.05),1px_0_0_rgba(16,185,129,0.05),4px_0_32px_rgba(0,0,0,0.4)] z-[40] transition-all duration-300 ease-out ${
           isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}
@@ -149,7 +149,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900/60 backdrop-blur-xl border border-white/[0.08] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
+          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-950/65 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_4px_20px_rgba(0,0,0,0.4)] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
           aria-label="Open sidebar"
         >
           <Menu size={21} className="flex-shrink-0" />

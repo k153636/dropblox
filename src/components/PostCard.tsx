@@ -321,7 +321,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="bg-white/[0.028] backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-white/[0.05] hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.06)] transition-all group" onClick={() => setShowDetail(true)}>
+    <article className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-zinc-950/65 hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.07)] transition-all group" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -401,7 +401,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
               </div>
             )}
-            <div className="bg-black/25 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
+            <div className="bg-black/50 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
               <div className="flex items-start justify-between gap-[8px]">
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-[15px] leading-tight text-zinc-100">{post.preview_name}</p>

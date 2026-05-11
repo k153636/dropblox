@@ -187,7 +187,7 @@ export default function Feed() {
         <FilterBar />
         <div className="space-y-[21px]">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white/[0.028] backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden animate-pulse">
+            <div key={i} className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden animate-pulse">
               <div className="p-[21px] space-y-[13px]">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-white/[0.06]" />
@@ -214,7 +214,7 @@ export default function Feed() {
       <>
         <FilterBar />
         <div className="text-center py-[55px] space-y-[13px]">
-          <div className="w-[55px] h-[55px] mx-auto bg-white/[0.04] backdrop-blur-md border border-white/[0.05] rounded-[13px] flex items-center justify-center text-[24px]">
+          <div className="w-[55px] h-[55px] mx-auto bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] flex items-center justify-center text-[24px]">
             🎮
           </div>
           <p className="text-zinc-200 text-lg font-semibold">
