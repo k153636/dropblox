@@ -5,6 +5,12 @@ import { useAuthStore } from "@/lib/auth-store";
 import { usePostStore } from "@/lib/store";
 import { X, ChevronDown } from "lucide-react";
 
+function fmt(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toLocaleString();
+}
+
 // Common Roblox game genres
 const ROBLOX_GENRES = [
   "Adventure",
@@ -146,7 +152,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
 
       {/* Modal */}
       <div className="fixed inset-0 z-[61] flex items-center justify-center p-[21px]">
-        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-900/70 backdrop-blur-xl border border-white/[0.08] rounded-[13px] shadow-2xl">
+        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-950/85 backdrop-blur-2xl border border-white/[0.07] rounded-[13px] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
           {/* Header */}
           <div className="flex items-center justify-between px-[21px] py-[13px] border-b border-white/[0.06]">
             <h2 className="text-lg font-semibold text-zinc-100">New Post</h2>
@@ -197,7 +203,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                       <ChevronDown size={12} />
                     </button>
                     {showGenreDropdown && (
-                      <div className="absolute top-full left-0 mt-[4px] w-[160px] max-h-[200px] overflow-y-auto bg-zinc-900 border border-white/[0.1] rounded-[8px] shadow-xl z-10 py-[4px]">
+                      <div className="absolute top-full left-0 mt-[4px] w-[160px] max-h-[200px] overflow-y-auto bg-zinc-950/95 backdrop-blur-xl border border-white/[0.08] rounded-[8px] shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-10 py-[4px]">
                         {ROBLOX_GENRES.map((g) => (
                           <button
                             key={g}
@@ -216,8 +222,8 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                       </div>
                     )}
                   </div>
-                  <span>{preview.playing.toLocaleString()} playing</span>
-                  <span>{preview.visits.toLocaleString()} visits</span>
+                  <span>{fmt(preview.playing)} playing</span>
+                  <span>{fmt(preview.visits)} visits</span>
                 </div>
               </div>
             )}

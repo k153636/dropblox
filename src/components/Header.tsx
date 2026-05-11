@@ -86,7 +86,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 top-[calc(100%+8px)] w-[160px] bg-zinc-900 border border-white/[0.08] rounded-[10px] shadow-xl overflow-hidden z-50">
+                <div className="absolute right-0 top-[calc(100%+8px)] w-[160px] bg-zinc-950/90 backdrop-blur-2xl border border-white/[0.07] rounded-[10px] shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden z-50">
                   <Link
                     href="/profile"
                     onClick={() => setMenuOpen(false)}

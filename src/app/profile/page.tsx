@@ -113,7 +113,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Bio — φ divider */}
-            <div className="mt-[21px] pt-[21px] border-t border-white/[0.06]">
+            <div className="mt-[21px] pt-[21px] border-t border-white/[0.05]">
               {isEditingBio ? (
                 <div className="space-y-[13px]">
                   <textarea

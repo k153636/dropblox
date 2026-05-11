@@ -104,7 +104,7 @@ function CommentItem({
   return (
     <div className={`${depth > 0 ? "ml-8 mt-3" : ""}`}>
       <div className="flex gap-3">
-        <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-zinc-400 text-xs font-bold flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-white/[0.08] flex items-center justify-center text-zinc-300 text-xs font-bold flex-shrink-0">
           {comment.author_name?.[0] || "?"}
         </div>
         <div className="flex-1 min-w-0">
@@ -128,7 +128,7 @@ function CommentItem({
                 type="text"
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
-                className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm focus:outline-none focus:border-zinc-500"
+                className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-[6px] px-2 py-1 text-sm text-zinc-200 focus:outline-none focus:border-emerald-500/40 transition-colors"
                 autoFocus
               />
               <button
@@ -203,12 +203,12 @@ function CommentItem({
                 placeholder="Reply..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
+                className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-[6px] px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/40 transition-colors"
               />
               <button
                 type="submit"
                 disabled={!replyText.trim()}
-                className="px-3 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded transition-colors disabled:opacity-50"
+                className="px-3 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[6px] transition-colors disabled:opacity-50"
               >
                 <Send size={14} />
               </button>
@@ -457,10 +457,10 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
         <div className="flex items-center gap-[5px] pt-1" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={handleLikeClick}
-            className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
+            className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all ${
               post.userLiked
                 ? "text-red-400 bg-red-500/10"
-                : "text-zinc-400 hover:text-red-400 hover:bg-red-500/10"
+                : "text-zinc-500 hover:text-red-400 hover:bg-red-500/[0.08]"
             }`}
           >
             <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} className={likeAnim ? "heart-pop" : ""} />
@@ -468,7 +468,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
           </button>
           <button
             onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10"
+            className="flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06]"
           >
             <MessageCircle size={14} />
             <span className="tabular-nums">{post.comments.length}</span>
@@ -482,9 +482,9 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
       {showComments && (
         <div className="border-t border-white/[0.04] p-[21px]" onClick={(e) => e.stopPropagation()}>
           {/* Comment count header */}
-          <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
+          <p className="text-[12px] font-medium text-zinc-500 mb-[13px] uppercase tracking-wider">
             {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}
-          </h3>
+          </p>
 
           {/* Add comment */}
           {currentUser ? (
@@ -512,7 +512,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                     <button
                       type="submit"
                       disabled={!commentText.trim()}
-                      className="px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-full transition-colors disabled:opacity-50"
+                      className="px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[6px] transition-colors disabled:opacity-50"
                     >
                       Comment
                     </button>
@@ -521,7 +521,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
               </div>
             </form>
           ) : (
-            <div className="mb-[21px] p-[13px] bg-zinc-800/50 rounded-[8px] text-center text-sm text-zinc-400">
+            <div className="mb-[21px] p-[13px] bg-white/[0.04] border border-white/[0.05] rounded-[8px] text-center text-sm text-zinc-500">
               Sign in to comment
             </div>
           )}

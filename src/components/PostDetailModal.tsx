@@ -4,6 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import type { Post } from "@/lib/db-posts";
 import { X, ChevronLeft, ChevronRight, Heart, ExternalLink, Maximize2, Minimize2 } from "lucide-react";
 
+function fmt(n: number | string | undefined): string {
+  const num = Number(n);
+  if (isNaN(num)) return "0";
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+  return num.toLocaleString();
+}
+
 interface PostDetailModalProps {
   post: Post | null;
   isOpen: boolean;
@@ -72,7 +80,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
 
       {/* Modal */}
       <div className={`fixed inset-0 z-[61] flex items-center justify-center p-[21px] ${fullscreen ? 'invisible' : ''}`}>
-        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-900/70 backdrop-blur-xl border border-white/[0.08] rounded-[13px] shadow-2xl">
+        <div className="w-full max-w-[610px] max-h-[90vh] overflow-y-auto bg-zinc-950/85 backdrop-blur-2xl border border-white/[0.07] rounded-[13px] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
           {/* Header */}
           <div className="flex items-center justify-between px-[21px] py-[13px] border-b border-white/[0.06]">
             <h2 className="text-lg font-semibold text-zinc-100 truncate pr-[13px]">
@@ -90,7 +98,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
           <div className="p-[21px] space-y-[21px]">
             {/* Screenshot Slider */}
             <div
-              className="relative aspect-video rounded-[8px] overflow-hidden bg-zinc-800 cursor-pointer"
+              className="relative aspect-video rounded-[8px] overflow-hidden bg-zinc-950 cursor-pointer"
               onClick={() => screenshots.length > 0 && setFullscreen(true)}
             >
               {screenshots.length > 0 ? (
@@ -177,19 +185,19 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
             </div>
 
             {/* Stats */}
-            <div className="flex items-center gap-[21px] py-[13px] border-y border-zinc-800">
+            <div className="flex items-center gap-[21px] py-[13px] border-y border-white/[0.06]">
               <div className="flex items-center gap-[8px] text-zinc-400">
-                <Heart size={21} className="text-emerald-500" fill="currentColor" />
-                <span className="font-medium">{post.likes || 0} likes</span>
+                <Heart size={16} className="text-emerald-500" fill="currentColor" />
+                <span className="text-sm font-medium">{post.likes || 0} likes</span>
               </div>
-              
+
               {(post.preview_playing || post.preview_visits) && (
                 <div className="flex items-center gap-[13px] text-sm text-zinc-500">
                   {post.preview_playing && (
-                    <span>{Number(post.preview_playing).toLocaleString()} playing</span>
+                    <span>{fmt(post.preview_playing)} playing</span>
                   )}
                   {post.preview_visits && (
-                    <span>{Number(post.preview_visits).toLocaleString()} visits</span>
+                    <span>{fmt(post.preview_visits)} visits</span>
                   )}
                 </div>
               )}
@@ -206,7 +214,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
                 href={post.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-[8px] px-[21px] py-[13px] bg-emerald-500 hover:bg-emerald-600 text-white rounded-[8px] font-medium text-sm transition-colors"
+                className="flex items-center gap-[8px] px-[21px] py-[13px] bg-emerald-500 hover:bg-emerald-400 text-white rounded-[8px] font-medium text-sm transition-colors"
               >
                 <ExternalLink size={16} />
                 Visit Game

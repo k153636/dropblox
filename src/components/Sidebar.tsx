@@ -132,8 +132,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   }}
                   className={`flex flex-row items-center justify-center rounded-[8px] transition-colors w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] ${
                     item.active
-                      ? "bg-white/[0.08] text-emerald-400"
-                      : "text-zinc-400 hover:bg-white/[0.06] hover:text-zinc-200"
+                      ? "bg-white/[0.11] text-emerald-400"
+                      : "text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200"
                   }`}
                 >
                   <Icon className="flex-shrink-0 w-[21px] h-[21px]" />
