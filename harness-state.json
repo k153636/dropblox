@@ -1,0 +1,16 @@
+{
+  "current_sprint": 1,
+  "sprints": {
+    "1": {
+      "status": "self_evaluated",
+      "retries": 1,
+      "generator_scores": {
+        "critical_サイドバーz-index": 10,
+        "critical_コメント常時有効": 10,
+        "critical_MobileNav表示": 9,
+        "normal_スタガーアニメ": 10,
+        "normal_ホバー浮遊感": 10
+      }
+    }
+  }
+}

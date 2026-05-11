@@ -73,7 +73,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Backdrop for mobile */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[39] transition-opacity"
+          className="fixed inset-0 bg-black/50 z-[55] transition-opacity"
           onClick={onToggle}
         />
       )}
@@ -87,7 +87,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Sidebar - Golden Ratio: Closed 89px, Open 144px (144/89 ≈ 1.618) */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-zinc-900/60 backdrop-blur-xl border-r border-white/[0.06] z-[40] transition-all duration-300 ease-out ${
+        className={`fixed left-0 top-0 h-full bg-zinc-900/60 backdrop-blur-xl border-r border-white/[0.06] z-[60] transition-all duration-300 ease-out ${
           isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}
@@ -161,7 +161,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900/60 backdrop-blur-xl border border-white/[0.08] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
+          className="fixed top-[13px] left-[13px] z-[65] p-[8px] bg-zinc-900/60 backdrop-blur-xl border border-white/[0.08] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
           aria-label="Open sidebar"
         >
           <Menu size={21} className="flex-shrink-0" />

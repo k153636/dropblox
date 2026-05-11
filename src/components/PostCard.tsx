@@ -249,12 +249,14 @@ interface PostCardProps {
     preview_genre?: string;
   };
   showActions?: boolean;
+  index?: number;
 }
 
-export default function PostCard({ post, showActions = false }: PostCardProps) {
+export default function PostCard({ post, showActions = false, index = 0 }: PostCardProps) {
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [likeAnimating, setLikeAnimating] = useState(false);
   const [editBody, setEditBody] = useState(post.body);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
@@ -313,7 +315,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="bg-zinc-900/60 border border-white/[0.06] rounded-[13px] overflow-hidden cursor-pointer hover:border-white/[0.1] transition-colors group" onClick={() => setShowDetail(true)}>
+    <article className="post-card bg-zinc-900/60 border border-white/[0.06] rounded-[13px] overflow-hidden cursor-pointer hover:border-white/[0.1] group" style={{ animationDelay: `${index * 60}ms` }} onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -393,7 +395,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
               </div>
             )}
-            <div className="bg-zinc-950/60 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
+            <div className="bg-zinc-950/60 px-[21px] pb-[21px] pt-[21px] -mt-1 space-y-[16px]">
               <div className="flex items-start justify-between gap-[8px]">
                 <p className="font-semibold text-[15px] leading-tight text-zinc-100">{post.preview_name}</p>
                 {post.preview_genre && post.preview_genre !== "All" && (
@@ -441,27 +443,22 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-[5px] pt-1" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-[8px] pt-1" onClick={(e) => e.stopPropagation()}>
           <button
-            onClick={() => likePost(post.id)}
+            onClick={() => { likePost(post.id); setLikeAnimating(true); }}
+            onAnimationEnd={() => setLikeAnimating(false)}
             className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
               post.userLiked
                 ? "text-red-400 bg-red-500/10"
                 : "text-zinc-400 hover:text-red-400 hover:bg-red-500/10"
             }`}
           >
-            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} />
+            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} className={likeAnimating ? "heart-pop" : ""} />
             <span className="tabular-nums">{post.likes}</span>
           </button>
           <button
-            onClick={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? () => setShowComments(!showComments) : undefined}
-            disabled={!process.env.NEXT_PUBLIC_ENABLE_COMMENTS}
-            className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
-              process.env.NEXT_PUBLIC_ENABLE_COMMENTS
-                ? "text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10"
-                : "text-zinc-600 cursor-not-allowed"
-            }`}
-            title={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? undefined : "コメント機能は現在無効化されています"}
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10"
           >
             <MessageCircle size={14} />
             <span className="tabular-nums">{post.comments.length}</span>
@@ -472,8 +469,8 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
       </div>
 
       {/* Comments section */}
-      {!!process.env.NEXT_PUBLIC_ENABLE_COMMENTS && (
-        <div className="border-t border-white/[0.06] p-[21px]">
+      {showComments && (
+        <div className="comment-section border-t border-white/[0.06] p-[21px]">
           {/* Comment count header */}
           <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
             {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}
