@@ -130,7 +130,7 @@ export default function Feed() {
           onClick={() => setSortBy("recent")}
           className={`flex items-center gap-[6px] px-[13px] py-[6px] rounded-[8px] text-xs font-medium transition-all ${
             sortBy === "recent"
-              ? "bg-white/[0.1] text-zinc-100 border border-white/[0.1]"
+              ? "bg-white/[0.08] text-zinc-100"
               : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
           }`}
         >
@@ -141,7 +141,7 @@ export default function Feed() {
           onClick={() => setSortBy("popular")}
           className={`flex items-center gap-[6px] px-[13px] py-[6px] rounded-[8px] text-xs font-medium transition-all ${
             sortBy === "popular"
-              ? "bg-white/[0.1] text-zinc-100 border border-white/[0.1]"
+              ? "bg-white/[0.08] text-zinc-100"
               : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
           }`}
         >
@@ -187,7 +187,7 @@ export default function Feed() {
         <FilterBar />
         <div className="space-y-[21px]">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-zinc-900/60 border border-white/[0.06] rounded-[13px] overflow-hidden animate-pulse">
+            <div key={i} className="bg-white/[0.028] backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden animate-pulse">
               <div className="p-[21px] space-y-[13px]">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-white/[0.06]" />
@@ -214,7 +214,7 @@ export default function Feed() {
       <>
         <FilterBar />
         <div className="text-center py-[55px] space-y-[13px]">
-          <div className="w-[55px] h-[55px] mx-auto bg-zinc-900/60 border border-white/[0.06] rounded-[13px] flex items-center justify-center text-[24px]">
+          <div className="w-[55px] h-[55px] mx-auto bg-white/[0.04] backdrop-blur-md border border-white/[0.05] rounded-[13px] flex items-center justify-center text-[24px]">
             🎮
           </div>
           <p className="text-zinc-200 text-lg font-semibold">

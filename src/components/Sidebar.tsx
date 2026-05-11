@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Sidebar - mobile: hidden until opened, desktop: always visible */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-zinc-900/50 backdrop-blur-xl border-r border-emerald-500/[0.08] shadow-[1px_0_20px_rgba(16,185,129,0.04)] z-[40] transition-all duration-300 ease-out ${
+        className={`fixed left-0 top-0 h-full bg-zinc-950/30 backdrop-blur-2xl border-r border-white/[0.05] shadow-[1px_0_40px_rgba(16,185,129,0.06),1px_0_0_rgba(255,255,255,0.03)] z-[40] transition-all duration-300 ease-out ${
           isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}

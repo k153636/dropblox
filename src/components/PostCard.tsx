@@ -304,7 +304,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="bg-zinc-900/60 border border-white/[0.06] rounded-[13px] overflow-hidden cursor-pointer hover:border-white/[0.1] transition-colors group" onClick={() => setShowDetail(true)}>
+    <article className="bg-white/[0.028] backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-white/[0.05] hover:border-white/[0.08] transition-all group" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -373,7 +373,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
         {/* Game preview card */}
         {hasPreview ? (
-          <div className="rounded-[8px] overflow-hidden border border-white/[0.06]">
+          <div className="rounded-[8px] overflow-hidden border border-white/[0.04]">
             {post.preview_thumbnail && (
               <div className="relative">
                 <img
@@ -384,7 +384,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
               </div>
             )}
-            <div className="bg-zinc-950/60 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
+            <div className="bg-black/25 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
               <div className="flex items-start justify-between gap-[8px]">
                 <p className="font-semibold text-[15px] leading-tight text-zinc-100">{post.preview_name}</p>
                 {post.preview_genre && post.preview_genre !== "All" && (
@@ -416,7 +416,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-white/[0.03] border border-white/[0.06] rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
+          <div className="bg-white/[0.02] border border-white/[0.04] rounded-[8px] p-[13px] flex items-center justify-between gap-[13px]">
             <span className="text-sm text-zinc-500">Roblox Game</span>
             <a
               href={post.url}
@@ -458,7 +458,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
       {/* Comments section */}
       {showComments && (
-        <div className="border-t border-white/[0.06] p-[21px]" onClick={(e) => e.stopPropagation()}>
+        <div className="border-t border-white/[0.04] p-[21px]" onClick={(e) => e.stopPropagation()}>
           {/* Comment count header */}
           <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
             {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}
