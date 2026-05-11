@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getPosts, getPostById, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, getDistinctGenres, Post } from "./db-posts";
+import { getPosts, getPostById, getGameStatsByIds, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, getDistinctGenres, Post } from "./db-posts";
 import { getCommentsByPostId, createComment, updateComment, deleteComment, Comment } from "./db-comments";
 import { toggleLike, hasLiked, getLikeCount, subscribeToAllLikes } from "./db-likes";
 import { toggleCommentLike } from "./db-comment-likes";
@@ -49,6 +49,7 @@ interface PostStore {
   loadGenres: () => Promise<void>;
   setGenre: (genre: string) => void;
   setSortBy: (sort: "recent" | "popular") => void;
+  refreshGameStats: () => Promise<void>;
   loadComments: (postId: string) => Promise<void>;
   addPost: (url: string, body: string, preview?: GamePreview) => Promise<void>;
   updatePost: (id: string, body: string) => Promise<void>;
@@ -625,7 +626,14 @@ export const usePostStore = create<PostStore>((set, get) => ({
       )
       .subscribe();
 
+    // Poll game stats every 60 s — fallback for when Supabase Realtime
+    // postgres_changes is not configured for the posts table
+    const statsInterval = setInterval(() => {
+      get().refreshGameStats();
+    }, 60_000);
+
     return () => {
+      clearInterval(statsInterval);
       postsSubscription.unsubscribe();
       likesSubscription.unsubscribe();
       commentsSubscription.unsubscribe();
@@ -669,5 +677,29 @@ export const usePostStore = create<PostStore>((set, get) => ({
 
   setSearchQuery: (query: string) => {
     set({ searchQuery: query });
+  },
+
+  refreshGameStats: async () => {
+    const { posts } = get();
+    if (posts.length === 0) return;
+    const ids = posts.map((p) => p.id);
+    const freshStats = await getGameStatsByIds(ids);
+    if (freshStats.length === 0) return;
+    const statsMap = new Map(freshStats.map((s) => [s.id, s]));
+    set((state) => ({
+      posts: state.posts.map((p) => {
+        const s = statsMap.get(p.id);
+        if (!s) return p;
+        return {
+          ...p,
+          preview_name: s.preview_name,
+          preview_thumbnail: s.preview_thumbnail,
+          preview_playing: s.preview_playing,
+          preview_visits: s.preview_visits,
+          preview_genre: s.preview_genre,
+          last_fetched_at: s.last_fetched_at,
+        };
+      }),
+    }));
   },
 }));

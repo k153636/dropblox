@@ -209,6 +209,17 @@ export async function getPostCountByUserId(userId: string): Promise<number> {
   return count || 0;
 }
 
+// Fetch lightweight game stats for a list of post IDs (for polling)
+export async function getGameStatsByIds(ids: string[]): Promise<Pick<Post, "id" | "preview_name" | "preview_thumbnail" | "preview_playing" | "preview_visits" | "preview_genre" | "last_fetched_at">[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("posts")
+    .select("id, preview_name, preview_thumbnail, preview_playing, preview_visits, preview_genre, last_fetched_at")
+    .in("id", ids);
+  if (error) return [];
+  return (data as any[]) || [];
+}
+
 // Subscribe to post changes
 export function subscribeToPosts(callback: (payload: any) => void) {
   return supabase
