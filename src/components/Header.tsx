@@ -42,7 +42,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-zinc-900/40 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-zinc-900/40 backdrop-blur-xl shadow-[0_1px_0_rgba(16,185,129,0.05)]">
       <div 
         className={`h-[55px] flex items-center justify-between transition-all duration-300 ${
           sidebarOpen ? "md:ml-[144px] px-[21px]" : "md:ml-[89px] px-[21px]"
