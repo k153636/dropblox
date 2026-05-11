@@ -30,3 +30,5 @@ RETURNS TABLE(genre text, post_count bigint) AS $$
   ORDER BY post_count DESC
   LIMIT limit_n;
 $$ LANGUAGE SQL STABLE SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION get_distinct_genres(int) TO anon, authenticated;
