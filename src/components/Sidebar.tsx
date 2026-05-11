@@ -93,9 +93,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Inverse corners at top — circles in page bg color punch out the corners */}
-        <div className="absolute top-0 left-0 w-[26px] h-[26px] rounded-full bg-zinc-950 pointer-events-none z-10" style={{ transform: 'translate(-13px, -13px)' }} />
-        <div className="absolute top-0 right-0 w-[26px] h-[26px] rounded-full bg-zinc-950 pointer-events-none z-10" style={{ transform: 'translate(13px, -13px)' }} />
+        {/* Inverted corners — glass bleeds outward at top to flow into header */}
+        <div
+          className="absolute top-0 w-[13px] h-[13px] bg-zinc-950/65 backdrop-blur-2xl pointer-events-none z-10"
+          style={{ left: '-13px', borderBottomRightRadius: '13px' }}
+        />
+        <div
+          className="absolute top-0 w-[13px] h-[13px] bg-zinc-950/65 backdrop-blur-2xl pointer-events-none z-10"
+          style={{ right: '-13px', borderBottomLeftRadius: '13px' }}
+        />
 
         {/* X button when open */}
         {isOpen && (
