@@ -193,7 +193,7 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
                       onClick={() => setShowGenreDropdown(!showGenreDropdown)}
                       className="flex items-center gap-[4px] px-[8px] py-[3px] bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 rounded-[5px] text-[11px] font-medium transition-colors"
                     >
-                      {manualGenre || preview?.genre || "ジャンルを選択"}
+                      {manualGenre || preview?.genre || "Select genre"}
                       <ChevronDown size={12} />
                     </button>
                     {showGenreDropdown && (

@@ -117,7 +117,7 @@ export default function ProfilePage() {
                   <textarea
                     value={bioText}
                     onChange={(e) => setBioText(e.target.value)}
-                    placeholder="自己紹介を書いてください..."
+                    placeholder="Write a short bio..."
                     maxLength={200}
                     rows={3}
                     className="w-full px-[13px] py-[13px] bg-white/[0.04] border border-white/[0.08] rounded-[8px] text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20 transition-all resize-none text-sm leading-relaxed"
@@ -132,7 +132,7 @@ export default function ProfilePage() {
                         className="flex items-center gap-[5px] px-[13px] py-[8px] text-xs text-zinc-500 hover:text-zinc-300 rounded-[8px] hover:bg-zinc-800/60 transition-all"
                       >
                         <X size={13} />
-                        キャンセル
+                        Cancel
                       </button>
                       <button
                         onClick={handleSaveBio}
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                         className="flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-medium bg-emerald-500/90 hover:bg-emerald-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white rounded-[8px] transition-all"
                       >
                         <Check size={13} />
-                        {bioSaving ? "保存中..." : "保存"}
+                        {bioSaving ? "Saving..." : "Save"}
                       </button>
                     </div>
                   </div>
@@ -148,12 +148,12 @@ export default function ProfilePage() {
               ) : (
                 <div className="flex items-start gap-[13px]">
                   <p className="text-zinc-400 text-sm flex-1 leading-relaxed">
-                    {user.bio || <span className="text-zinc-600 italic">自己紹介はまだありません</span>}
+                    {user.bio || <span className="text-zinc-600 italic">No bio yet</span>}
                   </p>
                   <button
                     onClick={() => setIsEditingBio(true)}
                     className="shrink-0 p-[5px] text-zinc-600 hover:text-emerald-400 transition-colors"
-                    title="自己紹介を編集"
+                    title="Edit bio"
                   >
                     <Pencil size={13} />
                   </button>

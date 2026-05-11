@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, Post } from "./db-posts";
+import { getPosts, getPostById, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, getDistinctGenres, Post } from "./db-posts";
 import { getCommentsByPostId, createComment, updateComment, deleteComment, Comment } from "./db-comments";
 import { toggleLike, hasLiked, getLikeCount, subscribeToAllLikes } from "./db-likes";
 import { toggleCommentLike } from "./db-comment-likes";
@@ -31,16 +31,24 @@ interface PostStore {
   error: string | null;
   hasMore: boolean;
   offset: number;
-  
+
+  // Filter / Sort
+  activeGenre: string;
+  sortBy: "recent" | "popular";
+  genres: string[];
+
   // Search
   searchQuery: string;
   searchResults: Post[];
   isSearching: boolean;
   hasSearched: boolean;
-  
+
   // Actions
   loadPosts: () => Promise<void>;
   loadMorePosts: () => Promise<void>;
+  loadGenres: () => Promise<void>;
+  setGenre: (genre: string) => void;
+  setSortBy: (sort: "recent" | "popular") => void;
   loadComments: (postId: string) => Promise<void>;
   addPost: (url: string, body: string, preview?: GamePreview) => Promise<void>;
   updatePost: (id: string, body: string) => Promise<void>;
@@ -67,7 +75,12 @@ export const usePostStore = create<PostStore>((set, get) => ({
   error: null,
   hasMore: true,
   offset: 0,
-  
+
+  // Filter / Sort state
+  activeGenre: "",
+  sortBy: "recent",
+  genres: [],
+
   // Search state
   searchQuery: "",
   searchResults: [],
@@ -75,9 +88,10 @@ export const usePostStore = create<PostStore>((set, get) => ({
   hasSearched: false,
 
   loadPosts: async () => {
+    const { activeGenre, sortBy } = get();
     set({ isLoading: true, error: null, offset: 0 });
     try {
-      const posts = await getPosts(20, 0);
+      const posts = await getPosts(20, 0, activeGenre || undefined, sortBy);
       const user = useAuthStore.getState().user;
       
       // Load likes status for each post
@@ -106,12 +120,12 @@ export const usePostStore = create<PostStore>((set, get) => ({
   },
 
   loadMorePosts: async () => {
-    const { offset, posts, isLoadingMore } = get();
+    const { offset, posts, isLoadingMore, activeGenre, sortBy } = get();
     if (isLoadingMore) return;
-    
+
     set({ isLoadingMore: true });
     try {
-      const newPosts = await getPosts(20, offset);
+      const newPosts = await getPosts(20, offset, activeGenre || undefined, sortBy);
       const user = useAuthStore.getState().user;
       
       // Load likes status for each post
@@ -491,25 +505,27 @@ export const usePostStore = create<PostStore>((set, get) => ({
           };
         });
       } else if (payload.eventType === "UPDATE") {
-        // Post updated
-        const updatedPost = payload.new as Post;
-        set((state) => ({
-          posts: state.posts.map((p) =>
-            p.id === updatedPost.id
-              ? {
-                  ...p,
-                  body: updatedPost.body,
-                  preview_name: updatedPost.preview_name,
-                  preview_description: updatedPost.preview_description,
-                  preview_thumbnail: updatedPost.preview_thumbnail,
-                  preview_playing: updatedPost.preview_playing,
-                  preview_visits: updatedPost.preview_visits,
-                  preview_genre: updatedPost.preview_genre,
-                  last_fetched_at: updatedPost.last_fetched_at,
-                }
-              : p
-          ),
-        }));
+        const postId = (payload.new as { id: string }).id;
+        getPostById(postId).then((updated) => {
+          if (!updated) return;
+          set((state) => ({
+            posts: state.posts.map((p) =>
+              p.id === postId
+                ? {
+                    ...p,
+                    body: updated.body,
+                    preview_name: updated.preview_name,
+                    preview_description: updated.preview_description,
+                    preview_thumbnail: updated.preview_thumbnail,
+                    preview_playing: updated.preview_playing,
+                    preview_visits: updated.preview_visits,
+                    preview_genre: updated.preview_genre,
+                    last_fetched_at: updated.last_fetched_at,
+                  }
+                : p
+            ),
+          }));
+        });
       } else if (payload.eventType === "DELETE") {
         // Post deleted
         const deletedId = payload.old.id;
@@ -614,6 +630,21 @@ export const usePostStore = create<PostStore>((set, get) => ({
       likesSubscription.unsubscribe();
       commentsSubscription.unsubscribe();
     };
+  },
+
+  loadGenres: async () => {
+    const genres = await getDistinctGenres(8);
+    set({ genres });
+  },
+
+  setGenre: (genre: string) => {
+    set({ activeGenre: genre });
+    get().loadPosts();
+  },
+
+  setSortBy: (sort: "recent" | "popular") => {
+    set({ sortBy: sort });
+    get().loadPosts();
   },
 
   // Search Actions

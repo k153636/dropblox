@@ -63,13 +63,24 @@ export async function createPost(
   return data as Post;
 }
 
-// Get all posts (with pagination)
-export async function getPosts(limit = 20, offset = 0): Promise<Post[]> {
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .range(offset, offset + limit - 1);
+// Get all posts (with pagination, optional genre filter and sort)
+export async function getPosts(
+  limit = 20,
+  offset = 0,
+  genre?: string,
+  sortBy: "recent" | "popular" = "recent"
+): Promise<Post[]> {
+  let query = supabase.from("posts").select("*");
+
+  if (genre) query = query.eq("preview_genre", genre);
+
+  if (sortBy === "popular") {
+    query = query.order("likes", { ascending: false });
+  } else {
+    query = query.order("created_at", { ascending: false });
+  }
+
+  const { data, error } = await query.range(offset, offset + limit - 1);
 
   if (error) {
     console.error("Error fetching posts:", error);

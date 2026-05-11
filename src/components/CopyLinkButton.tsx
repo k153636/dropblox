@@ -13,11 +13,8 @@ export default function CopyLinkButton({ postId, gameUrl }: CopyLinkButtonProps)
 
   const handleCopy = async () => {
     try {
-      // ゲームURLをコピー
       await navigator.clipboard.writeText(gameUrl);
       setCopied(true);
-      
-      // 2秒後に元のアイコンに戻す
       setTimeout(() => {
         setCopied(false);
       }, 2000);
@@ -34,7 +31,7 @@ export default function CopyLinkButton({ postId, gameUrl }: CopyLinkButtonProps)
           ? "text-emerald-400 bg-emerald-500/10"
           : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]"
       }`}
-      title={copied ? "コピーしました！" : "ゲームURLをコピー"}
+      title={copied ? "Copied!" : "Copy game URL"}
     >
       {copied ? <Check size={14} /> : <Link2 size={14} />}
     </button>

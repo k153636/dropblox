@@ -47,17 +47,15 @@ function CommentItem({
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.body);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  
   const addComment = usePostStore((s) => s.addComment);
   const updateComment = usePostStore((s) => s.updateComment);
   const deleteComment = usePostStore((s) => s.deleteComment);
+  const likeComment = usePostStore((s) => s.likeComment);
   const currentUser = useAuthStore((s) => s.user);
   const childComments = usePostStore((s) =>
     s.posts.find(p => p.id === postId)?.comments.filter(
       c => c.parent_id === comment.id
-    ) || []
+    ) ?? []
   );
 
   async function handleReply(e: React.FormEvent) {
@@ -84,9 +82,7 @@ function CommentItem({
   }
 
   function handleLike() {
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-    // TODO: implement comment likes in backend
+    likeComment(postId, comment.id);
   }
 
   const isAuthor = currentUser?.id === comment.author_id;
@@ -155,11 +151,11 @@ function CommentItem({
               <button
                 onClick={handleLike}
                 className={`flex items-center justify-center gap-1 text-xs transition-colors min-w-[40px] ${
-                  liked ? "text-red-400" : "text-zinc-500 hover:text-red-400"
+                  comment.user_has_liked ? "text-red-400" : "text-zinc-500 hover:text-red-400"
                 }`}
               >
-                <Heart size={14} fill={liked ? "currentColor" : "none"} />
-                <span className="w-4 text-center">{likeCount > 0 ? likeCount : " "}</span>
+                <Heart size={14} fill={comment.user_has_liked ? "currentColor" : "none"} />
+                <span className="w-4 text-center">{comment.comment_likes_count > 0 ? comment.comment_likes_count : " "}</span>
               </button>
               
               {/* Reply */}
@@ -258,9 +254,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
   const [editBody, setEditBody] = useState(post.body);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
-  const [hasLoadedComments, setHasLoadedComments] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
-  const [expanded, setExpanded] = useState(false);
   
   const likePost = usePostStore((s) => s.likePost);
   const addComment = usePostStore((s) => s.addComment);
@@ -275,9 +269,6 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
       setCommentsLoading(true);
       setCommentsError(null);
       loadComments(post.id)
-        .then(() => {
-          setHasLoadedComments(true);
-        })
         .catch((err) => {
           setCommentsError("Failed to load comments");
           console.error("Error loading comments:", err);
@@ -350,7 +341,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
         {/* Body - editable if editing */}
         {isEditing ? (
-          <form onSubmit={handleEdit} className="space-y-[8px]">
+          <form onSubmit={handleEdit} onClick={(e) => e.stopPropagation()} className="space-y-[8px]">
             <textarea
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
@@ -454,14 +445,8 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
             <span className="tabular-nums">{post.likes}</span>
           </button>
           <button
-            onClick={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? () => setShowComments(!showComments) : undefined}
-            disabled={!process.env.NEXT_PUBLIC_ENABLE_COMMENTS}
-            className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
-              process.env.NEXT_PUBLIC_ENABLE_COMMENTS
-                ? "text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10"
-                : "text-zinc-600 cursor-not-allowed"
-            }`}
-            title={process.env.NEXT_PUBLIC_ENABLE_COMMENTS ? undefined : "コメント機能は現在無効化されています"}
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10"
           >
             <MessageCircle size={14} />
             <span className="tabular-nums">{post.comments.length}</span>
@@ -472,8 +457,8 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
       </div>
 
       {/* Comments section */}
-      {!!process.env.NEXT_PUBLIC_ENABLE_COMMENTS && (
-        <div className="border-t border-white/[0.06] p-[21px]">
+      {showComments && (
+        <div className="border-t border-white/[0.06] p-[21px]" onClick={(e) => e.stopPropagation()}>
           {/* Comment count header */}
           <h3 className="text-lg font-bold text-zinc-200 mb-[21px]">
             {post.comments.length} {post.comments.length === 1 ? "comment" : "comments"}

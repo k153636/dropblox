@@ -33,7 +33,6 @@ export default function SearchBar({ sidebarOpen = true }: SearchBarProps) {
             else inputRef.current?.focus();
           }}
         >
-          {/* アイコン: 開閉に合わせてサイズ変化 */}
           <Search
             className="flex-shrink-0 transition-all duration-300"
             style={{
@@ -43,7 +42,6 @@ export default function SearchBar({ sidebarOpen = true }: SearchBarProps) {
             }}
           />
 
-          {/* 入力エリア: 幅・透明度をサイドバーと同期してアニメーション */}
           <div
             style={{
               maxWidth: sidebarOpen ? "200px" : "0px",
@@ -59,13 +57,12 @@ export default function SearchBar({ sidebarOpen = true }: SearchBarProps) {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="検索..."
+              placeholder="Search..."
               tabIndex={sidebarOpen ? 0 : -1}
               className="w-full bg-transparent text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none"
             />
           </div>
 
-          {/* クリアボタン */}
           <div
             style={{
               maxWidth: sidebarOpen && inputValue ? "20px" : "0px",

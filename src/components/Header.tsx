@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@/lib/auth-store";
-import { Menu } from "lucide-react";
+import { Menu, LogOut, User } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 const GitHubIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -27,6 +28,18 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps) {
   const { user, signInWithGithub, signInWithRoblox, signOut } = useAuthStore();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-zinc-900/40 backdrop-blur-xl">
@@ -45,17 +58,17 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
           >
             <Menu size={21} />
           </button>
-          <h1 className="text-xl font-bold tracking-tight">
+          <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
             <span className="text-emerald-400">drop</span>blox
-          </h1>
+          </Link>
         </div>
 
         {/* Right side - User auth */}
         <div className="flex-shrink-0">
           {user ? (
-            <div className="flex items-center gap-[8px]">
-              <Link
-                href="/profile"
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
                 className="flex items-center gap-[8px] px-[10px] py-[6px] rounded-[8px] hover:bg-white/[0.06] transition-colors"
               >
                 {user.avatarUrl ? (
@@ -70,13 +83,28 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
                   </div>
                 )}
                 <span className="text-sm text-zinc-300 font-medium hidden sm:block">{user.username}</span>
-              </Link>
-              <button
-                onClick={signOut}
-                className="px-[10px] py-[6px] text-xs font-medium text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06] rounded-[8px] transition-all"
-              >
-                Sign out
               </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 top-[calc(100%+8px)] w-[160px] bg-zinc-900 border border-white/[0.08] rounded-[10px] shadow-xl overflow-hidden z-50">
+                  <Link
+                    href="/profile"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-[8px] px-[13px] py-[10px] text-sm text-zinc-300 hover:bg-white/[0.06] transition-colors"
+                  >
+                    <User size={14} className="text-zinc-500" />
+                    Profile
+                  </Link>
+                  <div className="border-t border-white/[0.06]" />
+                  <button
+                    onClick={() => { signOut(); setMenuOpen(false); }}
+                    className="w-full flex items-center gap-[8px] px-[13px] py-[10px] text-sm text-zinc-500 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+                  >
+                    <LogOut size={14} />
+                    Sign out
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-[8px]">

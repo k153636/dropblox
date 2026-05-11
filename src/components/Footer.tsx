@@ -13,13 +13,13 @@ export default function Footer() {
               href="/privacy" 
               className="text-zinc-400 hover:text-zinc-200 transition-colors"
             >
-              プライバシーポリシー
+              Privacy Policy
             </Link>
             <Link 
               href="/terms" 
               className="text-zinc-400 hover:text-zinc-200 transition-colors"
             >
-              利用規約
+              Terms of Service
             </Link>
           </div>
         </div>

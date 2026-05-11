@@ -99,13 +99,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           <div className="px-[13px] mb-[13px]">
             <button
               onClick={openPostModal}
-              className={`flex flex-col items-center justify-center bg-emerald-500/80 hover:bg-emerald-500 backdrop-blur-sm text-white rounded-[8px] transition-all ${
-                isOpen && !isMobile
-                  ? "w-[89px] h-[89px] gap-[8px] mx-auto p-0"
-                  : "w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] flex-row"
-              }`}
+              className="flex flex-row items-center justify-center bg-emerald-500/80 hover:bg-emerald-500 backdrop-blur-sm text-white rounded-[8px] transition-all w-full min-h-[47px] px-[13px] py-[13px] gap-[13px]"
             >
-              <SquarePlus className={`flex-shrink-0 ${isOpen && !isMobile ? "w-[34px] h-[34px]" : "w-[21px] h-[21px]"}`} />
+              <SquarePlus className="flex-shrink-0 w-[21px] h-[21px]" />
               {isOpen && <span className="font-medium text-xs whitespace-nowrap">New Post</span>}
             </button>
           </div>
@@ -124,17 +120,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   onClick={() => {
                     if (isMobile && isOpen) onToggle();
                   }}
-                  className={`flex flex-col items-center justify-center rounded-[8px] transition-colors ${
+                  className={`flex flex-row items-center justify-center rounded-[8px] transition-colors w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] ${
                     item.active
                       ? "bg-white/[0.08] text-emerald-400"
                       : "text-zinc-400 hover:bg-white/[0.06] hover:text-zinc-200"
-                  } ${
-                    isOpen && !isMobile
-                      ? "w-[89px] h-[89px] gap-[8px] mx-auto p-0"
-                      : "w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] flex-row"
                   }`}
                 >
-                  <Icon className={`flex-shrink-0 ${isOpen && !isMobile ? "w-[34px] h-[34px]" : "w-[21px] h-[21px]"}`} />
+                  <Icon className="flex-shrink-0 w-[21px] h-[21px]" />
                   {isOpen && <span className="font-medium text-xs whitespace-nowrap">{item.label}</span>}
                 </Link>
               );
