@@ -166,7 +166,7 @@ export default function Feed() {
   const endIdx = Math.min(posts.length, visibleRange.end);
 
   return (
-    <div ref={containerRef} className="space-y-[34px]">
+    <div ref={containerRef} className="space-y-[21px]">
       {/* Virtual padding top */}
       {startIdx > 0 && (
         <div style={{ height: startIdx * 200 }} className="w-full" />
@@ -180,7 +180,7 @@ export default function Feed() {
           data-id={post.id}
           data-index={startIdx + idx}
         >
-          <PostCard post={post} index={startIdx + idx} />
+          <PostCard post={post} />
         </div>
       ))}
       

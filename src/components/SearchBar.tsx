@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useRef, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 
@@ -10,60 +10,84 @@ interface SearchBarProps {
 
 export default function SearchBar({ sidebarOpen = true }: SearchBarProps) {
   const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    
-    // 検索結果ページに遷移
-    router.push(`/search?q=${encodeURIComponent(inputValue)}`);
+    router.push(`/search?q=${encodeURIComponent(inputValue.trim())}`);
   };
-
-  const handleClear = () => {
-    setInputValue("");
-  };
-
-  // Sidebarが閉じている時はアイコンのみ表示
-  if (!sidebarOpen) {
-    return (
-      <div className="flex justify-center py-2">
-        <button
-          onClick={() => router.push('/search')}
-          className="p-2 text-zinc-400 hover:text-emerald-400 transition-colors"
-          title="検索"
-        >
-          <Search className="w-5 h-5" />
-        </button>
-      </div>
-    );
-  }
 
   return (
-    <div className="px-3 py-2">
-      <form onSubmit={handleSubmit} className="relative">
-        <div className="relative flex items-center">
-          <Search className="absolute left-2.5 w-4 h-4 text-zinc-500" />
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="ゲームを検索..."
-            className="w-full pl-9 pr-8 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg 
-                       text-sm text-zinc-200 placeholder-zinc-500
-                       focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20
-                       backdrop-blur-sm transition-all"
+    <div className="px-[13px] py-[8px]">
+      <form onSubmit={handleSubmit}>
+        <div
+          className={`flex items-center w-full rounded-[8px] transition-all duration-300 ${
+            sidebarOpen
+              ? "bg-white/[0.04] border border-white/[0.08] px-[10px] py-[7px] gap-[6px] focus-within:border-emerald-500/40 focus-within:bg-white/[0.06]"
+              : "justify-center min-h-[47px] hover:bg-white/[0.06] cursor-pointer"
+          }`}
+          onClick={() => {
+            if (!sidebarOpen) router.push("/search");
+            else inputRef.current?.focus();
+          }}
+        >
+          {/* アイコン: 開閉に合わせてサイズ変化 */}
+          <Search
+            className="flex-shrink-0 transition-all duration-300"
+            style={{
+              width: sidebarOpen ? "13px" : "21px",
+              height: sidebarOpen ? "13px" : "21px",
+              color: sidebarOpen ? "rgb(113 113 122)" : "rgb(161 161 170)",
+            }}
           />
-          {inputValue ? (
+
+          {/* 入力エリア: 幅・透明度をサイドバーと同期してアニメーション */}
+          <div
+            style={{
+              maxWidth: sidebarOpen ? "200px" : "0px",
+              opacity: sidebarOpen ? 1 : 0,
+              overflow: "hidden",
+              transition: "max-width 300ms ease-out, opacity 300ms ease-out",
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="検索..."
+              tabIndex={sidebarOpen ? 0 : -1}
+              className="w-full bg-transparent text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none"
+            />
+          </div>
+
+          {/* クリアボタン */}
+          <div
+            style={{
+              maxWidth: sidebarOpen && inputValue ? "20px" : "0px",
+              opacity: sidebarOpen && inputValue ? 1 : 0,
+              overflow: "hidden",
+              transition: "max-width 200ms ease-out, opacity 200ms ease-out",
+              flexShrink: 0,
+            }}
+          >
             <button
               type="button"
-              onClick={handleClear}
-              className="absolute right-2.5 p-0.5 text-zinc-500 hover:text-zinc-300 
-                         hover:bg-zinc-800 rounded transition-colors"
+              tabIndex={sidebarOpen ? 0 : -1}
+              onClick={(e) => {
+                e.stopPropagation();
+                setInputValue("");
+                inputRef.current?.focus();
+              }}
+              className="text-zinc-500 hover:text-zinc-300 transition-colors"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-[11px] h-[11px]" />
             </button>
-          ) : null}
+          </div>
         </div>
       </form>
     </div>

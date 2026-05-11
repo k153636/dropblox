@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
-import MobileNav from "@/components/MobileNav";
 
 import { Toaster } from "react-hot-toast";
 
@@ -26,7 +25,6 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
-        <MobileNav />
         <AuthModal />
         <Toaster 
           position="bottom-right"

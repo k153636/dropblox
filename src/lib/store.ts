@@ -496,7 +496,17 @@ export const usePostStore = create<PostStore>((set, get) => ({
         set((state) => ({
           posts: state.posts.map((p) =>
             p.id === updatedPost.id
-              ? { ...p, body: updatedPost.body, preview_name: updatedPost.preview_name, preview_description: updatedPost.preview_description }
+              ? {
+                  ...p,
+                  body: updatedPost.body,
+                  preview_name: updatedPost.preview_name,
+                  preview_description: updatedPost.preview_description,
+                  preview_thumbnail: updatedPost.preview_thumbnail,
+                  preview_playing: updatedPost.preview_playing,
+                  preview_visits: updatedPost.preview_visits,
+                  preview_genre: updatedPost.preview_genre,
+                  last_fetched_at: updatedPost.last_fetched_at,
+                }
               : p
           ),
         }));

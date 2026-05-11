@@ -28,7 +28,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   };
   const closePostModal = () => setIsPostModalOpen(false);
 
-  // Detect mobile
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -36,7 +35,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Swipe handlers
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
   }, []);
@@ -44,20 +42,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent) => {
       if (touchStart === null) return;
-
       const touchEnd = e.changedTouches[0].clientX;
       const diff = touchStart - touchEnd;
       const threshold = 50;
-
-      // Left edge swipe to open (start < 20px from left edge)
-      if (!isOpen && touchStart < 20 && diff < -threshold) {
-        onToggle();
-      }
-      // Swipe left to close
-      else if (isOpen && diff > threshold) {
-        onToggle();
-      }
-
+      if (!isOpen && touchStart < 20 && diff < -threshold) onToggle();
+      else if (isOpen && diff > threshold) onToggle();
       setTouchStart(null);
     },
     [touchStart, isOpen, onToggle]
@@ -70,31 +59,31 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   return (
     <>
-      {/* Backdrop for mobile */}
+      {/* Backdrop - mobile only when open */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[55] transition-opacity"
+          className="fixed inset-0 bg-black/50 z-[39] transition-opacity"
           onClick={onToggle}
         />
       )}
 
-      {/* Touch area for left edge swipe */}
+      {/* Left-edge swipe area - mobile only */}
       <div
         className="fixed left-0 top-0 w-[20px] h-full z-[35] md:hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       />
 
-      {/* Sidebar - Golden Ratio: Closed 89px, Open 144px (144/89 ≈ 1.618) */}
+      {/* Sidebar - mobile: hidden until opened, desktop: always visible */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-zinc-900/60 backdrop-blur-xl border-r border-white/[0.06] z-[60] transition-all duration-300 ease-out ${
+        className={`fixed left-0 top-0 h-full bg-zinc-900/60 backdrop-blur-xl border-r border-white/[0.06] z-[40] transition-all duration-300 ease-out ${
           isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-full md:translate-x-0"
         }`}
         style={{ paddingTop: "55px" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Toggle button - X when open (top right) */}
+        {/* X button when open */}
         {isOpen && (
           <button
             onClick={onToggle}
@@ -133,10 +122,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => {
-                    // Close sidebar on mobile when navigating
-                    if (isMobile && isOpen) {
-                      onToggle();
-                    }
+                    if (isMobile && isOpen) onToggle();
                   }}
                   className={`flex flex-col items-center justify-center rounded-[8px] transition-colors ${
                     item.active
@@ -157,18 +143,17 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </div>
       </aside>
 
-      {/* Desktop toggle button - visible when sidebar closed (desktop only) */}
+      {/* Menu button - desktop only when sidebar closed */}
       {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[65] p-[8px] bg-zinc-900/60 backdrop-blur-xl border border-white/[0.08] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
+          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-900/60 backdrop-blur-xl border border-white/[0.08] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
           aria-label="Open sidebar"
         >
           <Menu size={21} className="flex-shrink-0" />
         </button>
       )}
 
-      {/* Post Modal */}
       <PostModal isOpen={isPostModalOpen} onClose={closePostModal} />
     </>
   );
