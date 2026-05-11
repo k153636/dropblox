@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Home, SquarePlus, User, Menu, X } from "lucide-react";
@@ -28,12 +28,22 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   };
   const closePostModal = () => setIsPostModalOpen(false);
 
+  const prevIsMobile = useRef(true);
+
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      // モバイル→PC遷移時にサイドバーが開いていたら閉じてPCデフォルトにリセット
+      if (prevIsMobile.current && !mobile && isOpen) {
+        onToggle();
+      }
+      prevIsMobile.current = mobile;
+      setIsMobile(mobile);
+    };
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  }, [isOpen, onToggle]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
