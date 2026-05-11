@@ -20,7 +20,7 @@ export default function Home() {
       {/* Main content - shifted when sidebar open on desktop (Golden Ratio) */}
       <main
         className={`transition-all duration-300 ${
-          sidebarOpen ? "md:ml-[144px]" : "md:ml-[89px]"
+          sidebarOpen ? "md:ml-[157px]" : "md:ml-[102px]"
         }`}
       >
         <div className="max-w-[676px] mx-auto px-[21px] pt-[34px] pb-[89px] md:pb-[34px]">

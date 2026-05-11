@@ -64,7 +64,7 @@ export default function ProfilePage() {
       {/* Main content — φ container */}
       <main
         className={`transition-all duration-300 ${
-          sidebarOpen ? "md:ml-[144px]" : "md:ml-[89px]"
+          sidebarOpen ? "md:ml-[157px]" : "md:ml-[102px]"
         }`}
       >
         <div className="max-w-[610px] mx-auto px-[21px] pt-[55px] pb-[89px] md:pb-[89px]" style={{ paddingBottom: "calc(89px + env(safe-area-inset-bottom))" }}>

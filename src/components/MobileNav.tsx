@@ -19,10 +19,12 @@ export default function MobileNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden px-[13px]"
+        style={{ paddingBottom: "calc(13px + env(safe-area-inset-bottom))" }}
+      >
         <div
-          className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-2xl shadow-[0_-1px_0_rgba(255,255,255,0.05),0_-1px_0_rgba(16,185,129,0.04),0_-8px_32px_rgba(0,0,0,0.35)] px-[21px] py-[13px]"
-          style={{ paddingBottom: "calc(13px + env(safe-area-inset-bottom))" }}
+          className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-2xl rounded-[21px] shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.07)] px-[21px] py-[13px]"
         >
           <Link
             href="/"
