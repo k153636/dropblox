@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { getCommentLikeCounts, getUserCommentLikes } from "./db-comment-likes";
 
 export interface Comment {
   id: string;
@@ -8,10 +9,12 @@ export interface Comment {
   body: string;
   parent_id: string | null;
   created_at: string;
+  comment_likes_count: number;
+  user_has_liked: boolean;
 }
 
 // Get comments for a post
-export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
+export async function getCommentsByPostId(postId: string, userId?: string): Promise<Comment[]> {
   const { data, error } = await supabase
     .from("comments")
     .select("*")
@@ -23,7 +26,20 @@ export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
     return [];
   }
 
-  return (data as Comment[]) || [];
+  const rows = (data as Omit<Comment, "comment_likes_count" | "user_has_liked">[]) || [];
+  if (rows.length === 0) return [];
+
+  const ids = rows.map((c) => c.id);
+  const [counts, likedSet] = await Promise.all([
+    getCommentLikeCounts(ids),
+    userId ? getUserCommentLikes(ids, userId) : Promise.resolve(new Set<string>()),
+  ]);
+
+  return rows.map((c) => ({
+    ...c,
+    comment_likes_count: counts.get(c.id) || 0,
+    user_has_liked: likedSet.has(c.id),
+  }));
 }
 
 // Create a comment
@@ -51,7 +67,7 @@ export async function createComment(
     return null;
   }
 
-  return data as Comment;
+  return { ...(data as Omit<Comment, "comment_likes_count" | "user_has_liked">), comment_likes_count: 0, user_has_liked: false };
 }
 
 // Update a comment (author only)
@@ -84,7 +100,12 @@ export async function updateComment(
     return null;
   }
 
-  return data as Comment;
+  const base = data as Omit<Comment, "comment_likes_count" | "user_has_liked">;
+  const [counts, likedSet] = await Promise.all([
+    getCommentLikeCounts([base.id]),
+    Promise.resolve(new Set<string>()),
+  ]);
+  return { ...base, comment_likes_count: counts.get(base.id) || 0, user_has_liked: false };
 }
 
 // Delete a comment (author only)

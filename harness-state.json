@@ -1,8 +1,20 @@
 {
-  "current_sprint": 1,
+  "current_sprint": 2,
   "sprints": {
-    "1": {
+    "2": {
       "status": "self_evaluated",
+      "retries": 1,
+      "generator_scores": {
+        "critical_リアルタイムコメント同期": 8,
+        "critical_コメントいいね保存・表示": 9,
+        "critical_コメント削除即座反映": 10,
+        "normal_コメント投稿後入力クリア": 10,
+        "normal_PostCardバッジリアルタイム更新": 8
+      },
+      "feedback": ""
+    },
+    "1": {
+      "status": "pass",
       "retries": 1,
       "generator_scores": {
         "critical_サイドバーz-index": 10,
@@ -10,7 +22,35 @@
         "critical_MobileNav表示": 9,
         "normal_スタガーアニメ": 10,
         "normal_ホバー浮遊感": 10
-      }
+      },
+      "evaluator_results": [
+        {
+          "criterion": "critical_1_sidebar_z_index",
+          "passed": true,
+          "note": "aside z-[60] > header z-50. Desktop toggle button z-[65]. Backdrop z-[55]. No z-index conflict between sidebar and header."
+        },
+        {
+          "criterion": "critical_2_comments_no_env_gate",
+          "passed": true,
+          "note": "No process.env or NEXT_PUBLIC_ENABLE_COMMENTS reference in PostCard.tsx. Comment button onClick is unconditional; comment section renders purely on showComments state."
+        },
+        {
+          "criterion": "critical_3_mobilenav_fixed_bottom",
+          "passed": true,
+          "note": "MobileNav is in layout.tsx. CSS .mobile-nav: position:fixed; bottom:0; left:0; right:0; height:64px; z-index:50. Hidden at >=768px via media query."
+        },
+        {
+          "criterion": "normal_1_stagger_animation",
+          "passed": true,
+          "note": "PostCard uses animationDelay: `${index * 60}ms` inline style. Feed passes index={startIdx + idx}. .post-card has animation: fall-in 480ms var(--ease-expo) both."
+        },
+        {
+          "criterion": "normal_2_hover_float",
+          "passed": true,
+          "note": ".post-card:hover { transform: translateY(-5px); box-shadow: 0 28px 56px -18px ... } with spring easing transition on transform and box-shadow."
+        }
+      ],
+      "feedback": ""
     }
   }
 }

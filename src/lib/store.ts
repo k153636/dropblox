@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import { getPosts, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, Post } from "./db-posts";
-import { getCommentsByPostId, createComment, updateComment, deleteComment, subscribeToComments, Comment } from "./db-comments";
-import { toggleLike, hasLiked, getLikeCount, subscribeToLikes, subscribeToAllLikes } from "./db-likes";
+import { getCommentsByPostId, createComment, updateComment, deleteComment, Comment } from "./db-comments";
+import { toggleLike, hasLiked, getLikeCount, subscribeToAllLikes } from "./db-likes";
+import { toggleCommentLike } from "./db-comment-likes";
+import { supabase } from "./supabase";
 import { useAuthStore } from "./auth-store";
 import toast from "react-hot-toast";
 
@@ -19,6 +21,7 @@ export { type Post, type Comment };
 export interface PostWithComments extends Post {
   comments: Comment[];
   userLiked: boolean;
+  comment_count?: number;
 }
 
 interface PostStore {
@@ -46,6 +49,7 @@ interface PostStore {
   addComment: (postId: string, body: string, parentId?: string) => Promise<void>;
   updateComment: (postId: string, commentId: string, body: string) => Promise<void>;
   deleteComment: (postId: string, commentId: string) => Promise<void>;
+  likeComment: (postId: string, commentId: string) => Promise<void>;
   
   // Subscriptions
   subscribeToRealtime: () => (() => void);
@@ -137,7 +141,8 @@ export const usePostStore = create<PostStore>((set, get) => ({
 
   loadComments: async (postId: string) => {
     try {
-      const comments = await getCommentsByPostId(postId);
+      const user = useAuthStore.getState().user;
+      const comments = await getCommentsByPostId(postId, user?.id);
       set((state) => ({
         posts: state.posts.map((p) =>
           p.id === postId ? { ...p, comments } : p
@@ -266,19 +271,58 @@ export const usePostStore = create<PostStore>((set, get) => ({
       return;
     }
 
+    // Optimistic: add a temporary comment immediately
+    const tempId = `temp-${Date.now()}`;
+    const optimistic: Comment = {
+      id: tempId,
+      post_id: postId,
+      author_id: user.id,
+      author_name: user.username,
+      body,
+      parent_id: parentId || null,
+      created_at: new Date().toISOString(),
+      comment_likes_count: 0,
+      user_has_liked: false,
+    };
+    set((state) => ({
+      posts: state.posts.map((p) =>
+        p.id === postId
+          ? { ...p, comments: [...p.comments, optimistic], comment_count: (p.comment_count || p.comments.length) + 1 }
+          : p
+      ),
+    }));
+
     try {
       const comment = await createComment(postId, body, user.id, user.username, parentId);
       if (comment) {
+        // Replace optimistic with real
         set((state) => ({
           posts: state.posts.map((p) =>
             p.id === postId
-              ? { ...p, comments: [...p.comments, comment] }
+              ? { ...p, comments: p.comments.map((c) => (c.id === tempId ? comment : c)) }
               : p
           ),
         }));
+      } else {
+        // Revert
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId
+              ? { ...p, comments: p.comments.filter((c) => c.id !== tempId), comment_count: Math.max(0, (p.comment_count || p.comments.length) - 1) }
+              : p
+          ),
+        }));
+        toast.error("Failed to post comment");
       }
-    } catch (error: any) {
-      set({ error: error.message });
+    } catch {
+      set((state) => ({
+        posts: state.posts.map((p) =>
+          p.id === postId
+            ? { ...p, comments: p.comments.filter((c) => c.id !== tempId), comment_count: Math.max(0, (p.comment_count || p.comments.length) - 1) }
+            : p
+        ),
+      }));
+      toast.error("Failed to post comment");
     }
   },
 
@@ -311,22 +355,123 @@ export const usePostStore = create<PostStore>((set, get) => ({
     const user = useAuthStore.getState().user;
     if (!user) return;
 
+    // Optimistic: remove immediately, save for revert
+    let removed: Comment | undefined;
+    set((state) => ({
+      posts: state.posts.map((p) => {
+        if (p.id !== postId) return p;
+        removed = p.comments.find((c) => c.id === commentId);
+        return {
+          ...p,
+          comments: p.comments.filter((c) => c.id !== commentId),
+          comment_count: Math.max(0, (p.comment_count || p.comments.length) - 1),
+        };
+      }),
+    }));
+
     try {
       const success = await deleteComment(commentId, user.id);
-      if (success) {
+      if (!success && removed) {
+        // Revert
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId
+              ? { ...p, comments: [...p.comments, removed!], comment_count: (p.comment_count || p.comments.length) + 1 }
+              : p
+          ),
+        }));
+        toast.error("Failed to delete comment");
+      }
+    } catch {
+      if (removed) {
+        set((state) => ({
+          posts: state.posts.map((p) =>
+            p.id === postId
+              ? { ...p, comments: [...p.comments, removed!], comment_count: (p.comment_count || p.comments.length) + 1 }
+              : p
+          ),
+        }));
+      }
+      toast.error("Failed to delete comment");
+    }
+  },
+
+  likeComment: async (postId: string, commentId: string) => {
+    const user = useAuthStore.getState().user;
+    if (!user) {
+      useAuthStore.getState().openAuthModal();
+      return;
+    }
+
+    // Optimistic toggle
+    set((state) => ({
+      posts: state.posts.map((p) =>
+        p.id === postId
+          ? {
+              ...p,
+              comments: p.comments.map((c) =>
+                c.id === commentId
+                  ? {
+                      ...c,
+                      user_has_liked: !c.user_has_liked,
+                      comment_likes_count: c.user_has_liked
+                        ? c.comment_likes_count - 1
+                        : c.comment_likes_count + 1,
+                    }
+                  : c
+              ),
+            }
+          : p
+      ),
+    }));
+
+    try {
+      const result = await toggleCommentLike(commentId, user.id);
+      if (result.error) {
+        // Revert
         set((state) => ({
           posts: state.posts.map((p) =>
             p.id === postId
               ? {
                   ...p,
-                  comments: p.comments.filter((c) => c.id !== commentId),
+                  comments: p.comments.map((c) =>
+                    c.id === commentId
+                      ? {
+                          ...c,
+                          user_has_liked: !c.user_has_liked,
+                          comment_likes_count: c.user_has_liked
+                            ? c.comment_likes_count - 1
+                            : c.comment_likes_count + 1,
+                        }
+                      : c
+                  ),
                 }
               : p
           ),
         }));
       }
-    } catch (error: any) {
-      set({ error: error.message });
+    } catch {
+      // Revert
+      set((state) => ({
+        posts: state.posts.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                comments: p.comments.map((c) =>
+                  c.id === commentId
+                    ? {
+                        ...c,
+                        user_has_liked: !c.user_has_liked,
+                        comment_likes_count: c.user_has_liked
+                          ? c.comment_likes_count - 1
+                          : c.comment_likes_count + 1,
+                      }
+                    : c
+                ),
+              }
+            : p
+        ),
+      }));
     }
   },
 
@@ -394,9 +539,70 @@ export const usePostStore = create<PostStore>((set, get) => ({
       }));
     });
 
+    // Subscribe to all comments for realtime badge + modal updates
+    const commentsSubscription = supabase
+      .channel("comments:all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "comments" },
+        (payload) => {
+          const currentUserId = useAuthStore.getState().user?.id;
+
+          if (payload.eventType === "INSERT") {
+            const newComment = payload.new as Omit<Comment, "comment_likes_count" | "user_has_liked">;
+            const postId = newComment.post_id;
+
+            set((state) => {
+              const post = state.posts.find((p) => p.id === postId);
+              if (!post) return state;
+
+              // If already exists (optimistic), skip
+              if (post.comments.some((c) => c.id === newComment.id)) return state;
+
+              // Skip own inserts that are already covered by optimistic (temp id replaced)
+              // but include comments from other users
+              if (newComment.author_id === currentUserId) return state;
+
+              const fullComment: Comment = {
+                ...newComment,
+                comment_likes_count: 0,
+                user_has_liked: false,
+              };
+              return {
+                posts: state.posts.map((p) =>
+                  p.id === postId
+                    ? {
+                        ...p,
+                        comments: [...p.comments, fullComment],
+                        comment_count: (p.comment_count || p.comments.length) + 1,
+                      }
+                    : p
+                ),
+              };
+            });
+          } else if (payload.eventType === "DELETE") {
+            const deleted = payload.old as { id: string; post_id: string; author_id: string };
+            if (deleted.author_id === currentUserId) return;
+            set((state) => ({
+              posts: state.posts.map((p) =>
+                p.id === deleted.post_id
+                  ? {
+                      ...p,
+                      comments: p.comments.filter((c) => c.id !== deleted.id),
+                      comment_count: Math.max(0, (p.comment_count || p.comments.length) - 1),
+                    }
+                  : p
+              ),
+            }));
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       postsSubscription.unsubscribe();
       likesSubscription.unsubscribe();
+      commentsSubscription.unsubscribe();
     };
   },
 
