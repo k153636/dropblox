@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { getPosts, getPostById, getGameStatsByIds, createPost, updatePost, deletePost, subscribeToPosts, searchPosts, getDistinctGenres, Post } from "./db-posts";
 import { getCommentsByPostId, createComment, updateComment, deleteComment, Comment } from "./db-comments";
-import { toggleLike, hasLiked, getLikeCount, subscribeToAllLikes } from "./db-likes";
+import { toggleLike, hasLikedBatch, subscribeToAllLikes } from "./db-likes";
 import { toggleCommentLike } from "./db-comment-likes";
 import { supabase } from "./supabase";
 import { useAuthStore } from "./auth-store";
@@ -95,22 +95,17 @@ export const usePostStore = create<PostStore>((set, get) => ({
       const posts = await getPosts(20, 0, activeGenre || undefined, sortBy);
       const user = useAuthStore.getState().user;
       
-      // Load likes status for each post
-      const postsWithLikes = await Promise.all(
-        posts.map(async (post) => {
-          const likeCount = await getLikeCount(post.id);
-          const userLiked = user ? await hasLiked(post.id, user.id) : false;
-          return {
-            ...post,
-            likes: likeCount,
-            userLiked,
-            comments: [], // Load comments separately
-          };
-        })
-      );
-      
-      set({ 
-        posts: postsWithLikes, 
+      // posts.likes is maintained by DB trigger — just batch-check user liked status
+      const postIds = posts.map((p) => p.id);
+      const likedSet = user ? await hasLikedBatch(postIds, user.id) : new Set<string>();
+      const postsWithLikes = posts.map((post) => ({
+        ...post,
+        userLiked: likedSet.has(post.id),
+        comments: [],
+      }));
+
+      set({
+        posts: postsWithLikes,
         isLoading: false,
         hasMore: posts.length === 20,
         offset: posts.length,
@@ -129,21 +124,15 @@ export const usePostStore = create<PostStore>((set, get) => ({
       const newPosts = await getPosts(20, offset, activeGenre || undefined, sortBy);
       const user = useAuthStore.getState().user;
       
-      // Load likes status for each post
-      const postsWithLikes = await Promise.all(
-        newPosts.map(async (post) => {
-          const likeCount = await getLikeCount(post.id);
-          const userLiked = user ? await hasLiked(post.id, user.id) : false;
-          return {
-            ...post,
-            likes: likeCount,
-            userLiked,
-            comments: [],
-          };
-        })
-      );
-      
-      set({ 
+      const newPostIds = newPosts.map((p) => p.id);
+      const likedSet = user ? await hasLikedBatch(newPostIds, user.id) : new Set<string>();
+      const postsWithLikes = newPosts.map((post) => ({
+        ...post,
+        userLiked: likedSet.has(post.id),
+        comments: [],
+      }));
+
+      set({
         posts: [...posts, ...postsWithLikes],
         isLoadingMore: false,
         hasMore: newPosts.length === 20,

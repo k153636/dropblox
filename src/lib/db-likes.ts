@@ -105,6 +105,17 @@ export function subscribeToLikes(postId: string, callback: (payload: any) => voi
     .subscribe();
 }
 
+// Batch: get which posts a user has liked from a list (single query, replaces per-post hasLiked calls)
+export async function hasLikedBatch(postIds: string[], userId: string): Promise<Set<string>> {
+  if (!postIds.length) return new Set();
+  const { data } = await supabase
+    .from("likes")
+    .select("post_id")
+    .in("post_id", postIds)
+    .eq("user_id", userId);
+  return new Set((data || []).map((l) => l.post_id));
+}
+
 // Subscribe to all likes (for realtime like count updates)
 export function subscribeToAllLikes(callback: (payload: any) => void) {
   return supabase

@@ -246,30 +246,14 @@ export async function searchPosts(query: string, limit: number = 20) {
   return data || [];
 }
 
-// Get distinct genres from posts
+// Get distinct genres from posts via SQL GROUP BY (no full-table JS scan)
 export async function getDistinctGenres(limit: number = 10): Promise<string[]> {
-  const { data, error } = await supabase
-    .from("posts")
-    .select("preview_genre")
-    .not("preview_genre", "eq", "")
-    .not("preview_genre", "is", null);
-
+  const { data, error } = await supabase.rpc("get_distinct_genres", { limit_n: limit });
   if (error) {
     console.error("Error fetching genres:", error);
     return [];
   }
-
-  // Count occurrences and sort by frequency
-  const counts = new Map<string, number>();
-  for (const row of data || []) {
-    const g = row.preview_genre as string;
-    if (g) counts.set(g, (counts.get(g) || 0) + 1);
-  }
-
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, limit)
-    .map(([genre]) => genre);
+  return (data || []).map((row: { genre: string }) => row.genre);
 }
 
 // Alternative: Client-side simple search (fallback)
