@@ -10,8 +10,9 @@ export async function GET(req: NextRequest) {
     console.error("CRON_SECRET is not configured");
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
   }
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  const authHeader = req.headers.get("authorization") ?? "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
+  if (token !== cronSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
