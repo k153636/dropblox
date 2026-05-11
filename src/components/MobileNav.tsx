@@ -24,7 +24,7 @@ export default function MobileNav() {
         style={{ paddingBottom: "calc(13px + env(safe-area-inset-bottom))" }}
       >
         <div
-          className="flex items-center justify-around bg-zinc-950/80 backdrop-blur-2xl rounded-[21px] shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.07)] px-[21px] py-[13px]"
+          className="flex items-center justify-center gap-[55px] bg-zinc-950/80 backdrop-blur-2xl rounded-[21px] shadow-[0_8px_32px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.07)] px-[21px] py-[13px]"
         >
           <Link
             href="/"
