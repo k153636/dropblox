@@ -192,6 +192,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
           ...state.posts,
         ],
       }));
+      toast.success("Dropped!");
     } catch (error: any) {
       set({ error: error.message });
       throw error;
@@ -232,6 +233,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
       set((state) => ({
         posts: state.posts.filter((p) => p.id !== id),
       }));
+      toast.success("Post deleted");
     } catch (error: any) {
       set({ error: error.message });
       throw error;

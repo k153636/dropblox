@@ -20,6 +20,14 @@ import {
   ChevronUp
 } from "lucide-react";
 
+function fmt(n: number | string | undefined): string {
+  const num = Number(n);
+  if (isNaN(num)) return "0";
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+  return num.toLocaleString();
+}
+
 function timeAgo(dateStr: string): string {
   const seconds = Math.floor(
     (Date.now() - new Date(dateStr).getTime()) / 1000
@@ -255,6 +263,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [likeAnim, setLikeAnim] = useState(false);
   
   const likePost = usePostStore((s) => s.likePost);
   const addComment = usePostStore((s) => s.addComment);
@@ -293,6 +302,14 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
     setIsEditing(false);
   }
 
+  function handleLikeClick() {
+    likePost(post.id);
+    if (!post.userLiked) {
+      setLikeAnim(true);
+      setTimeout(() => setLikeAnim(false), 350);
+    }
+  }
+
   function handleDelete() {
     if (confirm("Are you sure you want to delete this post?")) {
       deletePost(post.id);
@@ -304,7 +321,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="bg-white/[0.028] backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-white/[0.05] hover:border-white/[0.08] transition-all group" onClick={() => setShowDetail(true)}>
+    <article className="bg-white/[0.028] backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-white/[0.05] hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.06)] transition-all group" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -386,7 +403,12 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
             )}
             <div className="bg-black/25 px-[21px] pb-[21px] pt-[13px] -mt-1 space-y-[10px]">
               <div className="flex items-start justify-between gap-[8px]">
-                <p className="font-semibold text-[15px] leading-tight text-zinc-100">{post.preview_name}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[15px] leading-tight text-zinc-100">{post.preview_name}</p>
+                  {post.preview_description && (
+                    <p className="text-[12px] text-zinc-500 mt-[5px] leading-relaxed line-clamp-2">{post.preview_description}</p>
+                  )}
+                </div>
                 {post.preview_genre && post.preview_genre !== "All" && (
                   <span className="flex-shrink-0 px-[8px] py-[3px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-[5px] text-[11px] font-medium">
                     {post.preview_genre}
@@ -396,10 +418,10 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
               <div className="flex items-center justify-between gap-[8px]">
                 <div className="flex gap-[13px] text-[12px] text-zinc-500">
                   {post.preview_playing !== undefined && (
-                    <span>{Number(post.preview_playing).toLocaleString()} playing</span>
+                    <span>{fmt(post.preview_playing)} playing</span>
                   )}
                   {post.preview_visits !== undefined && (
-                    <span>{Number(post.preview_visits).toLocaleString()} visits</span>
+                    <span>{fmt(post.preview_visits)} visits</span>
                   )}
                 </div>
                 <a
@@ -434,14 +456,14 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
         {/* Actions */}
         <div className="flex items-center gap-[5px] pt-1" onClick={(e) => e.stopPropagation()}>
           <button
-            onClick={() => likePost(post.id)}
+            onClick={handleLikeClick}
             className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all min-w-[54px] ${
               post.userLiked
                 ? "text-red-400 bg-red-500/10"
                 : "text-zinc-400 hover:text-red-400 hover:bg-red-500/10"
             }`}
           >
-            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} />
+            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} className={likeAnim ? "heart-pop" : ""} />
             <span className="tabular-nums">{post.likes}</span>
           </button>
           <button

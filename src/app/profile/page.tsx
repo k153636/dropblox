@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import MobileNav from "@/components/MobileNav";
 import UserPostsGrid from "@/components/UserPostsGrid";
 import LikedPostsGrid from "@/components/LikedPostsGrid";
 import { useAuthStore } from "@/lib/auth-store";
@@ -66,7 +67,7 @@ export default function ProfilePage() {
           sidebarOpen ? "md:ml-[144px]" : "md:ml-[89px]"
         }`}
       >
-        <div className="max-w-[610px] mx-auto px-[21px] pt-[55px] pb-[89px]">
+        <div className="max-w-[610px] mx-auto px-[21px] pt-[55px] pb-[89px] md:pb-[89px]" style={{ paddingBottom: "calc(89px + env(safe-area-inset-bottom))" }}>
 
           {/* ── Profile Card ── */}
           <div className="rounded-[13px] p-[34px] mb-[34px]">
@@ -96,15 +97,16 @@ export default function ProfilePage() {
                   Joined {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
                 </p>
 
-                {/* Stats — φ pill badges */}
-                <div className="flex gap-[13px] mt-[13px]">
-                  <div className="flex items-center gap-[8px]">
-                    <span className="text-[13px] font-semibold text-zinc-100 tabular-nums">{postCount}</span>
-                    <span className="text-[11px] text-zinc-500 uppercase tracking-wider">posts</span>
+                {/* Stats */}
+                <div className="flex items-center gap-[21px] mt-[13px]">
+                  <div>
+                    <div className="text-[21px] font-bold text-zinc-50 tabular-nums leading-none">{postCount}</div>
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-widest mt-[4px]">Posts</div>
                   </div>
-                  <div className="flex items-center gap-[8px]">
-                    <span className="text-[13px] font-semibold text-zinc-100 tabular-nums">{likesCount}</span>
-                    <span className="text-[11px] text-zinc-500 uppercase tracking-wider">likes</span>
+                  <div className="w-px h-[34px] bg-white/[0.06]" />
+                  <div>
+                    <div className="text-[21px] font-bold text-zinc-50 tabular-nums leading-none">{likesCount}</div>
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-widest mt-[4px]">Likes</div>
                   </div>
                 </div>
               </div>
@@ -200,6 +202,8 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+
+      <MobileNav />
     </div>
   );
 }

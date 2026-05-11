@@ -4,6 +4,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Feed from "@/components/Feed";
+import MobileNav from "@/components/MobileNav";
 import TestModeBanner from "@/components/TestModeBanner";
 
 export default function Home() {
@@ -17,16 +18,18 @@ export default function Home() {
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
       
       {/* Main content - shifted when sidebar open on desktop (Golden Ratio) */}
-      <main 
+      <main
         className={`transition-all duration-300 ${
           sidebarOpen ? "md:ml-[144px]" : "md:ml-[89px]"
         }`}
       >
-        <div className="max-w-[676px] mx-auto px-[21px] py-[34px]">
+        <div className="max-w-[676px] mx-auto px-[21px] pt-[34px] pb-[89px] md:pb-[34px]">
           <TestModeBanner />
           <Feed />
         </div>
       </main>
+
+      <MobileNav />
     </div>
   );
 }

@@ -26,13 +26,16 @@ export default function RootLayout({
         </div>
         <Footer />
         <AuthModal />
-        <Toaster 
+        <Toaster
           position="bottom-right"
+          containerStyle={{ bottom: 76 }}
           toastOptions={{
             style: {
               background: "#18181b",
               color: "#fff",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "10px",
+              fontSize: "13px",
             },
           }}
         />

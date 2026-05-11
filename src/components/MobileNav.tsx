@@ -3,26 +3,9 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Home, User, SquarePlus } from "lucide-react";
 import { useAuthStore } from "@/lib/auth-store";
 import PostModal from "./PostModal";
-
-const IconHome = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-  </svg>
-);
-
-const IconUser = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-
-const IconPlus = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-  </svg>
-);
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -36,17 +19,42 @@ export default function MobileNav() {
 
   return (
     <>
-      <nav className="mobile-nav">
-        <Link href="/" style={{ flex: 1, height: 44, borderRadius: 10, background: "none", border: "none", color: pathname === "/" ? "var(--accent-bright)" : "var(--text-4)", backgroundColor: pathname === "/" ? "rgba(16,185,129,0.10)" : "transparent", display: "grid", placeItems: "center", textDecoration: "none", transition: "color 180ms cubic-bezier(0.22,1,0.36,1), background-color 180ms cubic-bezier(0.22,1,0.36,1), transform 180ms cubic-bezier(0.22,1,0.36,1)" }}>
-          <IconHome />
-        </Link>
-        <button className="new-post" onClick={openPostModal} style={{ flex: "none" }}>
-          <IconPlus />
-        </button>
-        <Link href="/profile" style={{ flex: 1, height: 44, borderRadius: 10, background: "none", border: "none", color: pathname === "/profile" ? "var(--accent-bright)" : "var(--text-4)", backgroundColor: pathname === "/profile" ? "rgba(16,185,129,0.10)" : "transparent", display: "grid", placeItems: "center", textDecoration: "none", transition: "color 180ms cubic-bezier(0.22,1,0.36,1), background-color 180ms cubic-bezier(0.22,1,0.36,1), transform 180ms cubic-bezier(0.22,1,0.36,1)" }}>
-          <IconUser />
-        </Link>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+        <div
+          className="flex items-center justify-around bg-zinc-950/70 backdrop-blur-2xl border-t border-white/[0.05] px-[21px] py-[13px]"
+          style={{ paddingBottom: "calc(13px + env(safe-area-inset-bottom))" }}
+        >
+          <Link
+            href="/"
+            className={`flex items-center justify-center w-[44px] h-[44px] rounded-[10px] transition-colors ${
+              pathname === "/"
+                ? "text-emerald-400 bg-emerald-500/10"
+                : "text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            <Home size={21} />
+          </Link>
+
+          <button
+            onClick={openPostModal}
+            className="w-[47px] h-[47px] bg-emerald-500 hover:bg-emerald-400 active:scale-95 rounded-[13px] flex items-center justify-center text-white transition-all shadow-lg shadow-emerald-900/40"
+          >
+            <SquarePlus size={21} />
+          </button>
+
+          <Link
+            href="/profile"
+            className={`flex items-center justify-center w-[44px] h-[44px] rounded-[10px] transition-colors ${
+              pathname === "/profile"
+                ? "text-emerald-400 bg-emerald-500/10"
+                : "text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            <User size={21} />
+          </Link>
+        </div>
       </nav>
+
       <PostModal isOpen={isPostModalOpen} onClose={() => setIsPostModalOpen(false)} />
     </>
   );
