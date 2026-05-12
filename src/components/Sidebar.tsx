@@ -72,7 +72,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Backdrop - mobile only when open */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[39] transition-opacity"
+          className="fixed inset-0 bg-black/50 z-[59] transition-opacity"
           onClick={onToggle}
         />
       )}
@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Sidebar - mobile: hidden until opened, desktop: always visible */}
       <aside
-        className={`fixed left-[13px] bg-zinc-950/65 backdrop-blur-2xl rounded-b-[13px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.07)] z-[40] transition-all duration-300 ease-out ${
+        className={`fixed left-[13px] bg-zinc-950/65 backdrop-blur-2xl rounded-b-[13px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.07)] z-[60] transition-all duration-300 ease-out ${
           isOpen ? "w-[144px] translate-x-0" : "w-[89px] -translate-x-[calc(100%+14px)] md:translate-x-0"
         }`}
         style={{ top: "55px", bottom: "13px" }}
@@ -107,7 +107,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         {isOpen && (
           <button
             onClick={onToggle}
-            className="absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors z-[41]"
+            className="absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors z-[61]"
             aria-label="Close sidebar"
           >
             <X size={21} />
