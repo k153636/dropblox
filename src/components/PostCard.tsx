@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { usePostStore } from "@/lib/store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Comment } from "@/lib/db-comments";
@@ -61,10 +61,10 @@ function CommentItem({
   const deleteComment = usePostStore((s) => s.deleteComment);
   const likeComment = usePostStore((s) => s.likeComment);
   const currentUser = useAuthStore((s) => s.user);
-  const childComments = usePostStore((s) =>
-    s.posts.find(p => p.id === postId)?.comments.filter(
-      c => c.parent_id === comment.id
-    ) ?? []
+  const post = usePostStore((s) => s.posts.find((p) => p.id === postId));
+  const childComments = useMemo(
+    () => post?.comments?.filter((c) => c.parent_id === comment.id) ?? [],
+    [post?.comments, comment.id]
   );
 
   async function handleReply(e: React.FormEvent) {
