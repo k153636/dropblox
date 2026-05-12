@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-zinc-950 text-zinc-100 min-h-screen flex flex-col`}>
+      <body className={`${inter.className} bg-zinc-950 text-zinc-100 min-h-screen flex flex-col`} onTouchStart={() => {}}>
         <div className="flex-1">
           {children}
         </div>
