@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { usePostStore } from "@/lib/store";
+import { useAuthStore } from "@/lib/auth-store";
 import PostCard from "./PostCard";
-import { Flame, Clock } from "lucide-react";
+import { Flame, Clock, Users, Globe } from "lucide-react";
 
 const BUFFER_ITEMS = 5;
 const MAX_DOM_ITEMS = 50;
@@ -19,9 +20,12 @@ export default function Feed() {
   const activeGenre = usePostStore((s) => s.activeGenre);
   const sortBy = usePostStore((s) => s.sortBy);
   const genres = usePostStore((s) => s.genres);
+  const feedMode = usePostStore((s) => s.feedMode);
   const loadGenres = usePostStore((s) => s.loadGenres);
   const setGenre = usePostStore((s) => s.setGenre);
   const setSortBy = usePostStore((s) => s.setSortBy);
+  const setFeedMode = usePostStore((s) => s.setFeedMode);
+  const currentUser = useAuthStore((s) => s.user);
 
   // Virtualization state
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: MAX_DOM_ITEMS });
@@ -122,9 +126,38 @@ export default function Feed() {
     }
   }, []);
 
-  const FilterBar = () => (
+  const renderFilterBar = () => (
     <div className="mb-[21px] space-y-[13px]">
-      {/* Sort toggle */}
+      {/* Feed mode toggle — All / Following */}
+      {currentUser && (
+        <div className="flex items-center gap-[8px] pb-[8px] border-b border-white/[0.05]">
+          <button
+            onClick={() => setFeedMode("all")}
+            className={`flex items-center gap-[6px] px-[13px] py-[6px] rounded-[8px] text-xs font-medium transition-all ${
+              feedMode === "all"
+                ? "bg-emerald-500/15 text-emerald-400"
+                : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] active:text-zinc-300 active:bg-white/[0.04]"
+            }`}
+          >
+            <Globe size={13} />
+            All
+          </button>
+          <button
+            onClick={() => setFeedMode("following")}
+            className={`flex items-center gap-[6px] px-[13px] py-[6px] rounded-[8px] text-xs font-medium transition-all ${
+              feedMode === "following"
+                ? "bg-emerald-500/15 text-emerald-400"
+                : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] active:text-zinc-300 active:bg-white/[0.04]"
+            }`}
+          >
+            <Users size={13} />
+            Following
+          </button>
+        </div>
+      )}
+
+      {/* Sort toggle — hidden in following mode */}
+      {feedMode === "all" && (
       <div className="flex items-center gap-[8px]">
         <button
           onClick={() => setSortBy("recent")}
@@ -149,6 +182,7 @@ export default function Feed() {
           Popular
         </button>
       </div>
+      )}
 
       {/* Genre chips */}
       {genres.length > 0 && (
@@ -184,7 +218,7 @@ export default function Feed() {
   if (isLoading) {
     return (
       <>
-        <FilterBar />
+        {renderFilterBar()}
         <div className="space-y-[21px]">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden animate-pulse">
@@ -210,18 +244,23 @@ export default function Feed() {
   }
 
   if (posts.length === 0) {
+    const isFollowingMode = feedMode === "following";
     return (
       <>
-        <FilterBar />
+        {renderFilterBar()}
         <div className="text-center py-[55px] space-y-[13px]">
           <div className="w-[55px] h-[55px] mx-auto bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] flex items-center justify-center text-[24px]">
-            🎮
+            {isFollowingMode ? "👥" : "🎮"}
           </div>
           <p className="text-zinc-200 text-lg font-semibold">
-            {activeGenre ? `No ${activeGenre} games yet` : "No drops yet"}
+            {isFollowingMode ? "No posts from people you follow" : activeGenre ? `No ${activeGenre} games yet` : "No drops yet"}
           </p>
           <p className="text-zinc-500 text-sm">
-            {activeGenre ? "Try a different genre or check back later." : "Be the first to share a Roblox game!"}
+            {isFollowingMode
+              ? "Follow someone to see their drops here."
+              : activeGenre
+              ? "Try a different genre or check back later."
+              : "Be the first to share a Roblox game!"}
           </p>
         </div>
       </>
@@ -233,7 +272,7 @@ export default function Feed() {
 
   return (
     <>
-      <FilterBar />
+      {renderFilterBar()}
       <div ref={containerRef} className="space-y-[21px]">
         {posts.slice(startIdx, endIdx).map((post, idx) => (
           <div

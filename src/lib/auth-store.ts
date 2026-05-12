@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { supabase } from "./supabase";
+import { followUser, unfollowUser, getFollowingIds, getFollowStats } from "./db-follows";
 import toast from "react-hot-toast";
 
 export interface User {
@@ -19,6 +20,9 @@ interface AuthStore {
   isLoading: boolean;
   error: string | null;
   isAuthModalOpen: boolean;
+  followingIds: string[];
+  followersCount: number;
+  followingCount: number;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -29,6 +33,9 @@ interface AuthStore {
   updateProfile: (updates: { bio?: string; username?: string }) => Promise<void>;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+  loadFollowingIds: () => Promise<void>;
+  loadFollowStats: () => Promise<void>;
+  toggleFollow: (targetId: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -38,7 +45,10 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
       error: null,
       isAuthModalOpen: false,
- 
+      followingIds: [],
+      followersCount: 0,
+      followingCount: 0,
+
       setUser: (user) => set({ user }),
  
       signInWithGithub: async () => {
@@ -82,7 +92,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true });
         try {
           await supabase.auth.signOut();
-          set({ user: null, isLoading: false });
+          set({ user: null, isLoading: false, followingIds: [], followersCount: 0, followingCount: 0 });
         } catch (error: any) {
           set({ error: error.message, isLoading: false });
         }
@@ -90,7 +100,50 @@ export const useAuthStore = create<AuthStore>()(
  
       openAuthModal: () => set({ isAuthModalOpen: true }),
       closeAuthModal: () => set({ isAuthModalOpen: false }),
- 
+
+      loadFollowingIds: async () => {
+        const user = get().user;
+        if (!user) return;
+        const ids = await getFollowingIds(user.id);
+        set({ followingIds: ids });
+      },
+
+      loadFollowStats: async () => {
+        const user = get().user;
+        if (!user) return;
+        const stats = await getFollowStats(user.id);
+        set({ followersCount: stats.followers, followingCount: stats.following });
+      },
+
+      toggleFollow: async (targetId: string) => {
+        const user = get().user;
+        if (!user) {
+          get().openAuthModal();
+          return;
+        }
+        const isFollowing = get().followingIds.includes(targetId);
+        // Optimistic update
+        set((s) => ({
+          followingIds: isFollowing
+            ? s.followingIds.filter((id) => id !== targetId)
+            : [...s.followingIds, targetId],
+          followingCount: isFollowing ? s.followingCount - 1 : s.followingCount + 1,
+        }));
+        const ok = isFollowing
+          ? await unfollowUser(user.id, targetId)
+          : await followUser(user.id, targetId);
+        if (!ok) {
+          // Revert
+          set((s) => ({
+            followingIds: isFollowing
+              ? [...s.followingIds, targetId]
+              : s.followingIds.filter((id) => id !== targetId),
+            followingCount: isFollowing ? s.followingCount + 1 : s.followingCount - 1,
+          }));
+          toast.error("Failed to update follow");
+        }
+      },
+
       fetchUser: async () => {
         try {
           const { data: { session } } = await supabase.auth.getSession();
@@ -139,6 +192,8 @@ export const useAuthStore = create<AuthStore>()(
                 createdAt: newProfile.created_at || null,
               },
             });
+            get().loadFollowingIds();
+            get().loadFollowStats();
           } else if (error) {
             throw error;
           } else {
@@ -154,6 +209,9 @@ export const useAuthStore = create<AuthStore>()(
                 createdAt: profile.created_at || null,
               },
             });
+            // Load following IDs in parallel (non-blocking)
+            get().loadFollowingIds();
+            get().loadFollowStats();
           }
         } catch (error: any) {
           set({ error: error.message });

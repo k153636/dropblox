@@ -3,6 +3,7 @@ import { getPosts, getPostById, getGameStatsByIds, createPost, updatePost, delet
 import { getCommentsByPostId, createComment, updateComment, deleteComment, Comment } from "./db-comments";
 import { toggleLike, hasLikedBatch, subscribeToAllLikes } from "./db-likes";
 import { toggleCommentLike } from "./db-comment-likes";
+import { getFollowingIds, getPostsByFollowing } from "./db-follows";
 import { supabase } from "./supabase";
 import { useAuthStore } from "./auth-store";
 import toast from "react-hot-toast";
@@ -36,6 +37,7 @@ interface PostStore {
   activeGenre: string;
   sortBy: "recent" | "popular";
   genres: string[];
+  feedMode: "all" | "following";
 
   // Search
   searchQuery: string;
@@ -49,6 +51,7 @@ interface PostStore {
   loadGenres: () => Promise<void>;
   setGenre: (genre: string) => void;
   setSortBy: (sort: "recent" | "popular") => void;
+  setFeedMode: (mode: "all" | "following") => void;
   refreshGameStats: () => Promise<void>;
   loadComments: (postId: string) => Promise<void>;
   addPost: (url: string, body: string, preview?: GamePreview) => Promise<void>;
@@ -81,6 +84,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
   activeGenre: "",
   sortBy: "recent",
   genres: [],
+  feedMode: "all" as "all" | "following",
 
   // Search state
   searchQuery: "",
@@ -89,13 +93,19 @@ export const usePostStore = create<PostStore>((set, get) => ({
   hasSearched: false,
 
   loadPosts: async () => {
-    const { activeGenre, sortBy } = get();
+    const { activeGenre, sortBy, feedMode } = get();
     set({ isLoading: true, error: null, offset: 0 });
     try {
-      const posts = await getPosts(20, 0, activeGenre || undefined, sortBy);
       const user = useAuthStore.getState().user;
-      
-      // posts.likes is maintained by DB trigger — just batch-check user liked status
+      let posts: Post[];
+
+      if (feedMode === "following" && user) {
+        const followingIds = await getFollowingIds(user.id);
+        posts = await getPostsByFollowing(followingIds, 20, 0);
+      } else {
+        posts = await getPosts(20, 0, activeGenre || undefined, sortBy);
+      }
+
       const postIds = posts.map((p) => p.id);
       const likedSet = user ? await hasLikedBatch(postIds, user.id) : new Set<string>();
       const postsWithLikes = posts.map((post) => ({
@@ -116,14 +126,21 @@ export const usePostStore = create<PostStore>((set, get) => ({
   },
 
   loadMorePosts: async () => {
-    const { offset, posts, isLoadingMore, activeGenre, sortBy } = get();
+    const { offset, posts, isLoadingMore, activeGenre, sortBy, feedMode } = get();
     if (isLoadingMore) return;
 
     set({ isLoadingMore: true });
     try {
-      const newPosts = await getPosts(20, offset, activeGenre || undefined, sortBy);
       const user = useAuthStore.getState().user;
-      
+      let newPosts: Post[];
+
+      if (feedMode === "following" && user) {
+        const followingIds = await getFollowingIds(user.id);
+        newPosts = await getPostsByFollowing(followingIds, 20, offset);
+      } else {
+        newPosts = await getPosts(20, offset, activeGenre || undefined, sortBy);
+      }
+
       const newPostIds = newPosts.map((p) => p.id);
       const likedSet = user ? await hasLikedBatch(newPostIds, user.id) : new Set<string>();
       const postsWithLikes = newPosts.map((post) => ({
@@ -644,6 +661,11 @@ export const usePostStore = create<PostStore>((set, get) => ({
 
   setSortBy: (sort: "recent" | "popular") => {
     set({ sortBy: sort });
+    get().loadPosts();
+  },
+
+  setFeedMode: (mode: "all" | "following") => {
+    set({ feedMode: mode });
     get().loadPosts();
   },
 

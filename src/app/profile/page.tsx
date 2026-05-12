@@ -15,6 +15,9 @@ export default function ProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"posts" | "likes">("posts");
   const { user } = useAuthStore();
+  const followersCount = useAuthStore((s) => s.followersCount);
+  const followingCount = useAuthStore((s) => s.followingCount);
+  const loadFollowStats = useAuthStore((s) => s.loadFollowStats);
   const [postCount, setPostCount] = useState(0);
   const [likesCount, setLikesCount] = useState(0);
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -26,8 +29,10 @@ export default function ProfilePage() {
     if (!user) return;
     getPostCountByUserId(user.id).then(setPostCount);
     getTotalLikesReceivedByUserId(user.id).then(setLikesCount);
+    loadFollowStats();
     setBioText(user.bio || "");
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   async function handleSaveBio() {
     setBioSaving(true);
@@ -107,6 +112,16 @@ export default function ProfilePage() {
                   <div>
                     <div className="text-[21px] font-bold text-zinc-50 tabular-nums leading-none">{likesCount}</div>
                     <div className="text-[10px] text-zinc-500 uppercase tracking-widest mt-[4px]">Likes</div>
+                  </div>
+                  <div className="w-px h-[34px] bg-white/[0.06]" />
+                  <div>
+                    <div className="text-[21px] font-bold text-zinc-50 tabular-nums leading-none">{followersCount}</div>
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-widest mt-[4px]">Followers</div>
+                  </div>
+                  <div className="w-px h-[34px] bg-white/[0.06]" />
+                  <div>
+                    <div className="text-[21px] font-bold text-zinc-50 tabular-nums leading-none">{followingCount}</div>
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-widest mt-[4px]">Following</div>
                   </div>
                 </div>
               </div>

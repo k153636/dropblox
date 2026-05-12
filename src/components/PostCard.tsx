@@ -6,19 +6,20 @@ import { useAuthStore } from "@/lib/auth-store";
 import { Comment } from "@/lib/db-comments";
 import CopyLinkButton from "./CopyLinkButton";
 import PostDetailModal from "./PostDetailModal";
-import { 
-  Heart, 
-  MessageCircle, 
-  Send, 
-  X, 
-  Trash2, 
-  Edit2, 
+import {
+  Heart,
+  MessageCircle,
+  Send,
+  X,
+  Trash2,
+  Edit2,
   CornerDownRight,
   Play,
   Check,
   ChevronDown,
   ChevronUp
 } from "lucide-react";
+import FollowButton from "./FollowButton";
 
 function fmt(n: number | string | undefined): string {
   const num = Number(n);
@@ -339,7 +340,10 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
               </div>
             )}
             <div className="flex flex-col">
-              <span className="font-medium text-sm">{post.author_name}</span>
+              <div className="flex items-center gap-[6px]">
+                <span className="font-medium text-sm">{post.author_name}</span>
+                <FollowButton targetId={post.author_id} />
+              </div>
               <span className="text-xs text-zinc-500">
                 {timeAgo(post.created_at)}
               </span>
