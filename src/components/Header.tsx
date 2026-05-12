@@ -58,8 +58,8 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
           >
             <Menu size={21} />
           </button>
-          <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
-            <span className="text-emerald-400">drop</span>blox
+          <Link href="/" className="text-[22px] font-black tracking-tight hover:scale-[1.03] transition-transform duration-200 origin-left inline-flex items-baseline gap-0">
+            <span className="bg-gradient-to-br from-emerald-300 to-emerald-500 bg-clip-text text-transparent">drop</span><span className="text-zinc-100">blox</span>
           </Link>
         </div>
 
