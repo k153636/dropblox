@@ -13,6 +13,7 @@ export interface Post {
   last_fetched_at?: string;
   author_id: string;
   author_name: string;
+  author_avatar_url?: string | null;
   likes: number;
   created_at: string;
 }
@@ -34,7 +35,8 @@ export interface CreatePostInput {
 export async function createPost(
   input: CreatePostInput,
   userId: string,
-  userName: string
+  userName: string,
+  avatarUrl?: string | null
 ): Promise<Post | null> {
   const { data, error } = await supabase
     .from("posts")
@@ -50,6 +52,7 @@ export async function createPost(
       last_fetched_at: new Date().toISOString(),
       author_id: userId,
       author_name: userName,
+      author_avatar_url: avatarUrl ?? null,
       likes: 0,
     })
     .select()

@@ -241,6 +241,7 @@ interface PostCardProps {
     body: string;
     author_name: string;
     author_id: string;
+    author_avatar_url?: string | null;
     likes: number;
     userLiked: boolean;
     comments: Comment[];
@@ -326,9 +327,17 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500/30 to-emerald-700/20 ring-1 ring-white/[0.08] flex items-center justify-center text-emerald-400 text-sm font-bold">
-              {post.author_name?.[0] || "?"}
-            </div>
+            {post.author_avatar_url ? (
+              <img
+                src={post.author_avatar_url}
+                alt={post.author_name}
+                className="w-8 h-8 rounded-full ring-1 ring-white/[0.08] object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500/30 to-emerald-700/20 ring-1 ring-white/[0.08] flex items-center justify-center text-emerald-400 text-sm font-bold">
+                {post.author_name?.[0] || "?"}
+              </div>
+            )}
             <div className="flex flex-col">
               <span className="font-medium text-sm">{post.author_name}</span>
               <span className="text-xs text-zinc-500">

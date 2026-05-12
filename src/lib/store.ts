@@ -168,7 +168,8 @@ export const usePostStore = create<PostStore>((set, get) => ({
       const post = await createPost(
         { url, body, preview },
         user.id,
-        user.username
+        user.username,
+        user.avatarUrl
       );
       
       if (!post) {
