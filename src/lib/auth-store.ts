@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
-import { followUser, unfollowUser, getFollowingIds, getFollowStats } from "./db-follows";
+import { followUser, getFollowingIds, getFollowStats, unfollowUser } from "./db-follows";
 import toast from "react-hot-toast";
 
 export interface User {
@@ -15,6 +16,16 @@ export interface User {
   createdAt: string | null;
 }
 
+interface ProfileRecord {
+  id: string;
+  github_id: string | null;
+  roblox_id: string | null;
+  username: string;
+  avatar_url: string | null;
+  bio?: string | null;
+  created_at?: string | null;
+}
+
 interface AuthStore {
   user: User | null;
   isLoading: boolean;
@@ -24,7 +35,6 @@ interface AuthStore {
   followersCount: number;
   followingCount: number;
 
-  // Actions
   setUser: (user: User | null) => void;
   signInWithGithub: () => Promise<void>;
   signInWithRoblox: () => Promise<void>;
@@ -36,6 +46,49 @@ interface AuthStore {
   loadFollowingIds: () => Promise<void>;
   loadFollowStats: () => Promise<void>;
   toggleFollow: (targetId: string) => Promise<void>;
+}
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+function normalizeProvider(robloxId: string | null): "github" | "roblox" {
+  return robloxId ? "roblox" : "github";
+}
+
+function profileToUser(profile: ProfileRecord): User {
+  return {
+    id: profile.id,
+    github_id: profile.github_id,
+    roblox_id: profile.roblox_id,
+    provider: normalizeProvider(profile.roblox_id),
+    username: profile.username,
+    avatarUrl: profile.avatar_url,
+    bio: profile.bio || "",
+    createdAt: profile.created_at || null,
+  };
+}
+
+function normalizeProfileRecord(row: Record<string, unknown>): ProfileRecord {
+  return {
+    id: typeof row.id === "string" ? row.id : "",
+    github_id: typeof row.github_id === "string" ? row.github_id : null,
+    roblox_id: typeof row.roblox_id === "string" ? row.roblox_id : null,
+    username: typeof row.username === "string" ? row.username : "User",
+    avatar_url: typeof row.avatar_url === "string" ? row.avatar_url : null,
+    bio: typeof row.bio === "string" ? row.bio : null,
+    created_at: typeof row.created_at === "string" ? row.created_at : null,
+  };
+}
+
+function getMetadataValue(metadata: Record<string, unknown>, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = metadata[key];
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+  }
+  return null;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -50,54 +103,70 @@ export const useAuthStore = create<AuthStore>()(
       followingCount: 0,
 
       setUser: (user) => set({ user }),
- 
+
       signInWithGithub: async () => {
         set({ isLoading: true, error: null });
         try {
-          const { data, error } = await supabase.auth.signInWithOAuth({
+          const { error } = await supabase.auth.signInWithOAuth({
             provider: "github",
             options: {
               redirectTo: `${window.location.origin}/auth/callback`,
             },
           });
- 
+
           if (error) throw error;
-          set({ isAuthModalOpen: false }); // Close modal on start of OAuth flow
-        } catch (error: any) {
-          set({ error: error.message, isLoading: false });
-          toast.error(`Login failed: ${error.message}`);
+          set({ isAuthModalOpen: false });
+        } catch (error) {
+          const message = getErrorMessage(error, "Login failed");
+          set({ error: message, isLoading: false });
+          toast.error(`Login failed: ${message}`);
         }
       },
 
       signInWithRoblox: async () => {
         set({ isLoading: true, error: null });
         try {
-          const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: "roblox" as any, // Supabase Dashboardでカスタムプロバイダーとして設定
-            options: {
-              redirectTo: `${window.location.origin}/auth/callback`,
-              scopes: "openid profile",
-            },
+          const clientId = process.env.NEXT_PUBLIC_ROBLOX_CLIENT_ID;
+          if (!clientId) {
+            throw new Error("Roblox OAuth client ID is not configured");
+          }
+
+          const stateBytes = new Uint8Array(16);
+          crypto.getRandomValues(stateBytes);
+          const state = Array.from(stateBytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+          sessionStorage.setItem("roblox_oauth_state", state);
+
+          const params = new URLSearchParams({
+            client_id: clientId,
+            redirect_uri: `${window.location.origin}/auth/callback/roblox`,
+            response_type: "code",
+            scope: "openid profile",
+            state,
           });
 
-          if (error) throw error;
           set({ isAuthModalOpen: false });
-        } catch (error: any) {
-          set({ error: error.message, isLoading: false });
-          toast.error(`Login failed: ${error.message}`);
+          window.location.assign(`https://apis.roblox.com/oauth/v1/authorize?${params.toString()}`);
+        } catch (error) {
+          const message = getErrorMessage(error, "Login failed");
+          set({ error: message, isLoading: false });
+          toast.error(`Login failed: ${message}`);
         }
       },
- 
+
       signOut: async () => {
         set({ isLoading: true });
         try {
           await supabase.auth.signOut();
+          localStorage.removeItem("roblox_session_token");
+          localStorage.removeItem("roblox_access_token");
+          localStorage.removeItem("roblox_user");
           set({ user: null, isLoading: false, followingIds: [], followersCount: 0, followingCount: 0 });
-        } catch (error: any) {
-          set({ error: error.message, isLoading: false });
+        } catch (error) {
+          const message = getErrorMessage(error, "Sign out failed");
+          set({ error: message, isLoading: false });
         }
       },
- 
+
       openAuthModal: () => set({ isAuthModalOpen: true }),
       closeAuthModal: () => set({ isAuthModalOpen: false }),
 
@@ -121,24 +190,22 @@ export const useAuthStore = create<AuthStore>()(
           get().openAuthModal();
           return;
         }
+
         const isFollowing = get().followingIds.includes(targetId);
-        // Optimistic update
-        set((s) => ({
+        set((state) => ({
           followingIds: isFollowing
-            ? s.followingIds.filter((id) => id !== targetId)
-            : [...s.followingIds, targetId],
-          followingCount: isFollowing ? s.followingCount - 1 : s.followingCount + 1,
+            ? state.followingIds.filter((id) => id !== targetId)
+            : [...state.followingIds, targetId],
+          followingCount: isFollowing ? state.followingCount - 1 : state.followingCount + 1,
         }));
-        const ok = isFollowing
-          ? await unfollowUser(user.id, targetId)
-          : await followUser(user.id, targetId);
+
+        const ok = isFollowing ? await unfollowUser(user.id, targetId) : await followUser(user.id, targetId);
         if (!ok) {
-          // Revert
-          set((s) => ({
+          set((state) => ({
             followingIds: isFollowing
-              ? [...s.followingIds, targetId]
-              : s.followingIds.filter((id) => id !== targetId),
-            followingCount: isFollowing ? s.followingCount + 1 : s.followingCount - 1,
+              ? [...state.followingIds, targetId]
+              : state.followingIds.filter((id) => id !== targetId),
+            followingCount: isFollowing ? state.followingCount + 1 : state.followingCount - 1,
           }));
           toast.error("Failed to update follow");
         }
@@ -146,75 +213,68 @@ export const useAuthStore = create<AuthStore>()(
 
       fetchUser: async () => {
         try {
-          const { data: { session } } = await supabase.auth.getSession();
-          
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+
           if (!session) {
-            set({ user: null });
+            set({ user: null, isLoading: false });
             return;
           }
 
-          // Fetch or create user profile
           const { data: profile, error } = await supabase
             .from("profiles")
             .select("*")
             .eq("id", session.user.id)
-            .single();
+            .single<Record<string, unknown>>();
 
           if (error && error.code === "PGRST116") {
-            // Profile doesn't exist, create it
-            const provider = session.user.app_metadata.provider || "github";
-            const isRoblox = provider === "roblox";
-            
+            const metadata = session.user.user_metadata as Record<string, unknown>;
+            const provider = String(session.user.app_metadata.provider || "github") === "roblox" ? "roblox" : "github";
+            const providerId = getMetadataValue(metadata, ["provider_id", "sub"]);
+            const username =
+              getMetadataValue(metadata, ["full_name", "name", "user_name", "preferred_username"]) ||
+              session.user.email?.split("@")[0] ||
+              "User";
+
             const { data: newProfile, error: createError } = await supabase
               .from("profiles")
-              .insert({
+              .upsert({
                 id: session.user.id,
-                github_id: isRoblox ? null : (session.user.user_metadata.provider_id || session.user.user_metadata.sub),
-                roblox_id: isRoblox ? (session.user.user_metadata.provider_id || session.user.user_metadata.sub) : null,
-                provider: provider,
-                username: session.user.user_metadata.full_name || session.user.user_metadata.name || session.user.user_metadata.user_name || session.user.email?.split('@')[0] || 'User',
-                avatar_url: session.user.user_metadata.avatar_url,
-              })
-              .select()
-              .single();
+                github_id: provider === "roblox" ? null : providerId,
+                roblox_id: provider === "roblox" ? providerId : null,
+                username,
+                avatar_url: getMetadataValue(metadata, ["avatar_url", "picture"]),
+              }, { onConflict: "id" })
+              .select("*")
+              .single<Record<string, unknown>>();
 
-            if (createError) throw createError;
-            
-            set({
-              user: {
-                id: newProfile.id,
-                github_id: newProfile.github_id,
-                roblox_id: newProfile.roblox_id,
-                provider: newProfile.provider,
-                username: newProfile.username,
-                avatarUrl: newProfile.avatar_url,
-                bio: newProfile.bio || "",
-                createdAt: newProfile.created_at || null,
-              },
-            });
+            if (createError) {
+              const { data: retryProfile, error: retryError } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", session.user.id)
+                .single<Record<string, unknown>>();
+              if (retryError) throw createError;
+              set({ user: profileToUser(normalizeProfileRecord(retryProfile)), isLoading: false });
+              get().loadFollowingIds();
+              get().loadFollowStats();
+              return;
+            }
+
+            set({ user: profileToUser(normalizeProfileRecord(newProfile)), isLoading: false });
             get().loadFollowingIds();
             get().loadFollowStats();
           } else if (error) {
             throw error;
           } else {
-            set({
-              user: {
-                id: profile.id,
-                github_id: profile.github_id,
-                roblox_id: profile.roblox_id,
-                provider: profile.provider,
-                username: profile.username,
-                avatarUrl: profile.avatar_url,
-                bio: profile.bio || "",
-                createdAt: profile.created_at || null,
-              },
-            });
-            // Load following IDs in parallel (non-blocking)
+            set({ user: profileToUser(normalizeProfileRecord(profile)), isLoading: false });
             get().loadFollowingIds();
             get().loadFollowStats();
           }
-        } catch (error: any) {
-          set({ error: error.message });
+        } catch (error) {
+          const message = getErrorMessage(error, "Failed to load user");
+          set({ error: message, isLoading: false });
         }
       },
 
@@ -227,11 +287,7 @@ export const useAuthStore = create<AuthStore>()(
           if (updates.bio !== undefined) updateData.bio = updates.bio;
           if (updates.username !== undefined) updateData.username = updates.username;
 
-          const { error } = await supabase
-            .from("profiles")
-            .update(updateData)
-            .eq("id", user.id);
-
+          const { error } = await supabase.from("profiles").update(updateData).eq("id", user.id);
           if (error) throw error;
 
           set({
@@ -241,22 +297,22 @@ export const useAuthStore = create<AuthStore>()(
               ...(updates.username !== undefined && { username: updates.username }),
             },
           });
-        } catch (error: any) {
-          set({ error: error.message });
-          toast.error(`Failed to update profile: ${error.message}`);
+        } catch (error) {
+          const message = getErrorMessage(error, "Failed to update profile");
+          set({ error: message });
+          toast.error(`Failed to update profile: ${message}`);
           throw error;
         }
       },
     }),
     {
       name: "auth-storage",
-    }
-  )
+    },
+  ),
 );
 
-// Auth state change listener
-supabase.auth.onAuthStateChange((event: string, session: any) => {
-  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+  if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session) {
     useAuthStore.getState().fetchUser();
   } else if (event === "SIGNED_OUT") {
     useAuthStore.getState().setUser(null);

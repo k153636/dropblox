@@ -52,10 +52,8 @@ export type Tables = {
     id: string;
     github_id: string | null;
     roblox_id: string | null;
-    provider: string;
     username: string;
     avatar_url: string | null;
     created_at: string;
   };
 };
-
