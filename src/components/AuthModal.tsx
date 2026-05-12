@@ -39,7 +39,7 @@ export default function AuthModal() {
         {/* Close Button */}
         <button
           onClick={closeAuthModal}
-          className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all"
+          className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white hover:bg-white/5 active:text-white active:bg-white/5 rounded-full transition-all"
         >
           <X size={20} />
         </button>
@@ -59,7 +59,7 @@ export default function AuthModal() {
             <button
               onClick={signInWithGithub}
               disabled={isLoading}
-              className="w-full h-12 flex items-center justify-center gap-3 bg-white text-zinc-950 font-semibold rounded-xl hover:bg-zinc-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              className="w-full h-12 flex items-center justify-center gap-3 bg-white text-zinc-950 font-semibold rounded-xl hover:bg-zinc-200 active:bg-zinc-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               <GitHubIcon className="w-5 h-5 transition-transform group-hover:scale-110" />
               Continue with GitHub
@@ -68,7 +68,7 @@ export default function AuthModal() {
             <button
               onClick={signInWithRoblox}
               disabled={isLoading}
-              className="w-full h-12 flex items-center justify-center gap-3 bg-zinc-800 text-white font-semibold rounded-xl border border-white/5 hover:bg-zinc-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              className="w-full h-12 flex items-center justify-center gap-3 bg-zinc-800 text-white font-semibold rounded-xl border border-white/5 hover:bg-zinc-700 active:bg-zinc-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               <RobloxIcon className="w-5 h-5 transition-transform group-hover:scale-110" />
               Continue with Roblox

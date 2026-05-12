@@ -131,7 +131,7 @@ export default function Feed() {
           className={`flex items-center gap-[6px] px-[13px] py-[6px] rounded-[8px] text-xs font-medium transition-all ${
             sortBy === "recent"
               ? "bg-white/[0.08] text-zinc-100"
-              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
+              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] active:text-zinc-300 active:bg-white/[0.04]"
           }`}
         >
           <Clock size={13} />
@@ -142,7 +142,7 @@ export default function Feed() {
           className={`flex items-center gap-[6px] px-[13px] py-[6px] rounded-[8px] text-xs font-medium transition-all ${
             sortBy === "popular"
               ? "bg-white/[0.08] text-zinc-100"
-              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04]"
+              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] active:text-zinc-300 active:bg-white/[0.04]"
           }`}
         >
           <Flame size={13} />
@@ -158,7 +158,7 @@ export default function Feed() {
             className={`px-[10px] py-[4px] rounded-full text-xs transition-all ${
               activeGenre === ""
                 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                : "bg-white/[0.04] text-zinc-500 border border-white/[0.06] hover:text-zinc-300 hover:bg-white/[0.08]"
+                : "bg-white/[0.04] text-zinc-500 border border-white/[0.06] hover:text-zinc-300 hover:bg-white/[0.08] active:text-zinc-300 active:bg-white/[0.08]"
             }`}
           >
             All
@@ -170,7 +170,7 @@ export default function Feed() {
               className={`px-[10px] py-[4px] rounded-full text-xs transition-all ${
                 activeGenre === g
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                  : "bg-white/[0.04] text-zinc-500 border border-white/[0.06] hover:text-zinc-300 hover:bg-white/[0.08]"
+                  : "bg-white/[0.04] text-zinc-500 border border-white/[0.06] hover:text-zinc-300 hover:bg-white/[0.08] active:text-zinc-300 active:bg-white/[0.08]"
               }`}
             >
               {g}

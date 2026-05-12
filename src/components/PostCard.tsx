@@ -133,7 +133,7 @@ function CommentItem({
               />
               <button
                 type="submit"
-                className="p-1 text-emerald-400 hover:text-emerald-300"
+                className="p-1 text-emerald-400 hover:text-emerald-300 active:text-emerald-300"
               >
                 <Check size={16} />
               </button>
@@ -143,7 +143,7 @@ function CommentItem({
                   setIsEditing(false);
                   setEditText(comment.body);
                 }}
-                className="p-1 text-zinc-400 hover:text-zinc-300"
+                className="p-1 text-zinc-400 hover:text-zinc-300 active:text-zinc-300"
               >
                 <X size={16} />
               </button>
@@ -159,7 +159,7 @@ function CommentItem({
               <button
                 onClick={handleLike}
                 className={`flex items-center justify-center gap-1 text-xs transition-colors min-w-[40px] ${
-                  comment.user_has_liked ? "text-red-400" : "text-zinc-500 hover:text-red-400"
+                  comment.user_has_liked ? "text-red-400" : "text-zinc-500 hover:text-red-400 active:text-red-400"
                 }`}
               >
                 <Heart size={14} fill={comment.user_has_liked ? "currentColor" : "none"} />
@@ -169,7 +169,7 @@ function CommentItem({
               {/* Reply */}
               <button
                 onClick={() => setShowReplyInput(!showReplyInput)}
-                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 active:text-zinc-300 transition-colors"
               >
                 <CornerDownRight size={14} />
                 <span>Reply</span>
@@ -180,13 +180,13 @@ function CommentItem({
                 <>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                    className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 active:text-zinc-300 transition-colors"
                   >
                     <Edit2 size={14} />
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="flex items-center gap-1 text-xs text-zinc-500 hover:text-red-400 transition-colors"
+                    className="flex items-center gap-1 text-xs text-zinc-500 hover:text-red-400 active:text-red-400 transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -208,7 +208,7 @@ function CommentItem({
               <button
                 type="submit"
                 disabled={!replyText.trim()}
-                className="px-3 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[6px] transition-colors disabled:opacity-50"
+                className="px-3 py-2 text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-400 text-white rounded-[6px] transition-colors disabled:opacity-50"
               >
                 <Send size={14} />
               </button>
@@ -321,7 +321,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-zinc-950/65 hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.07)] active:bg-zinc-950/65 active:border-white/[0.08] active:shadow-[0_8px_32px_rgba(16,185,129,0.07)] transition-all group" onClick={() => setShowDetail(true)}>
+    <article className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-zinc-950/65 hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.07)] active:bg-zinc-950/65 active:border-white/[0.08] active:-translate-y-0.5 active:shadow-[0_8px_32px_rgba(16,185,129,0.07)] transition-all group" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -444,7 +444,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
               href={post.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[7px] transition-colors"
+              className="inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-400 text-white rounded-[7px] transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <Play size={13} fill="currentColor" />
@@ -505,14 +505,14 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                     <button
                       type="button"
                       onClick={() => setCommentText("")}
-                      className="px-[13px] py-[8px] text-xs font-semibold text-zinc-400 hover:text-zinc-200 rounded-full transition-colors"
+                      className="px-[13px] py-[8px] text-xs font-semibold text-zinc-400 hover:text-zinc-200 active:text-zinc-200 rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={!commentText.trim()}
-                      className="px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[6px] transition-colors disabled:opacity-50"
+                      className="px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-400 text-white rounded-[6px] transition-colors disabled:opacity-50"
                     >
                       Comment
                     </button>

@@ -148,7 +148,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {!isOpen && !isMobile && (
         <button
           onClick={onToggle}
-          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-950/65 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_4px_20px_rgba(0,0,0,0.4)] rounded-[8px] text-zinc-400 hover:text-zinc-200 transition-all"
+          className="fixed top-[13px] left-[13px] z-[45] p-[8px] bg-zinc-950/65 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_4px_20px_rgba(0,0,0,0.4)] rounded-[8px] text-zinc-400 hover:text-zinc-200 active:text-zinc-200 transition-all"
           aria-label="Open sidebar"
         >
           <Menu size={21} className="flex-shrink-0" />

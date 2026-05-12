@@ -88,7 +88,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
             </h2>
             <button
               onClick={onClose}
-              className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors rounded-[8px] hover:bg-white/[0.06] flex-shrink-0"
+              className="p-[8px] text-zinc-400 hover:text-zinc-200 active:text-zinc-200 transition-colors rounded-[8px] hover:bg-white/[0.06] active:bg-white/[0.06] flex-shrink-0"
             >
               <X size={21} />
             </button>
@@ -123,13 +123,13 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
                     <>
                       <button
                         onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                        className="absolute left-[8px] top-1/2 -translate-y-1/2 w-[34px] h-[34px] bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-all"
+                        className="absolute left-[8px] top-1/2 -translate-y-1/2 w-[34px] h-[34px] bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 active:text-white active:bg-black/70 transition-all"
                       >
                         <ChevronLeft size={18} />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); goNext(); }}
-                        className="absolute right-[8px] top-1/2 -translate-y-1/2 w-[34px] h-[34px] bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-all"
+                        className="absolute right-[8px] top-1/2 -translate-y-1/2 w-[34px] h-[34px] bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 active:text-white active:bg-black/70 transition-all"
                       >
                         <ChevronRight size={18} />
                       </button>
@@ -146,7 +146,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
                           className={`w-[6px] h-[6px] rounded-full transition-all ${
                             i === currentSlide
                               ? "bg-white w-[18px]"
-                              : "bg-white/40 hover:bg-white/60"
+                              : "bg-white/40 hover:bg-white/60 active:bg-white/60"
                           }`}
                         />
                       ))}
@@ -214,7 +214,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
                 href={post.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-[8px] px-[21px] py-[13px] bg-emerald-500 hover:bg-emerald-400 text-white rounded-[8px] font-medium text-sm transition-colors"
+                className="flex items-center gap-[8px] px-[21px] py-[13px] bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-400 text-white rounded-[8px] font-medium text-sm transition-colors"
               >
                 <ExternalLink size={16} />
                 Visit Game
@@ -230,7 +230,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
           {/* Close / minimize */}
           <button
             onClick={() => setFullscreen(false)}
-            className="absolute top-[21px] right-[21px] w-[34px] h-[34px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all z-10"
+            className="absolute top-[21px] right-[21px] w-[34px] h-[34px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 active:text-white active:bg-white/20 transition-all z-10"
           >
             <Minimize2 size={18} />
           </button>
@@ -256,13 +256,13 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                  className="absolute left-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all"
+                  className="absolute left-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 active:text-white active:bg-white/20 transition-all"
                 >
                   <ChevronLeft size={24} />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); goNext(); }}
-                  className="absolute right-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all"
+                  className="absolute right-[13px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 active:text-white active:bg-white/20 transition-all"
                 >
                   <ChevronRight size={24} />
                 </button>
@@ -280,7 +280,7 @@ export default function PostDetailModal({ post, isOpen, onClose }: PostDetailMod
                   className={`w-[8px] h-[8px] rounded-full transition-all ${
                     i === currentSlide
                       ? "bg-white w-[24px]"
-                      : "bg-white/30 hover:bg-white/50"
+                      : "bg-white/30 hover:bg-white/50 active:bg-white/50"
                   }`}
                 />
               ))}

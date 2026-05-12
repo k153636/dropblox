@@ -51,7 +51,7 @@ function UserPostCard({ post, onClick, onEdit }: { post: Post; onClick: () => vo
           <img
             src={post.preview_thumbnail}
             alt={post.preview_name || "Game thumbnail"}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 group-active:scale-105"
             loading="lazy"
           />
         ) : (
@@ -62,17 +62,17 @@ function UserPostCard({ post, onClick, onEdit }: { post: Post; onClick: () => vo
 
         {/* Edit indicator overlay - clickable */}
         <div
-          className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center z-10"
+          className="absolute inset-0 bg-black/0 group-hover:bg-black/40 group-active:bg-black/40 transition-all duration-300 flex items-center justify-center z-10"
           onClick={(e) => { e.stopPropagation(); onEdit(); }}
         >
-          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 bg-zinc-900/80 backdrop-blur-sm p-[8px] rounded-full cursor-pointer hover:bg-zinc-800/90">
+          <div className="opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 group-active:scale-100 bg-zinc-900/80 backdrop-blur-sm p-[8px] rounded-full cursor-pointer hover:bg-zinc-800/90 active:bg-zinc-800/90">
             <EditIcon className="w-[16px] h-[16px] text-white" />
           </div>
         </div>
       </div>
       
       {/* Game name */}
-      <h3 className="text-[13px] font-medium text-zinc-300 truncate mb-[5px] group-hover:text-emerald-400 transition-colors">
+      <h3 className="text-[13px] font-medium text-zinc-300 truncate mb-[5px] group-hover:text-emerald-400 group-active:text-emerald-400 transition-colors">
         {post.preview_name || "Untitled Game"}
       </h3>
 

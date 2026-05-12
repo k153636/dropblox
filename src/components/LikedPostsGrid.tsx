@@ -43,7 +43,7 @@ function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
           <img
             src={post.preview_thumbnail}
             alt={post.preview_name || "Game thumbnail"}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 group-active:scale-105"
             loading="lazy"
           />
         ) : (
@@ -53,11 +53,11 @@ function LikedPostCard({ post, onClick }: { post: Post; onClick: () => void }) {
         )}
         
         {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 group-active:bg-black/30 transition-all duration-300" />
       </div>
       
       {/* Game name */}
-      <h3 className="text-[13px] font-medium text-zinc-300 truncate group-hover:text-emerald-400 transition-colors">
+      <h3 className="text-[13px] font-medium text-zinc-300 truncate group-hover:text-emerald-400 group-active:text-emerald-400 transition-colors">
         {post.preview_name || "Untitled Game"}
       </h3>
     </div>
