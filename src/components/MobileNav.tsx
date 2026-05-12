@@ -31,7 +31,7 @@ export default function MobileNav() {
             className={`flex items-center justify-center w-[44px] h-[44px] rounded-[10px] transition-colors ${
               pathname === "/"
                 ? "text-emerald-400 bg-emerald-500/10"
-                : "text-zinc-500 hover:text-zinc-300"
+                : "text-zinc-500 hover:text-zinc-300 active:text-zinc-300"
             }`}
           >
             <Home size={21} />
@@ -49,7 +49,7 @@ export default function MobileNav() {
             className={`flex items-center justify-center w-[44px] h-[44px] rounded-[10px] transition-colors ${
               pathname === "/profile"
                 ? "text-emerald-400 bg-emerald-500/10"
-                : "text-zinc-500 hover:text-zinc-300"
+                : "text-zinc-500 hover:text-zinc-300 active:text-zinc-300"
             }`}
           >
             <User size={21} />

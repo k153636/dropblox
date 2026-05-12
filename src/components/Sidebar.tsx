@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, SquarePlus, User, Menu, X } from "lucide-react";
+import { Home, SquarePlus, User, Menu } from "lucide-react";
 import { useAuthStore } from "@/lib/auth-store";
 import PostModal from "./PostModal";
 import SearchBar from "./SearchBar";
@@ -103,23 +103,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           style={{ right: '-13px', borderBottomLeftRadius: '13px' }}
         />
 
-        {/* X button when open */}
-        {isOpen && (
-          <button
-            onClick={onToggle}
-            className="absolute top-[13px] right-[13px] p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors z-[61]"
-            aria-label="Close sidebar"
-          >
-            <X size={21} />
-          </button>
-        )}
-
         <div className="flex flex-col h-full py-[13px]">
           {/* New Post Button */}
           <div className="px-[13px] mb-[13px]">
             <button
               onClick={openPostModal}
-              className="flex flex-row items-center justify-center bg-emerald-500/80 hover:bg-emerald-500 backdrop-blur-sm text-white rounded-[8px] transition-all w-full min-h-[47px] px-[13px] py-[13px] gap-[13px]"
+              className="flex flex-row items-center justify-center bg-emerald-500/80 hover:bg-emerald-500 active:bg-emerald-500 backdrop-blur-sm text-white rounded-[8px] transition-all w-full min-h-[47px] px-[13px] py-[13px] gap-[13px]"
             >
               <SquarePlus className="flex-shrink-0 w-[21px] h-[21px]" />
               {isOpen && <span className="font-medium text-xs whitespace-nowrap">New Post</span>}
@@ -143,7 +132,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   className={`flex flex-row items-center justify-center rounded-[8px] transition-colors w-full min-h-[47px] px-[13px] py-[13px] gap-[13px] ${
                     item.active
                       ? "bg-white/[0.11] text-emerald-400"
-                      : "text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200"
+                      : "text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200 active:bg-white/[0.08] active:text-zinc-200"
                   }`}
                 >
                   <Icon className="flex-shrink-0 w-[21px] h-[21px]" />

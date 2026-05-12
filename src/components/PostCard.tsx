@@ -321,7 +321,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
 
   return (
     <>
-    <article className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-zinc-950/65 hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.07)] transition-all group" onClick={() => setShowDetail(true)}>
+    <article className="bg-zinc-950/55 backdrop-blur-md border border-white/[0.05] rounded-[13px] overflow-hidden cursor-pointer hover:bg-zinc-950/65 hover:border-white/[0.08] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(16,185,129,0.07)] active:bg-zinc-950/65 active:border-white/[0.08] active:shadow-[0_8px_32px_rgba(16,185,129,0.07)] transition-all group" onClick={() => setShowDetail(true)}>
       <div className="p-[21px] space-y-[13px]">
         {/* Author & time */}
         <div className="flex items-center justify-between gap-[13px]">
@@ -428,7 +428,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                   href={post.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-shrink-0 inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-white rounded-[7px] transition-colors shadow-lg shadow-emerald-900/30"
+                  className="flex-shrink-0 inline-flex items-center gap-[5px] px-[13px] py-[8px] text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-400 text-white rounded-[7px] transition-colors shadow-lg shadow-emerald-900/30"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Play size={13} fill="currentColor" />
@@ -460,7 +460,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
             className={`flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all ${
               post.userLiked
                 ? "text-red-400 bg-red-500/10"
-                : "text-zinc-500 hover:text-red-400 hover:bg-red-500/[0.08]"
+                : "text-zinc-500 hover:text-red-400 hover:bg-red-500/[0.08] active:text-red-400 active:bg-red-500/[0.08]"
             }`}
           >
             <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} className={likeAnim ? "heart-pop" : ""} />
@@ -468,7 +468,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
           </button>
           <button
             onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06]"
+            className="flex items-center gap-1.5 text-xs px-[10px] py-[6px] rounded-[6px] transition-all text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06] active:text-zinc-300 active:bg-white/[0.06]"
           >
             <MessageCircle size={14} />
             <span className="tabular-nums">{post.comments.length}</span>

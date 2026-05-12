@@ -53,7 +53,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
           {/* Hamburger menu button */}
           <button
             onClick={onMenuClick}
-            className="p-[8px] text-zinc-400 hover:text-zinc-200 transition-colors md:hidden"
+            className="p-[8px] text-zinc-400 hover:text-zinc-200 active:text-zinc-200 transition-colors md:hidden"
             aria-label="Toggle menu"
           >
             <Menu size={21} />
@@ -69,7 +69,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-[8px] px-[10px] py-[6px] rounded-[8px] hover:bg-white/[0.06] transition-colors"
+                className="flex items-center gap-[8px] px-[10px] py-[6px] rounded-[8px] hover:bg-white/[0.06] active:bg-white/[0.06] transition-colors"
               >
                 {user.avatarUrl ? (
                   <img
@@ -90,7 +90,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
                   <Link
                     href="/profile"
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-[8px] px-[13px] py-[10px] text-sm text-zinc-300 hover:bg-white/[0.06] transition-colors"
+                    className="flex items-center gap-[8px] px-[13px] py-[10px] text-sm text-zinc-300 hover:bg-white/[0.06] active:bg-white/[0.06] transition-colors"
                   >
                     <User size={14} className="text-zinc-500" />
                     Profile
@@ -98,7 +98,7 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
                   <div className="border-t border-white/[0.06]" />
                   <button
                     onClick={() => { signOut(); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-[8px] px-[13px] py-[10px] text-sm text-zinc-500 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+                    className="w-full flex items-center gap-[8px] px-[13px] py-[10px] text-sm text-zinc-500 hover:text-red-400 hover:bg-red-500/5 active:text-red-400 active:bg-red-500/5 transition-colors"
                   >
                     <LogOut size={14} />
                     Sign out
@@ -110,14 +110,14 @@ export default function Header({ onMenuClick, sidebarOpen = false }: HeaderProps
             <div className="flex items-center gap-[8px]">
               <button
                 onClick={signInWithGithub}
-                className="px-[10px] py-[6px] text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-200 rounded-[8px] transition-all flex items-center gap-[6px]"
+                className="px-[10px] py-[6px] text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.1] border border-white/[0.08] text-zinc-200 rounded-[8px] transition-all flex items-center gap-[6px]"
               >
                 <GitHubIcon className="w-[14px] h-[14px]" />
                 <span className="hidden sm:inline">GitHub</span>
               </button>
               <button
                 onClick={signInWithRoblox}
-                className="px-[10px] py-[6px] text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-200 rounded-[8px] transition-all flex items-center gap-[6px]"
+                className="px-[10px] py-[6px] text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.1] border border-white/[0.08] text-zinc-200 rounded-[8px] transition-all flex items-center gap-[6px]"
                 title="Requires Roblox OAuth setup"
               >
                 <RobloxIcon className="w-[14px] h-[14px]" />
