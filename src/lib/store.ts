@@ -448,8 +448,8 @@ export const usePostStore = create<PostStore>((set, get) => ({
     }
 
     // Store previous state for reliable revert
-    const post = get().posts.find((p) => p.id === postId);
-    const comment = post?.comments.find((c) => c.id === commentId);
+    const currentPost = get().posts.find((p) => p.id === postId);
+    const comment = currentPost?.comments.find((c) => c.id === commentId);
     if (!comment) return;
 
     const wasLiked = comment.user_has_liked;

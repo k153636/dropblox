@@ -9,7 +9,7 @@ export async function toggleCommentLike(
     .select("id")
     .eq("comment_id", commentId)
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
 
   if (checkError && checkError.code !== "PGRST116") {
     return { liked: false, error: checkError };
