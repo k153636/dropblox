@@ -52,3 +52,11 @@ tmp_commit_msg
 .windsurf/
 supabase/.temp/
 
+# AI dev docs
+AGENTS.md
+CLAUDE.md
+design_context.md
+FUTURE_PLAN.md
+harness-spec.json
+harness-state.json
+
