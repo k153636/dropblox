@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { usePostStore } from "@/lib/store";
 import { useAuthStore } from "@/lib/auth-store";
+import { useHeartAnimation } from "@/lib/use-heart-animation";
 import { Comment } from "@/lib/db-comments";
 import CopyLinkButton from "./CopyLinkButton";
 import PostDetailModal from "./PostDetailModal";
@@ -56,7 +57,7 @@ function CommentItem({
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.body);
-  const [likeAnim, setLikeAnim] = useState(false);
+  const heartAnim = useHeartAnimation();
   const addComment = usePostStore((s) => s.addComment);
   const updateComment = usePostStore((s) => s.updateComment);
   const deleteComment = usePostStore((s) => s.deleteComment);
@@ -92,8 +93,7 @@ function CommentItem({
   }
 
   function handleLike() {
-    setLikeAnim(true);
-    setTimeout(() => setLikeAnim(false), 350);
+    heartAnim.trigger();
     likeComment(postId, comment.id);
   }
 
@@ -166,7 +166,7 @@ function CommentItem({
                   comment.user_has_liked ? "text-red-400" : "text-zinc-500 hover:text-red-400 active:text-red-400"
                 }`}
               >
-                <Heart size={14} fill={comment.user_has_liked ? "currentColor" : "none"} className={likeAnim ? "heart-pop" : ""} />
+                <Heart size={14} fill={comment.user_has_liked ? "currentColor" : "none"} className={heartAnim.className} />
                 <span className="w-4 text-center">{comment.comment_likes_count > 0 ? comment.comment_likes_count : " "}</span>
               </button>
               
@@ -268,7 +268,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [showDetail, setShowDetail] = useState(false);
-  const [likeAnim, setLikeAnim] = useState(false);
+  const heartAnim = useHeartAnimation();
   
   const likePost = usePostStore((s) => s.likePost);
   const addComment = usePostStore((s) => s.addComment);
@@ -310,8 +310,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
   function handleLikeClick() {
     likePost(post.id);
     if (!post.userLiked) {
-      setLikeAnim(true);
-      setTimeout(() => setLikeAnim(false), 350);
+      heartAnim.trigger();
     }
   }
 
