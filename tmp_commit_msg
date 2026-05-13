@@ -1,6 +1,0 @@
-fix: いいねアニメーションとカウント更新の修正
-
-- heart-pop クラスを Heart SVG から button 要素に移動
-- store.ts の optimistic update で前の状態を保存して revert 時に使うように修正
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>

@@ -44,3 +44,11 @@ next-env.d.ts
 .company/
 .continue/
 tmp_commit_msg
+
+# IDE / local config
+.claude/
+.codex/
+.vscode/
+.windsurf/
+supabase/.temp/
+
