@@ -42,6 +42,5 @@ next-env.d.ts
 
 # company secrets
 .company/
-
-.vscode/
-.windsurf/
+.continue/
+tmp_commit_msg

@@ -476,7 +476,7 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
                 : "text-zinc-500 hover:text-red-400 hover:bg-red-500/[0.08] active:text-red-400 active:bg-red-500/[0.08]"
             }`}
           >
-            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} className={likeAnim ? "heart-pop" : ""} />
+            <Heart size={14} fill={post.userLiked ? "currentColor" : "none"} />
             <span className="tabular-nums">{post.likes}</span>
           </button>
           <button

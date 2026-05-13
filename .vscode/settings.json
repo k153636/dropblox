@@ -1,0 +1,11 @@
+{
+    "files.readonlyInclude": {
+        "{**/.c4z/.extsrcs/*.PROTSYM.cbl,**/.c4z/.extsrcs/*.PROTSYM.listing}": true
+    },
+    "chat.tools.terminal.autoApprove": {
+        "/^node scripts/test-openrouter\\.mjs$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

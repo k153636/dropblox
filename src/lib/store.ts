@@ -255,13 +255,20 @@ export const usePostStore = create<PostStore>((set, get) => ({
     }
 
     // Optimistic update
+    const currentPost = get().posts.find((p) => p.id === id);
+    if (!currentPost) return;
+
+    const wasLiked = currentPost.userLiked;
+    const newLikes = wasLiked ? currentPost.likes - 1 : currentPost.likes + 1;
+    const newUserLiked = !wasLiked;
+
     set((state) => ({
       posts: state.posts.map((p) =>
         p.id === id
           ? {
               ...p,
-              likes: p.userLiked ? p.likes - 1 : p.likes + 1,
-              userLiked: !p.userLiked,
+              likes: newLikes,
+              userLiked: newUserLiked,
             }
           : p
       ),
@@ -270,21 +277,34 @@ export const usePostStore = create<PostStore>((set, get) => ({
     try {
       const result = await toggleLike(id, user.id);
       if (result.error) {
-        // Revert on error
+        // Revert on error using stored previous state
         set((state) => ({
           posts: state.posts.map((p) =>
             p.id === id
               ? {
                   ...p,
-                  likes: p.userLiked ? p.likes - 1 : p.likes + 1,
-                  userLiked: !p.userLiked,
+                  likes: wasLiked ? currentPost.likes : currentPost.likes,
+                  userLiked: wasLiked,
                 }
               : p
           ),
         }));
+        toast.error("Failed to toggle like");
       }
     } catch (error: any) {
       console.error("Error toggling like:", error);
+      // Revert on exception
+      set((state) => ({
+        posts: state.posts.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                likes: wasLiked ? currentPost.likes : currentPost.likes,
+                userLiked: wasLiked,
+              }
+            : p
+        ),
+      }));
     }
   },
 
@@ -427,6 +447,14 @@ export const usePostStore = create<PostStore>((set, get) => ({
       return;
     }
 
+    // Store previous state for reliable revert
+    const post = get().posts.find((p) => p.id === postId);
+    const comment = post?.comments.find((c) => c.id === commentId);
+    if (!comment) return;
+
+    const wasLiked = comment.user_has_liked;
+    const prevCount = comment.comment_likes_count;
+
     // Optimistic toggle
     set((state) => ({
       posts: state.posts.map((p) =>
@@ -437,10 +465,8 @@ export const usePostStore = create<PostStore>((set, get) => ({
                 c.id === commentId
                   ? {
                       ...c,
-                      user_has_liked: !c.user_has_liked,
-                      comment_likes_count: c.user_has_liked
-                        ? c.comment_likes_count - 1
-                        : c.comment_likes_count + 1,
+                      user_has_liked: !wasLiked,
+                      comment_likes_count: wasLiked ? prevCount - 1 : prevCount + 1,
                     }
                   : c
               ),
@@ -452,7 +478,7 @@ export const usePostStore = create<PostStore>((set, get) => ({
     try {
       const result = await toggleCommentLike(commentId, user.id);
       if (result.error) {
-        // Revert
+        // Revert using stored previous state
         set((state) => ({
           posts: state.posts.map((p) =>
             p.id === postId
@@ -462,10 +488,8 @@ export const usePostStore = create<PostStore>((set, get) => ({
                     c.id === commentId
                       ? {
                           ...c,
-                          user_has_liked: !c.user_has_liked,
-                          comment_likes_count: c.user_has_liked
-                            ? c.comment_likes_count - 1
-                            : c.comment_likes_count + 1,
+                          user_has_liked: wasLiked,
+                          comment_likes_count: prevCount,
                         }
                       : c
                   ),
@@ -473,9 +497,10 @@ export const usePostStore = create<PostStore>((set, get) => ({
               : p
           ),
         }));
+        toast.error("Failed to toggle like");
       }
     } catch {
-      // Revert
+      // Revert using stored previous state
       set((state) => ({
         posts: state.posts.map((p) =>
           p.id === postId
@@ -485,10 +510,8 @@ export const usePostStore = create<PostStore>((set, get) => ({
                   c.id === commentId
                     ? {
                         ...c,
-                        user_has_liked: !c.user_has_liked,
-                        comment_likes_count: c.user_has_liked
-                          ? c.comment_likes_count - 1
-                          : c.comment_likes_count + 1,
+                        user_has_liked: wasLiked,
+                        comment_likes_count: prevCount,
                       }
                     : c
                 ),
