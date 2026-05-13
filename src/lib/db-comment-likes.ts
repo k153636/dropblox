@@ -4,16 +4,19 @@ export async function toggleCommentLike(
   commentId: string,
   userId: string
 ): Promise<{ liked: boolean; error: Error | null }> {
-  const { data: existing, error: checkError } = await supabase
+  // Use limit(1) instead of single()/maybeSingle() for broader compatibility
+  const { data: existingRows, error: checkError } = await supabase
     .from("comment_likes")
     .select("id")
     .eq("comment_id", commentId)
     .eq("user_id", userId)
-    .maybeSingle();
+    .limit(1);
 
-  if (checkError && checkError.code !== "PGRST116") {
+  if (checkError) {
     return { liked: false, error: checkError };
   }
+
+  const existing = existingRows && existingRows.length > 0 ? existingRows[0] : null;
 
   if (existing) {
     const { error } = await supabase
