@@ -56,6 +56,7 @@ function CommentItem({
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.body);
+  const [likeAnim, setLikeAnim] = useState(false);
   const addComment = usePostStore((s) => s.addComment);
   const updateComment = usePostStore((s) => s.updateComment);
   const deleteComment = usePostStore((s) => s.deleteComment);
@@ -91,6 +92,8 @@ function CommentItem({
   }
 
   function handleLike() {
+    setLikeAnim(true);
+    setTimeout(() => setLikeAnim(false), 350);
     likeComment(postId, comment.id);
   }
 
@@ -163,7 +166,7 @@ function CommentItem({
                   comment.user_has_liked ? "text-red-400" : "text-zinc-500 hover:text-red-400 active:text-red-400"
                 }`}
               >
-                <Heart size={14} fill={comment.user_has_liked ? "currentColor" : "none"} />
+                <Heart size={14} fill={comment.user_has_liked ? "currentColor" : "none"} className={likeAnim ? "heart-pop" : ""} />
                 <span className="w-4 text-center">{comment.comment_likes_count > 0 ? comment.comment_likes_count : " "}</span>
               </button>
               
