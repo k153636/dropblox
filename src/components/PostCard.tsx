@@ -277,6 +277,11 @@ export default function PostCard({ post, showActions = false }: PostCardProps) {
   const loadComments = usePostStore((s) => s.loadComments);
   const currentUser = useAuthStore((s) => s.user);
 
+  // Pre-load comments on mount so they appear instantly when expanded
+  useEffect(() => {
+    loadComments(post.id);
+  }, [post.id, loadComments]);
+
   // Load comments when expanding - always reload when opened
   useEffect(() => {
     if (showComments) {
